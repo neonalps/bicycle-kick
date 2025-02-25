@@ -1,0 +1,1 @@
+export type BookableOffence = 'foul' | 'handball' | 'unsportingBehaviour' | 'denialOfGoalScoringOpportunity';

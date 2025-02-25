@@ -1,0 +1,5 @@
+{
+    "migration-filename-format": "utc",
+    "tsconfig": "./tsconfig.json",
+    "migrations-dir": "src/db/migrations"
+}

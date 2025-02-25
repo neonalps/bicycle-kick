@@ -1,0 +1,36 @@
+{
+  "name": "bicycle-kick",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "node-pg-migrate --config-file pgmigrate.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neonalps/bicycle-kick.git"
+  },
+  "author": "neonalps",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neonalps/bicycle-kick/issues"
+  },
+  "homepage": "https://github.com/neonalps/bicycle-kick#readme",
+  "dependencies": {
+    "@fastify/cors": "^10.0.2",
+    "@fastify/jwt": "^9.0.4",
+    "@types/node": "^22.13.4",
+    "dotenv": "^16.4.7",
+    "env-var": "^7.5.0",
+    "fastify": "^5.2.1",
+    "node-pg-migrate": "^7.9.1",
+    "pino": "^9.6.0",
+    "postgres": "^3.4.5",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.3",
+    "undici": "^7.3.0"
+  }
+}

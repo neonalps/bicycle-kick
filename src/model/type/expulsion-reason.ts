@@ -1,0 +1,1 @@
+export type ExpulsionReason = 'violentConduct' | 'denialOfGoalScoringOpportunity' | 'professionalFoul';

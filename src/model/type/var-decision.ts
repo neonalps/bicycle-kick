@@ -1,0 +1,1 @@
+export type VarDecision = 'penalty' | 'penaltyCancelled' | 'yellowCardOverturned';

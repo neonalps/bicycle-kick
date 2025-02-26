@@ -1,1 +1,1 @@
-export type BookableOffence = 'foul' | 'handball' | 'unsportingBehaviour' | 'denialOfGoalScoringOpportunity';
+export type BookableOffence = 'foul' | 'handball' | 'unsportingBehaviour' | 'dissent' | 'denialOfGoalScoringOpportunity';

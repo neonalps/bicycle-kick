@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "es2017",
         "lib": [
-            "es6"
+            "es2021"
         ],
         "types": ["node", "jest"],
         "paths": {
@@ -19,5 +19,9 @@
         "strict": true,
         "noImplicitAny": true,
         "skipLibCheck": true
-    }
+    },
+    "exclude": [
+        "jest.config.js",
+        "tests/**/*"
+    ]
 }

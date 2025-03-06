@@ -1,8 +1,10 @@
 import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { requireNonNull } from "@src/util/common";
-import { MagicSearchRouteHandler } from "./handler";
+import { MagicSearchRouteHandler } from "@src/api/v1/search/magic/handler";
+import { MagicSearchRequestDto } from "@src/model/external/dto/magic-search-request";
+import { MagicSearchResponseDto } from "@src/model/external/dto/magic-search-response";
 
-export class MagicSearchRouteProvider implements RouteProvider<void, void> {
+export class MagicSearchRouteProvider implements RouteProvider<MagicSearchRequestDto, MagicSearchResponseDto> {
 
     private readonly handler: MagicSearchRouteHandler;
 
@@ -10,14 +12,14 @@ export class MagicSearchRouteProvider implements RouteProvider<void, void> {
         this.handler = requireNonNull(handler);
     }
 
-    provide(): RouteDefinition<ProfileLoginRequestDto, ProfileLoginResponseDto> {
+    provide(): RouteDefinition<MagicSearchRequestDto, MagicSearchResponseDto> {
         const schema: RequestSchema = {
             body: {
                 type: 'object',
                 required: ['inquiry'],
                 properties: {
                     inquiry: { type: 'string' },
-                    source: { type: 'string' },
+                    channel: { type: 'string' },
                 },
             },
         };

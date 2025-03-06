@@ -4,11 +4,11 @@ import { AuthenticationContext, RequestSchema, ResponseSchema, RouteDefinition, 
 import { HttpMethod } from "@src/http/constants";
 import logger from "@src/log";
 import dependencyManager from "@src/di/manager";
-import { Dependencies } from "@src/di/dependencies";
-import { IllegalStateError } from "@src/api/error/illegal-state-error";
+import { IllegalStateError } from "@src/api/error/illegal-state";
 import { isDefined } from "@src/util/common";
-import { AuthenticationError } from "@src/api/error/authentication-error";
-import { ProfileService } from "@src/modules/profile/service";
+import { AuthenticationError } from "@src/api/error/authentication";
+import { Dependencies } from "@src/di/dependencies";
+import { ProfileService } from "@src/module/profile/service";
 
 export class RouteManager {
 
@@ -104,7 +104,7 @@ export class RouteManager {
 
         return {
             authenticated: true,
-            profile,
+            profile: null,      // TODO change
         };
     }
 

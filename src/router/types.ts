@@ -1,10 +1,9 @@
 import { HttpMethod } from "@src/http/constants";
-import { ProfileDao } from "@src/models/internal/dao/profile";
 import { FastifySchema } from "fastify";
 
 export type AuthenticationContext = {
     authenticated: boolean,
-    profile: ProfileDao | null,
+    profile: null,
 }
 
 export type RouteDefinition<S, T> = {

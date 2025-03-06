@@ -39,3 +39,12 @@ export function checkValidHttpMethod(method: string): boolean {
 export function getAllowedHttpMethods(): string[] {
     return [...allowedHttpMethods];
 }
+
+export function getOrThrow<T>(map: Map<unknown, unknown>, key: unknown, errorMessage: string): T {
+    const value = map.get(key);
+    if (value === undefined) {
+        throw new Error(errorMessage);
+    }
+
+    return value as T;
+}

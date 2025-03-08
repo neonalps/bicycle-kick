@@ -16,6 +16,6 @@ export interface Game {
     fullTimeGoalsOpponent: number;
     halfTimeGoalsMain: number;
     halfTimeGoalsOpponent: number;
-    turnAroundsMain: number;
-    turnAroundsOpponent: number;
+    turnaroundsMain: number;
+    turnaroundsOpponent: number;
 }

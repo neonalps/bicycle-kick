@@ -1,15 +1,15 @@
-import { CompetitionService } from "@src/module/competition/service";
 import { IdResolver, ResolvePossibility } from "@src/module/advanced-query/id-resolver/base";
 import { FilterParameter } from "@src/module/advanced-query/filter/parameter";
+import { ClubService } from "@src/module/club/service";
 
-export class CompetitionIdResolver extends IdResolver {
+export class ClubIdResolver extends IdResolver {
 
-    constructor(private readonly competitionService: CompetitionService) {
+    constructor(private readonly clubService: ClubService) {
         super();
     }
 
     async fetchPossibilities(parameter: FilterParameter): Promise<ResolvePossibility[]> {
-        const result = await this.competitionService.searchByName(parameter.value);
+        const result = await this.clubService.searchByName(parameter.value);
 
         return result.map(item => {
             return {

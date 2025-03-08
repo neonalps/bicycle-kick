@@ -8,6 +8,21 @@ import { FilterName } from "@src/module/advanced-query/scenario/constants";
 import { FilterProvider } from "@src/module/advanced-query/provider/base";
 import { CompetitionIdResolver } from "@src/module/advanced-query/id-resolver/competition";
 import { CompetitionFilterProvider } from "@src/module/advanced-query/provider/competition";
+import { PersonIdResolver } from "@src/module/advanced-query/id-resolver/person";
+import { PersonService } from "@src/module/person/service";
+import { PlayerFilterProvider } from "@src/module/advanced-query/provider/player";
+import { ClubService } from "@src/module/club/service";
+import { ClubIdResolver } from "@src/module/advanced-query/id-resolver/club";
+import { OpponentFilterProvider } from "@src/module/advanced-query/provider/opponent";
+import { VenueIdResolver } from "@src/module/advanced-query/id-resolver/venue";
+import { VenueService } from "@src/module/venue/service";
+import { SoldOutFilterProvider } from "@src/module/advanced-query/provider/sold-out";
+import { GoalDifferenceFilterProvider } from "@src/module/advanced-query/provider/goal-difference";
+import { ResultTendencyFilterProvider } from "@src/module/advanced-query/provider/result-tendency";
+import { SeasonService } from "@src/module/season/service";
+import { SeasonIdResolver } from "@src/module/advanced-query/id-resolver/season";
+import { SeasonFilterProvider } from "@src/module/advanced-query/provider/season";
+import { TurnaroundFilterProvider } from "@src/module/advanced-query/provider/turnaround";
 
 export class DependencyHelper {
 
@@ -19,7 +34,11 @@ export class DependencyHelper {
 
     private static getDependencies(): Map<Dependencies, any> {
 
+        const clubService = new ClubService();
         const competitionService = new CompetitionService();
+        const personService = new PersonService();
+        const seasonService = new SeasonService();
+        const venueService = new VenueService();
 
         const englishTokenizer = new EnglishTokenizer();
 
@@ -30,15 +49,30 @@ export class DependencyHelper {
 
         const idResolvers: Map<FilterName, IdResolver> = new Map();
         idResolvers.set(FilterName.Competition, new CompetitionIdResolver(competitionService));
+        idResolvers.set(FilterName.Opponent, new ClubIdResolver(clubService));
+        idResolvers.set(FilterName.Player, new PersonIdResolver(personService));
+        idResolvers.set(FilterName.Season, new SeasonIdResolver(seasonService));
+        idResolvers.set(FilterName.Venue, new VenueIdResolver(venueService));
 
         const filterProviders: Map<FilterName, FilterProvider<unknown>> = new Map();
         filterProviders.set(FilterName.Competition, new CompetitionFilterProvider());
+        filterProviders.set(FilterName.GoalDifference, new GoalDifferenceFilterProvider());
+        filterProviders.set(FilterName.Opponent, new OpponentFilterProvider());
+        filterProviders.set(FilterName.Player, new PlayerFilterProvider());
+        filterProviders.set(FilterName.ResultTendency, new ResultTendencyFilterProvider());
+        filterProviders.set(FilterName.Season, new SeasonFilterProvider());
+        filterProviders.set(FilterName.SoldOut, new SoldOutFilterProvider());
+        filterProviders.set(FilterName.Turnaround, new TurnaroundFilterProvider());
 
         const advancedQueryService = new AdvancedQueryService(config, idResolvers, filterProviders);
 
         const dependencies: Map<Dependencies, any> = new Map();
         
         dependencies.set(Dependencies.AdvancedQueryService, advancedQueryService);
+        dependencies.set(Dependencies.ClubService, clubService);
+        dependencies.set(Dependencies.CompetitionService, competitionService);
+        dependencies.set(Dependencies.PersonService, personService);
+        dependencies.set(Dependencies.VenueService, venueService);
 
         return dependencies;
     }

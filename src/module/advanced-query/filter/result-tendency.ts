@@ -6,7 +6,6 @@ export interface ResultTendencyFilterPayload {
     won?: boolean;
     drawn?: boolean;
     lost?: boolean;
-    goalDifference?: number;
 };
 
 export class ResultTendencyFilter implements Modifier {
@@ -38,10 +37,6 @@ export class ResultTendencyFilter implements Modifier {
             } else {
                 context.where.push(`g.result_tendency != 'l'`)
             }
-        }
-
-        if (this.payload.goalDifference !== undefined) {
-            context.where.push(`g.ft_goals_main - g.ft_goals_opponent = ${this.payload.goalDifference}`)
         }
     }
     

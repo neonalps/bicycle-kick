@@ -9,7 +9,7 @@ export class PersonIdResolver extends IdResolver {
     }
 
     async fetchPossibilities(parameter: FilterParameter): Promise<ResolvePossibility[]> {
-        const result = await this.personService.searchByName(parameter.value.join(" "));
+        const result = await this.personService.searchByName(parameter.value);
 
         return result.map(item => {
             return {

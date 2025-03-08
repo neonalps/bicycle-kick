@@ -6,7 +6,6 @@ export interface LocationFilterPayload {
     atHome?: boolean;
     away?: boolean;
     neutralGround?: boolean;
-    venue?: string[];
 };
 
 export class LocationFilter implements Modifier {
@@ -26,12 +25,6 @@ export class LocationFilter implements Modifier {
 
         if (this.payload.neutralGround !== undefined) {
             context.where.push(`g.is_neutral_ground = ${this.payload.neutralGround === true ? '1' : '0'}`);
-        }
-
-        if (this.payload.venue !== undefined && this.payload.venue.length > 0) {
-            addFromIfNotExists(context.from, `venue v`, `v.id = g.venue_id`);
-
-            context.where.push(this.payload.venue.map(item => `v.name ilike '%${item}%'`).join(' or '));
         }
     }
     

@@ -104,11 +104,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'smallint',
             notNull: false,
         },
-        turn_arounds_main: {
+        turnarounds_main: {
             type: 'smallint',
             notNull: false,
         },
-        turn_arounds_opponent: {
+        turnarounds_opponent: {
             type: 'smallint',
             notNull: false,
         },

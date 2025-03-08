@@ -17,14 +17,13 @@ export abstract class IdResolver {
     abstract fetchPossibilities(parameter: FilterParameter): Promise<ResolvePossibility[]>;
 
     async resolve(parameters: FilterParameter[]): Promise<IdResolveResult[]> {
-        return Promise.all(parameters.map(parameter => this.resolveSingle(parameter)));
+        return Promise.all(parameters
+            .filter(parameter => parameter.needsResolving === true)
+            .map(parameter => this.resolveSingle(parameter))
+        );
     }
 
     private async resolveSingle(parameter: FilterParameter): Promise<IdResolveResult> {
-        if (parameter.needsResolving === false) {
-            throw new Error(`Parameter passed that does not need resolving`);
-        }
-
         const possibilities = await this.fetchPossibilities(parameter);
         if (possibilities.length === 1) {
             return {

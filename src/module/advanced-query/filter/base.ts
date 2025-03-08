@@ -5,7 +5,7 @@ export interface Modifier {
 }
 
 export interface NumberComparison {
-    exact?: boolean;
+    exactly?: boolean;
     atLeast?: boolean;
     atMost?: boolean;
     moreThan?: boolean;

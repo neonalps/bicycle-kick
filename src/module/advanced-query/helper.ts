@@ -2,6 +2,9 @@ import { Game } from "@src/model/internal/game";
 import { Person } from "@src/model/internal/person";
 import { QueryContext } from "@src/module/advanced-query/context";
 import { NumberComparison } from "@src/module/advanced-query/filter/base";
+import { FilterDescriptor } from "./filter/descriptor";
+import { FilterParameter } from "./filter/parameter";
+import { ParameterName } from "./scenario/constants";
 
 export interface PersonGameTuple {
     person: Person;
@@ -44,6 +47,35 @@ export function addFromIfNotExists(from: string[], table: string, joinCondition?
     from.push(toAdd.join(" "));
 }
 
+export function extractNumberComparison(descriptor: FilterDescriptor): NumberComparison | null {
+    const atLeastParameter = descriptor.parameters.find(parameter => parameter.name === ParameterName.AtLeast);
+    if (atLeastParameter !== undefined) {
+        return { atLeast: true };
+    }
+
+    const atMostParameter = descriptor.parameters.find(parameter => parameter.name === ParameterName.AtMost);
+    if (atMostParameter !== undefined) {
+        return { atMost: true };
+    }
+
+    const lessThanParameter = descriptor.parameters.find(parameter => parameter.name === ParameterName.LessThan);
+    if (lessThanParameter !== undefined) {
+        return { lessThan: true };
+    }
+
+    const moreThanParameter = descriptor.parameters.find(parameter => parameter.name === ParameterName.MoreThan);
+    if (moreThanParameter !== undefined) {
+        return { moreThan: true };
+    }
+
+    const exactlyParameter = descriptor.parameters.find(parameter => parameter.name === ParameterName.Exactly);
+    if (exactlyParameter !== undefined) {
+        return { exactly: true };
+    }
+
+    return null;
+}
+
 export function resolveNumberComparison(comparison: NumberComparison): string {
     if (comparison.atLeast === true) {
         return ">=";
@@ -56,4 +88,23 @@ export function resolveNumberComparison(comparison: NumberComparison): string {
     } else {
         return "=";
     }
+}
+
+export function collectResolvedIds(descriptor: FilterDescriptor): number[] {
+    return Array.from(descriptor.parameters
+        .filter(parameter => parameter.needsResolving === true)
+        .reduce((accumulator: Set<number>, current: FilterParameter) => {
+            const resolveResult = descriptor.resolveResults?.find(item => item.forId === current.id);
+            if (resolveResult === undefined) {
+                throw new Error(`No resolve result present for parameter ID ${current.id}`);
+            }
+
+            const resolvedId = resolveResult.resolved;
+            if (resolvedId === undefined) {
+                throw new Error(`Resolve result for parameter ID ${current.id} did not contain a resolved ID`);
+            }
+
+            accumulator.add(resolvedId);
+            return accumulator;
+        }, new Set()));
 }

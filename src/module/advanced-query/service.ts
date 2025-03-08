@@ -11,6 +11,7 @@ import { FilterProvider } from "@src/module/advanced-query/provider/base";
 import { getOrThrow } from "@src/util/common";
 import { createEmptyQueryContext } from "@src/module/advanced-query/scenario/helper";
 import { convertContextToSql } from "@src/module/advanced-query/helper";
+import { PostProcessingHandler } from "./post-processor/handler";
 
 export interface AdvancedQueryConfig {
     mainClubId: number;
@@ -50,20 +51,21 @@ export class AdvancedQueryService {
             return clarificationQuery;
         }
 
-        // stage 4: get all  query modifiers and apply them to build the query context
+        // stage 4: get all query modifiers and apply them to build the query context
         const context = createEmptyQueryContext();
         const queryModifiers = this.getQueryModifiers(descriptor);
         for (const modifier of queryModifiers) {
             modifier.apply(context);
         }
 
-        return convertContextToSql(context);
-
         // stage 5: execute SQL query
 
         // stage 6: apply post-processors to result
+        this.applyPostProcessors(descriptor);
 
         // stage 7: return
+
+        return convertContextToSql(context);
     }
 
     private getScenarioDescriptor(input: string): ScenarioDescriptor {
@@ -87,6 +89,23 @@ export class AdvancedQueryService {
             throw new Error(`No ID resolver available for ${descriptor.name}`);
         }
         descriptor.resolveResults = await resolver.resolve(descriptor.parameters);
+    }
+
+    private applyPostProcessors(descriptor: ScenarioDescriptor): void {
+        for (const filter of descriptor.filters) {
+            const orderedPostProcessors = filter.parameters
+                .filter(parameter => parameter.postProcessing !== undefined)
+                .map(parameter => parameter.postProcessing as PostProcessingHandler)
+                .sort((a, b) => {
+                    return a.order - b.order;
+                });
+
+            for (const postProcessor of orderedPostProcessors) {
+                console.log(`running post processor with order ${postProcessor.order}`);
+
+                // TODO how?
+            }
+        }
     }
 
     private getClarificationQuery(descriptor: ScenarioDescriptor): ClarificationQuery | null {

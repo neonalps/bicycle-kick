@@ -17,6 +17,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'text',
             notNull: true
         },
+        district: {
+            type: 'text',
+            notNull: false
+        },
         country_code: {
             type: 'text',
             notNull: true

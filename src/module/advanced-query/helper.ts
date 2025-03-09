@@ -1,7 +1,7 @@
 import { Game } from "@src/model/internal/game";
 import { Person } from "@src/model/internal/person";
 import { QueryContext } from "@src/module/advanced-query/context";
-import { NumberComparison } from "@src/module/advanced-query/filter/base";
+import { QuantityComparison } from "@src/module/advanced-query/filter/base";
 import { FilterDescriptor } from "./filter/descriptor";
 import { FilterParameter } from "./filter/parameter";
 import { ParameterName } from "./scenario/constants";
@@ -47,7 +47,7 @@ export function addFromIfNotExists(from: string[], table: string, joinCondition?
     from.push(toAdd.join(" "));
 }
 
-export function extractNumberComparison(descriptor: FilterDescriptor): NumberComparison | null {
+export function extractNumberComparison(descriptor: FilterDescriptor): QuantityComparison | null {
     const atLeastParameter = descriptor.parameters.find(parameter => parameter.name === ParameterName.AtLeast);
     if (atLeastParameter !== undefined) {
         return { atLeast: true };
@@ -76,7 +76,16 @@ export function extractNumberComparison(descriptor: FilterDescriptor): NumberCom
     return null;
 }
 
-export function resolveNumberComparison(comparison: NumberComparison): string {
+export function extractQuantity(descriptor: FilterDescriptor): number | null {
+    const quantityParameter = descriptor.parameters.find(parameter => parameter.name === ParameterName.Quantity);
+    if (quantityParameter !== undefined) {
+        return Number(quantityParameter.value[0]);
+    }
+
+    return null;
+}
+
+export function resolveQuantityComparison(comparison: QuantityComparison): string {
     if (comparison.atLeast === true) {
         return ">=";
     } else if (comparison.atMost === true) {

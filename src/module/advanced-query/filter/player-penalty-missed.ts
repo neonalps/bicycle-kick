@@ -2,21 +2,21 @@ import { QueryContext } from "@src/module/advanced-query/context";
 import { Modifier, QuantityComparison } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists, resolveQuantityComparison } from "@src/module/advanced-query/helper";
 
-export interface PlayerGoalsScoredFilterPayload extends QuantityComparison {
-    goals: number;
+export interface PlayerPenaltyMissedFilterPayload extends QuantityComparison {
+    quantity: number;
 };
 
-export class PlayerGoalsScoredFilter implements Modifier {
+export class PlayerPenaltyMissedFilter implements Modifier {
 
-    constructor(private readonly payload: PlayerGoalsScoredFilterPayload) {}
+    constructor(private readonly payload: PlayerPenaltyMissedFilterPayload) {}
 
     apply(context: QueryContext): void {
         addFromIfNotExists(context.from, `game g`);
         addFromIfNotExists(context.from, `game_players gp`, `gp.game_id = g.id`);
 
-        const { goals } = this.payload;
+        const { quantity } = this.payload;
 
-        context.where.push(`gp.goals_scored ${resolveQuantityComparison(this.payload)} ${goals}`);
+        context.where.push(`(gp.regulation_penalties_taken - gp.regulation_penalties_scored) ${resolveQuantityComparison(this.payload)} ${quantity}`);
     }
     
 }

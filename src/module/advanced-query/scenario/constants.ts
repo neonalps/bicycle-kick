@@ -3,15 +3,21 @@ export enum ScenarioName {
 }
 
 export enum FilterName {
+    AnyPlayerSentOff = "AnyPlayerSentOff",
     Competition = "Competition",
     GoalDifference = "GoalDifference",
     Location = "Location",
     Minute = "Minute",
     Opponent = "Opponent",
     Player = "Player",
+    PlayerPenaltyMissed = "PlayerPenaltyMissed",
+    Referee = "Referee",
     ResultTendency = "ResultTendency",
     Season = "Season",
     SoldOut = "SoldOut",
+    TeamPenaltyConceded = "TeamPenaltyConceded",
+    TeamPenaltyMissed = "TeamPenaltyMissed",
+    TeamPenaltyScored = "TeamPenaltyScored",
     Turnaround = "Turnaround",
     Venue = "Venue",
 }
@@ -34,7 +40,9 @@ export enum ParameterName {
     Main = "main",
     MoreThan = "moreThan",
     Name = "name",
+    OfficiatingType = "officiatingType",
     Opponent = "opponent",
+    Quantity = "quantity",
     SoldOut = "soldOut",
     Total = "total",
     Won = "won",

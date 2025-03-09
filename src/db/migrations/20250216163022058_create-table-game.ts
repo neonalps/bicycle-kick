@@ -100,7 +100,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'smallint',
             notNull: false,
         },
-        penalties_saved_main: {
+        penalties_missed_main: {
+            type: 'smallint',
+            notNull: false,
+        },
+        penalties_missed_opponent: {
             type: 'smallint',
             notNull: false,
         },
@@ -117,10 +121,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: false,
         },
         bicycle_kick_goals_opponent: {
-            type: 'smallint',
-            notNull: false,
-        },
-        penalties_saved_opponent: {
             type: 'smallint',
             notNull: false,
         },

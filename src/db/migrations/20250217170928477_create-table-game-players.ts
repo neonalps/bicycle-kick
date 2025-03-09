@@ -10,7 +10,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: true,
             references: `"game"`,
         },
-        player_id: {
+        person_id: {
             type: 'integer',
             notNull: true,
             references: `"person"`,

@@ -4,10 +4,16 @@ export interface Modifier {
     apply(context: QueryContext): void;
 }
 
-export interface NumberComparison {
+export interface QuantityComparison {
     exactly?: boolean;
     atLeast?: boolean;
     atMost?: boolean;
     moreThan?: boolean;
     lessThan?: boolean;
+}
+
+export interface TeamQuantitySelection {
+    main?: number;
+    opponent?: number;
+    total?: number;
 }

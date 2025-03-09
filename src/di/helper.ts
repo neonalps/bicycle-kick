@@ -23,6 +23,10 @@ import { SeasonService } from "@src/module/season/service";
 import { SeasonIdResolver } from "@src/module/advanced-query/id-resolver/season";
 import { SeasonFilterProvider } from "@src/module/advanced-query/provider/season";
 import { TurnaroundFilterProvider } from "@src/module/advanced-query/provider/turnaround";
+import { TeamPlayerSentOffFilterProvider } from "@src/module/advanced-query/provider/team-player-sent-off";
+import { RefereeFilterProvider } from "@src/module/advanced-query/provider/referee";
+import { TeamPenaltyConcededFilterProvider } from "@src/module/advanced-query/provider/team-penalty-conceded";
+import { PlayerPenaltyMissedFilterProvider } from "@src/module/advanced-query/provider/player-penalty-missed";
 
 export class DependencyHelper {
 
@@ -47,21 +51,27 @@ export class DependencyHelper {
             enabledTokenizers: [englishTokenizer],
         };
 
+        const personIdResolver = new PersonIdResolver(personService);
         const idResolvers: Map<FilterName, IdResolver> = new Map();
         idResolvers.set(FilterName.Competition, new CompetitionIdResolver(competitionService));
         idResolvers.set(FilterName.Opponent, new ClubIdResolver(clubService));
-        idResolvers.set(FilterName.Player, new PersonIdResolver(personService));
+        idResolvers.set(FilterName.Player, personIdResolver);
+        idResolvers.set(FilterName.Referee, personIdResolver);
         idResolvers.set(FilterName.Season, new SeasonIdResolver(seasonService));
         idResolvers.set(FilterName.Venue, new VenueIdResolver(venueService));
 
         const filterProviders: Map<FilterName, FilterProvider<unknown>> = new Map();
+        filterProviders.set(FilterName.AnyPlayerSentOff, new TeamPlayerSentOffFilterProvider());
         filterProviders.set(FilterName.Competition, new CompetitionFilterProvider());
         filterProviders.set(FilterName.GoalDifference, new GoalDifferenceFilterProvider());
         filterProviders.set(FilterName.Opponent, new OpponentFilterProvider());
         filterProviders.set(FilterName.Player, new PlayerFilterProvider());
+        filterProviders.set(FilterName.PlayerPenaltyMissed, new PlayerPenaltyMissedFilterProvider());
+        filterProviders.set(FilterName.Referee, new RefereeFilterProvider());
         filterProviders.set(FilterName.ResultTendency, new ResultTendencyFilterProvider());
         filterProviders.set(FilterName.Season, new SeasonFilterProvider());
         filterProviders.set(FilterName.SoldOut, new SoldOutFilterProvider());
+        filterProviders.set(FilterName.TeamPenaltyConceded, new TeamPenaltyConcededFilterProvider());
         filterProviders.set(FilterName.Turnaround, new TurnaroundFilterProvider());
 
         const advancedQueryService = new AdvancedQueryService(config, idResolvers, filterProviders);

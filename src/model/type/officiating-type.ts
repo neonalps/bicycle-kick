@@ -1,0 +1,1 @@
+export type OfficiatingType = 'referee' | 'assistantReferee' | 'fourthOfficial' | 'var' | 'avar';

@@ -3,6 +3,7 @@ import { FilterParameter } from "@src/module/advanced-query/filter/parameter";
 export interface ResolvePossibility {
     id: number;
     name: string;
+    position?: number;
     description?: string;
 }
 
@@ -35,8 +36,8 @@ export abstract class IdResolver {
         } else {
             return {
                 forId: parameter.id,
-                possibilities: possibilities.map(item => {
-                    return { id: item.id, name: item.name };
+                possibilities: possibilities.map((item, idx) => {
+                    return { id: item.id, position: idx + 1, name: item.name };
                 })
             }
         }

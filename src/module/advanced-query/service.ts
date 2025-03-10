@@ -1,4 +1,4 @@
-import { Tokenizer } from "@src/module/advanced-query/tokenizer/tokenizer";
+import { Tokenizer, TokenizerResult } from "@src/module/advanced-query/tokenizer/tokenizer";
 import { ScenarioDescriptor } from "@src/module/advanced-query/scenario/descriptor";
 import { FilterName, ScenarioName } from "@src/module/advanced-query/scenario/constants";
 import { IdResolver } from "@src/module/advanced-query/id-resolver/base";
@@ -12,9 +12,11 @@ import { getOrThrow } from "@src/util/common";
 import { createEmptyQueryContext } from "@src/module/advanced-query/scenario/helper";
 import { convertContextToSql } from "@src/module/advanced-query/helper";
 import { PostProcessingHandler } from "./post-processor/handler";
+import { UuidSource } from "@src/util/uuid";
 
 export interface AdvancedQueryConfig {
     mainClubId: number;
+    mainClubCity: string;
     enabledTokenizers: Tokenizer[];
 }
 
@@ -24,6 +26,7 @@ export class AdvancedQueryService {
         private readonly config: AdvancedQueryConfig, 
         private readonly idResolvers: Map<FilterName, IdResolver>,
         private readonly filterProviders: Map<FilterName, FilterProvider<unknown>>,
+        private readonly uuidSource: UuidSource,
     ) {}
 
     async search(raw: string): Promise<ClarificationQuery | string> {
@@ -38,7 +41,8 @@ export class AdvancedQueryService {
             .toLocaleLowerCase();
 
         // stage 1: get scenario descriptor
-        const descriptor = this.getScenarioDescriptor(sanitizedInput);
+        const tokenizerResult = this.getTokenizerResult(sanitizedInput);
+        const descriptor = tokenizerResult.descriptor;
 
         // stage 2: resolve filters
         await this.resolveFilters(descriptor);
@@ -68,11 +72,15 @@ export class AdvancedQueryService {
         return convertContextToSql(context);
     }
 
-    private getScenarioDescriptor(input: string): ScenarioDescriptor {
+    private getTokenizerResult(input: string): TokenizerResult {
         for (const tokenizer of this.config.enabledTokenizers) {
             const descriptor = tokenizer.tokenize(input);
             if (descriptor !== null) {
-                return descriptor;
+                return {
+                    id: this.uuidSource.getRandom(),
+                    language: tokenizer.getLanguage(),
+                    descriptor,
+                };
             }
         }
 

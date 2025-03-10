@@ -1,12 +1,12 @@
-import { GoalDifferenceFilter } from "@src/module/advanced-query/filter/goal-difference";
 import { FilterProvider } from "@src/module/advanced-query/provider/base";
 import { FilterDescriptor } from "@src/module/advanced-query/filter/descriptor";
 import { ParameterName } from "@src/module/advanced-query/scenario/constants";
 import { extractNumberComparison, extractQuantity } from "@src/module/advanced-query/helper";
+import { TablePositionAfterFilter } from "@src/module/advanced-query/filter/table-position-after";
 
-export class GoalDifferenceFilterProvider implements FilterProvider<GoalDifferenceFilter> {
+export class TablePositionAfterFilterProvider implements FilterProvider<TablePositionAfterFilter> {
 
-    provide(descriptor: FilterDescriptor): GoalDifferenceFilter {
+    provide(descriptor: FilterDescriptor): TablePositionAfterFilter {
         const quantity = extractQuantity(descriptor);
         if (quantity === null) {
             throw new Error(`Missing mandatory parameter with name ${ParameterName.Quantity}`);
@@ -17,7 +17,7 @@ export class GoalDifferenceFilterProvider implements FilterProvider<GoalDifferen
             throw new Error(`Missing mandatory number comparison parameter`);
         }
 
-        return new GoalDifferenceFilter({ quantity: quantity, ...numberComparison, })
+        return new TablePositionAfterFilter({ quantity: quantity, ...numberComparison, })
     }
 
 }

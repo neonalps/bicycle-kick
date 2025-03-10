@@ -6,6 +6,7 @@ export class PersonService {
         return new Promise((resolve) => {
             setTimeout(() => resolve([
                { id: 5, name: "Manprit Sarkaria", shortName: "Sarkaria", },
+               { id: 8, name: "Alexander Prass", shortName: "Prass", },
             ]), 200);
         });
     }

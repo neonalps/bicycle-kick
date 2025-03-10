@@ -5,5 +5,6 @@ export enum Dependencies {
     PersonService,
     ProfileService,
     SeasonService,
+    UuidSource,
     VenueService,
 };

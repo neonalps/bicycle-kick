@@ -1,3 +1,8 @@
+export enum Language {
+    English = "English",
+    German = "German",
+}
+
 export enum ScenarioName {
     GoalsScoredByPlayer = "GoalsScoredByPlayer",
 }
@@ -5,6 +10,7 @@ export enum ScenarioName {
 export enum FilterName {
     AnyPlayerSentOff = "AnyPlayerSentOff",
     Competition = "Competition",
+    Derby = "Derby",
     GoalDifference = "GoalDifference",
     Location = "Location",
     Minute = "Minute",
@@ -15,6 +21,7 @@ export enum FilterName {
     ResultTendency = "ResultTendency",
     Season = "Season",
     SoldOut = "SoldOut",
+    TablePositionAfter = "TablePositionAfter",
     TeamPenaltyConceded = "TeamPenaltyConceded",
     TeamPenaltyMissed = "TeamPenaltyMissed",
     TeamPenaltyScored = "TeamPenaltyScored",
@@ -30,10 +37,12 @@ export enum TargetName {
 export enum ParameterName {
     AtLeast = "atLeast",
     AtMost = "atMost",
+    City = "city",
+    Country = "country",
     Current = "current",
+    District = "district",
     Drawn = "drawn",
     Exactly = "exactly",
-    GoalDifference = "goalDifference",
     Last = "last",
     LessThan = "lessThan",
     Lost = "lost",

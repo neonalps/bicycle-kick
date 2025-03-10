@@ -17,9 +17,13 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'text',
             notNull: true
         },
-        city_name: {
+        city: {
             type: 'text',
             notNull: true
+        },
+        district: {
+            type: 'text',
+            notNull: false
         },
         icon_large: {
             type: 'text',

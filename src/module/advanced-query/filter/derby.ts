@@ -1,5 +1,5 @@
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier } from "@src/module/advanced-query/filter/base";
+import { Filter } from "@src/module/advanced-query/filter/base";
 import { OpponentFilter } from "@src/module/advanced-query/filter/opponent";
 
 export interface DerbyFilterPayload {
@@ -7,7 +7,7 @@ export interface DerbyFilterPayload {
     district?: string[];
 };
 
-export class DerbyFilter implements Modifier {
+export class DerbyFilter implements Filter {
 
     constructor(private readonly payload: DerbyFilterPayload) {}
 

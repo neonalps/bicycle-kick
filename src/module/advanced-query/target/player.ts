@@ -1,12 +1,28 @@
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier } from "@src/module/advanced-query/filter/base";
-import { TargetName } from "@src/module/advanced-query/scenario/constants";
+import { TargetName, TargetResultParameter } from "@src/module/advanced-query/scenario/constants";
 import { addFromIfNotExists } from "@src/module/advanced-query/helper";
+import { Target } from "./base";
 
-export class PlayerTarget implements Modifier {
+export class PlayerTarget implements Target {
+
+    getName(): TargetName {
+        return TargetName.Player;
+    }
+
+    getResultParameter(): TargetResultParameter {
+        return TargetResultParameter.PlayerId;
+    }
+
+    getSelector(): string {
+        return `gp.player_id`;
+    }
+
+    getOrderSelector(): string {
+        return `gp.player_id`;
+    }
 
     apply(context: QueryContext): void {
-        context.select.push(`gp.player_id as '${TargetName.PlayerId}'`);
+        context.select.push(`${this.getSelector()} as '${this.getResultParameter()}'`);
         addFromIfNotExists(context.from, `game_players gp`, `gp.game_id = g.id`);
     }
     

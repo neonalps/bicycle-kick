@@ -1,6 +1,6 @@
 import { OfficiatingType } from "@src/model/type/officiating-type";
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier } from "@src/module/advanced-query/filter/base";
+import { Filter } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists } from "@src/module/advanced-query/helper";
 
 export interface RefereeFilterPayload {
@@ -8,7 +8,7 @@ export interface RefereeFilterPayload {
     officiatingType?: OfficiatingType;
 };
 
-export class RefereeFilter implements Modifier { 
+export class RefereeFilter implements Filter { 
 
     constructor(private readonly payload: RefereeFilterPayload) {}
 

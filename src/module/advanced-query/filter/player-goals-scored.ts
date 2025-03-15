@@ -1,12 +1,12 @@
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier, QuantityComparison } from "@src/module/advanced-query/filter/base";
+import { Filter, QuantityComparison } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists, resolveQuantityComparison } from "@src/module/advanced-query/helper";
 
 export interface PlayerGoalsScoredFilterPayload extends QuantityComparison {
     goals: number;
 };
 
-export class PlayerGoalsScoredFilter implements Modifier {
+export class PlayerGoalsScoredFilter implements Filter {
 
     constructor(private readonly payload: PlayerGoalsScoredFilterPayload) {}
 

@@ -1,6 +1,6 @@
 import { QueryContext } from "@src/module/advanced-query/context";
 
-export interface Modifier {
+export interface Filter {
     apply(context: QueryContext): void;
 }
 

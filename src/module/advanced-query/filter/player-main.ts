@@ -1,8 +1,8 @@
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier } from "@src/module/advanced-query/filter/base";
+import { Filter } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists } from "@src/module/advanced-query/helper";
 
-export class MainPlayerFilter implements Modifier {
+export class MainPlayerFilter implements Filter {
 
     constructor() {}
 

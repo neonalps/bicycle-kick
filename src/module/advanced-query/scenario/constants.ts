@@ -5,10 +5,10 @@ export enum Language {
 
 export enum ScenarioName {
     GoalsScoredByPlayer = "GoalsScoredByPlayer",
+    Standard = "Standard",
 }
 
 export enum FilterName {
-    AnyPlayerSentOff = "AnyPlayerSentOff",
     Competition = "Competition",
     Derby = "Derby",
     GoalDifference = "GoalDifference",
@@ -21,15 +21,27 @@ export enum FilterName {
     ResultTendency = "ResultTendency",
     Season = "Season",
     SoldOut = "SoldOut",
+    PlayerSentOffGameEventFilter = "PlayerSentOffGameEventFilter",
     TablePositionAfter = "TablePositionAfter",
     TeamPenaltyConceded = "TeamPenaltyConceded",
     TeamPenaltyMissed = "TeamPenaltyMissed",
     TeamPenaltyScored = "TeamPenaltyScored",
+    TeamPlayerSentOff = "TeamPlayerSentOff",
     Turnaround = "Turnaround",
     Venue = "Venue",
 }
 
+export enum SortOrder {
+    Ascending = "asc",
+    Descending = "desc",
+}
+
 export enum TargetName {
+    Game = "Game",
+    Player = "Player",
+}
+
+export enum TargetResultParameter {
     GameId = "game_id",
     PlayerId = "player_id",
 }
@@ -37,24 +49,34 @@ export enum TargetName {
 export enum ParameterName {
     AtLeast = "atLeast",
     AtMost = "atMost",
+    Away = "away",
     City = "city",
     Country = "country",
     Current = "current",
     District = "district",
     Drawn = "drawn",
     Exactly = "exactly",
+    From = "from",
+    Home = "home",
     Last = "last",
     LessThan = "lessThan",
     Lost = "lost",
     Main = "main",
     MoreThan = "moreThan",
     Name = "name",
+    Neutral = "neutral",
     OfficiatingType = "officiatingType",
     Opponent = "opponent",
     Quantity = "quantity",
     SoldOut = "soldOut",
+    To = "to",
     Total = "total",
     Won = "won",
+}
+
+export enum SubjectName {
+    Main = "Main",
+    Opponent = "Opponent",
 }
 
 export enum BooleanValueType {

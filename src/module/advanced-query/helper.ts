@@ -18,8 +18,10 @@ export function convertContextToSql(context: QueryContext): string {
     query.push("from");
     query.push(context.from.join(" left join "));
 
-    query.push("where");
-    query.push(context.where.join(" and "));
+    if (context.where.length > 0) {
+        query.push("where");
+        query.push(context.where.join(" and "));
+    }
 
     if (context.orderBy.length > 0) {
         query.push("order by");

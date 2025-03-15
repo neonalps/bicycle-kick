@@ -1,10 +1,10 @@
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier, QuantityComparison, TeamQuantitySelection } from "@src/module/advanced-query/filter/base";
+import { Filter, QuantityComparison, TeamQuantitySelection } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists, resolveQuantityComparison } from "@src/module/advanced-query/helper";
 
 export interface TeamPenaltyConcededFilterPayload extends QuantityComparison, TeamQuantitySelection {};
 
-export class TeamPenaltyConcededFilter implements Modifier {
+export class TeamPenaltyConcededFilter implements Filter {
 
     constructor(private readonly payload: TeamPenaltyConcededFilterPayload) {}
 

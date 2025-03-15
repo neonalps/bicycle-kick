@@ -4,6 +4,138 @@ import { GameMinute } from "@src/model/internal/game-minute";
 import { Score } from "@src/model/internal/score";
 import { Streak } from "@src/model/internal/streak";
 
+type PlaceholderType = 'number' | 'any';
+
+interface PlaceholderDefintion {
+    name: string;
+    type: PlaceholderType;
+}
+
+export interface PlaceholderMatch {
+    raw: string;
+    resolved: string | number;
+}
+
+export interface PresenceMatch {
+    indexOfList: number;
+    placeholders: Record<string, PlaceholderMatch>; 
+}
+
+export function ifPresent(input: string, toSearchExpression: string, matchHandler: (match: PresenceMatch) => void, numbers?: Record<string, number>, startPosition?: number): void {
+    const match = determineMatch(input, toSearchExpression, numbers, startPosition);
+    if (match !== null) {
+        matchHandler(match);
+    }
+}
+
+function determineMatch(input: string, toSearchExpression: string, numbers?: Record<string, number>, startPosition?: number): PresenceMatch | null {
+    const parts = input.split(" ");
+
+    const toSearchParts = toSearchExpression.split(" ");
+
+    const placeholderMap: Record<string, PlaceholderMatch> = {};
+
+    const startFrom = startPosition !== undefined ? startPosition : 0;
+
+    const inputLength = parts.length;
+    for (let i = startFrom; i < inputLength; i++) {
+        const part = parts[i];
+        const toSearch = toSearchParts[0];
+
+        const placeholder = getPlaceholderDefinition(toSearch);
+        const match = getPlaceholderMatch(part, placeholder, numbers);
+
+        if (part === toSearch || match !== null) {
+            let isMatching = true;
+            if (match !== null) {
+                // store placeholder match in map
+                placeholderMap[(placeholder as PlaceholderDefintion).name] = match;
+            }
+
+            // matching has started
+            matchingLoop: for (let j = 1; j < toSearchParts.length; j++) {
+                // strategy: peek at next elements to see if they also match
+                if ((i + j) >= inputLength) {
+                    // peeking not possible because end of input parts array is reached; abort matching
+                    isMatching = false;
+                    break matchingLoop;
+                }
+
+                const peekElement = parts[i + j];
+                const peekToSearch = toSearchParts[j];
+
+                const peekPlaceholder = getPlaceholderDefinition(peekToSearch);
+                const peekMatch = getPlaceholderMatch(peekElement, peekPlaceholder, numbers);
+
+                if (peekElement !== peekToSearch && peekMatch === null) {
+                    // peek element did not result in a match; abort matching
+                    isMatching = false;
+                    break matchingLoop;
+                }
+
+                // we found another match
+                if (peekMatch !== null) {
+                    placeholderMap[(peekPlaceholder as PlaceholderDefintion).name] = peekMatch;
+                }
+            }
+
+            if (isMatching) {
+                return { indexOfList: i, placeholders: placeholderMap };
+            }
+        }
+    }
+
+    return null;
+}
+
+function getPlaceholderMatch(item: string, placeholder: PlaceholderDefintion | null, numbers?: Record<string, number>): PlaceholderMatch | null {
+    if (placeholder === null) {
+        return null;
+    }
+
+    if (placeholder.type === 'any') {
+        return { raw: item, resolved: item };
+    } else {
+        // number
+        if (!isNaN(item as any)) {
+            return { raw: item, resolved: Number(item) };
+        }
+
+        if (numbers === undefined) {
+            return null;
+        }
+
+        const numberMatch = numbers[item];
+        if (numberMatch === undefined) {
+            return null;
+        }
+
+        return { raw: item, resolved: numberMatch };
+    }
+}
+
+function getPlaceholderDefinition(item: string): PlaceholderDefintion | null {
+    if (!item.startsWith("{") || !item.endsWith("}")) {
+        return null;
+    }
+
+    const itemContent = item.substring(1, item.length - 1);
+
+    const itemContentParts = itemContent.split(":");
+    if (itemContentParts.length === 0 || itemContentParts.length > 2) {
+        return null;
+    }
+
+    const name = itemContentParts[0];
+
+    if (itemContentParts.length === 1) {
+        return { name, type: 'any' };
+    } else {
+        const placeholderType: PlaceholderType = itemContentParts[1] === "n" ? 'number' : 'any';
+        return { name, type: placeholderType };
+    }
+}
+
 export function filterGoalDifferenceInPeriod(orderedEvents: GoalGameEvent[], goalDifference: number, from: GameMinute, to: GameMinute): boolean {
     const goalDifferenceAtStart = getScoreAfterMinute(orderedEvents, from).getGoalDifference();
     if ((goalDifference < 0 && goalDifferenceAtStart < goalDifference) || 

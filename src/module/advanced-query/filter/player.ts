@@ -1,12 +1,12 @@
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier } from "@src/module/advanced-query/filter/base";
+import { Filter } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists } from "@src/module/advanced-query/helper";
 
 export interface PlayerFilterPayload {
     ids: number[];
 };
 
-export class PlayerFilter implements Modifier { 
+export class PlayerFilter implements Filter { 
 
     constructor(private readonly payload: PlayerFilterPayload) {}
 

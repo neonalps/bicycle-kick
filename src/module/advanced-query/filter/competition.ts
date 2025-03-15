@@ -1,5 +1,5 @@
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier } from "@src/module/advanced-query/filter/base";
+import { Filter } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists } from "../helper";
 
 export interface CompetitionFilterPayload {
@@ -8,7 +8,7 @@ export interface CompetitionFilterPayload {
     international?: boolean;
 };
 
-export class CompetitionFilter implements Modifier {
+export class CompetitionFilter implements Filter {
 
     constructor(private readonly payload: CompetitionFilterPayload) {}
 

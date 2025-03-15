@@ -30,6 +30,9 @@ import { PlayerPenaltyMissedFilterProvider } from "@src/module/advanced-query/pr
 import { TablePositionAfterFilterProvider } from "@src/module/advanced-query/provider/table-position-after";
 import { DerbyFilterProvider } from "@src/module/advanced-query/provider/derby";
 import { UuidSource } from "@src/util/uuid";
+import { LocationFilterProvider } from "@src/module/advanced-query/provider/location";
+import { MinuteFilterProvider } from "@src/module/advanced-query/provider/minute";
+import { PlayerSentOffGameEventFilterProvider } from "@src/module/advanced-query/provider/player-sent-off-game-event";
 
 export class DependencyHelper {
 
@@ -52,7 +55,9 @@ export class DependencyHelper {
         const config: AdvancedQueryConfig = {
             mainClubId: 1,
             mainClubCity: "Graz",
+            mainClubNames: ["Sturm", "Blackies"],
             enabledTokenizers: [],
+            batchSize: 50,
         };
 
         const englishTokenizer = new EnglishTokenizer(config, uuidSource);
@@ -68,10 +73,12 @@ export class DependencyHelper {
         idResolvers.set(FilterName.Venue, new VenueIdResolver(venueService));
 
         const filterProviders: Map<FilterName, FilterProvider<unknown>> = new Map();
-        filterProviders.set(FilterName.AnyPlayerSentOff, new TeamPlayerSentOffFilterProvider());
+        filterProviders.set(FilterName.TeamPlayerSentOff, new TeamPlayerSentOffFilterProvider());
         filterProviders.set(FilterName.Competition, new CompetitionFilterProvider());
         filterProviders.set(FilterName.Derby, new DerbyFilterProvider());
         filterProviders.set(FilterName.GoalDifference, new GoalDifferenceFilterProvider());
+        filterProviders.set(FilterName.Location, new LocationFilterProvider());
+        filterProviders.set(FilterName.Minute, new MinuteFilterProvider());
         filterProviders.set(FilterName.Opponent, new OpponentFilterProvider());
         filterProviders.set(FilterName.Player, new PlayerFilterProvider());
         filterProviders.set(FilterName.PlayerPenaltyMissed, new PlayerPenaltyMissedFilterProvider());
@@ -79,6 +86,7 @@ export class DependencyHelper {
         filterProviders.set(FilterName.ResultTendency, new ResultTendencyFilterProvider());
         filterProviders.set(FilterName.Season, new SeasonFilterProvider());
         filterProviders.set(FilterName.SoldOut, new SoldOutFilterProvider());
+        filterProviders.set(FilterName.PlayerSentOffGameEventFilter, new PlayerSentOffGameEventFilterProvider());
         filterProviders.set(FilterName.TablePositionAfter, new TablePositionAfterFilterProvider());
         filterProviders.set(FilterName.TeamPenaltyConceded, new TeamPenaltyConcededFilterProvider());
         filterProviders.set(FilterName.Turnaround, new TurnaroundFilterProvider());

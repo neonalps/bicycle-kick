@@ -6,18 +6,27 @@ import { ClarificationQuery, ClarificationQueryItem } from "@src/module/advanced
 import { FilterDescriptor } from "@src/module/advanced-query/filter/descriptor";
 import { Scenario } from "@src/module/advanced-query/scenario/base";
 import { GoalsScoredByPlayerScenario } from "@src/module/advanced-query/scenario/goals-scored-by-player";
-import { Modifier } from "@src/module/advanced-query/filter/base";
+import { Filter } from "@src/module/advanced-query/filter/base";
 import { FilterProvider } from "@src/module/advanced-query/provider/base";
 import { getOrThrow } from "@src/util/common";
 import { createEmptyQueryContext } from "@src/module/advanced-query/scenario/helper";
 import { convertContextToSql } from "@src/module/advanced-query/helper";
-import { PostProcessingHandler } from "./post-processor/handler";
+import { PostProcessingHandler } from "@src/module/advanced-query/post-processor/handler";
 import { UuidSource } from "@src/util/uuid";
+import { StandardScenario } from "@src/module/advanced-query/scenario/standard";
+import { OrderModifier } from "@src/module/advanced-query/order/modifier";
+import { LimitModifier } from "./limit/modifier";
+import { Game } from "@src/model/internal/game";
+import { GameEvent } from "@src/model/internal/game-event";
+import { GameEventType } from "@src/model/external/dto/game-event-type";
+import { GameEventPostProcessingFilter } from "./post-processor/game-event-processing-filter";
 
 export interface AdvancedQueryConfig {
     mainClubId: number;
     mainClubCity: string;
+    mainClubNames: string[];
     enabledTokenizers: Tokenizer[];
+    batchSize: number;
 }
 
 export class AdvancedQueryService {
@@ -44,6 +53,8 @@ export class AdvancedQueryService {
         const tokenizerResult = this.getTokenizerResult(sanitizedInput);
         const descriptor = tokenizerResult.descriptor;
 
+        console.log(descriptor.filters.map(filter => filter.name));
+
         // stage 2: resolve filters
         await this.resolveFilters(descriptor);
 
@@ -57,19 +68,54 @@ export class AdvancedQueryService {
 
         // stage 4: get all query modifiers and apply them to build the query context
         const context = createEmptyQueryContext();
-        const queryModifiers = this.getQueryModifiers(descriptor);
+        const queryModifiers = [
+            ...descriptor.targets,
+            ...this.getQueryModifiers(descriptor, this.config.batchSize),
+        ];
         for (const modifier of queryModifiers) {
             modifier.apply(context);
         }
 
         // stage 5: execute SQL query
 
+        // returns game ids (batched to 50)
+        // load game events for all ids
+        // process, exit early if match is found (compare with descriptor limit)
+        // if has not been reached and cursor has next, request next page
+
         // stage 6: apply post-processors to result
-        this.applyPostProcessors(descriptor);
+        const gameEvents: GameEvent[] = [
+            { id: 1, eventType: GameEventType.VarDecision, minute: "7", sortOrder: 1, },
+            { id: 2, eventType: GameEventType.RedCard, minute: "7", sortOrder: 2, },
+        ];
+
+        const postProcessingFilters = queryModifiers
+            .filter(filter => this.isGameEventPostProcessingFilter(filter)) as GameEventPostProcessingFilter[];
+
+        const checkResult = this.check(gameEvents, postProcessingFilters);
+        console.log(`checkResult is ${checkResult}`);
 
         // stage 7: return
 
         return convertContextToSql(context);
+    }
+
+    private isGameEventPostProcessingFilter(object: any): object is GameEventPostProcessingFilter {
+        return 'process' in object;
+    }
+
+    private check(gameEvents: GameEvent[], filters: GameEventPostProcessingFilter[]): boolean {
+        if (filters.length === 0) {
+            return true;
+        }
+
+        for (const event of gameEvents) {
+            if (filters.every(filter => filter.process(event))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private getTokenizerResult(input: string): TokenizerResult {
@@ -97,23 +143,6 @@ export class AdvancedQueryService {
             throw new Error(`No ID resolver available for ${descriptor.name}`);
         }
         descriptor.resolveResults = await resolver.resolve(descriptor.parameters);
-    }
-
-    private applyPostProcessors(descriptor: ScenarioDescriptor): void {
-        for (const filter of descriptor.filters) {
-            const orderedPostProcessors = filter.parameters
-                .filter(parameter => parameter.postProcessing !== undefined)
-                .map(parameter => parameter.postProcessing as PostProcessingHandler)
-                .sort((a, b) => {
-                    return a.order - b.order;
-                });
-
-            for (const postProcessor of orderedPostProcessors) {
-                console.log(`running post processor with order ${postProcessor.order}`);
-
-                // TODO how?
-            }
-        }
     }
 
     private getClarificationQuery(descriptor: ScenarioDescriptor): ClarificationQuery | null {
@@ -151,19 +180,27 @@ export class AdvancedQueryService {
         return { required };
     }
 
-    private getQueryModifiers(descriptor: ScenarioDescriptor): Modifier[] {
+    private getQueryModifiers(descriptor: ScenarioDescriptor, batchSize: number): Filter[] {
         const scenario = this.getScenario(descriptor.name);
 
-        const filters = descriptor.filters.map(filter => getOrThrow<FilterProvider<unknown>>(this.filterProviders, filter.name, `Could not find filter provider for filter name ${filter.name}`).provide(filter) as Modifier);
+        const filters = descriptor.filters.map(filter => getOrThrow<FilterProvider<unknown>>(this.filterProviders, filter.name, `Could not find filter provider for filter name ${filter.name}`).provide(filter) as Filter);
+
+        const orders = descriptor.orders.map(order => new OrderModifier(order));
+
+        const limit = new LimitModifier(batchSize);
 
         return [
             ...scenario.getModifiers(),
             ...filters,
+            ...orders,
+            limit,
         ];
     }
 
     private getScenario(name: ScenarioName): Scenario {
         switch (name) {
+            case ScenarioName.Standard:
+                return new StandardScenario();
             case ScenarioName.GoalsScoredByPlayer:
                 return new GoalsScoredByPlayerScenario();
             default:

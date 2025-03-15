@@ -1,5 +1,5 @@
 import { QueryContext } from "@src/module/advanced-query/context";
-import { Modifier, QuantityComparison } from "@src/module/advanced-query/filter/base";
+import { Filter, QuantityComparison } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists, resolveQuantityComparison } from "@src/module/advanced-query/helper";
 
 export interface TeamPlayerSentOffFilterPayload extends QuantityComparison {
@@ -8,7 +8,7 @@ export interface TeamPlayerSentOffFilterPayload extends QuantityComparison {
     total?: number;
 };
 
-export class TeamPlayerSentOffFilter implements Modifier {
+export class TeamPlayerSentOffFilter implements Filter {
 
     constructor(private readonly payload: TeamPlayerSentOffFilterPayload) {}
 

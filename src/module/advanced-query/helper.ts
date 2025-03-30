@@ -5,6 +5,7 @@ import { QuantityComparison } from "@src/module/advanced-query/filter/base";
 import { FilterDescriptor } from "./filter/descriptor";
 import { FilterParameter } from "./filter/parameter";
 import { ParameterName } from "./scenario/constants";
+import { Target } from "./target/base";
 
 export interface PersonGameTuple {
     person: Person;
@@ -34,6 +35,14 @@ export function convertContextToSql(context: QueryContext): string {
     }
 
     return query.join(" ");
+}
+
+export function addTargetIfNotExists(targets: Target[], toAdd: Target): void {
+    if (targets.some(target => target.getName() === toAdd.getName())) {
+        return;
+    }
+
+    targets.push(toAdd);
 }
 
 export function addFromIfNotExists(from: string[], table: string, joinCondition?: string): void {

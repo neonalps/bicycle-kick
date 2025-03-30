@@ -33,6 +33,8 @@ import { UuidSource } from "@src/util/uuid";
 import { LocationFilterProvider } from "@src/module/advanced-query/provider/location";
 import { MinuteFilterProvider } from "@src/module/advanced-query/provider/minute";
 import { PlayerSentOffGameEventFilterProvider } from "@src/module/advanced-query/provider/player-sent-off-game-event";
+import { PlayerGoalScoredFilterProvider } from "@src/module/advanced-query/provider/player-goal-scored";
+import { GlobalResolveService, GlobalResolveServiceConfig } from "@src/module/advanced-query/global-resolver/service";
 
 export class DependencyHelper {
 
@@ -52,7 +54,7 @@ export class DependencyHelper {
         const seasonService = new SeasonService();
         const venueService = new VenueService();
 
-        const config: AdvancedQueryConfig = {
+        const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,
             mainClubCity: "Graz",
             mainClubNames: ["Sturm", "Blackies"],
@@ -60,8 +62,14 @@ export class DependencyHelper {
             batchSize: 50,
         };
 
-        const englishTokenizer = new EnglishTokenizer(config, uuidSource);
-        config.enabledTokenizers.push(englishTokenizer);
+        const globalResolveConfig: GlobalResolveServiceConfig = {
+
+        };
+
+        const globalResolveService = new GlobalResolveService(globalResolveConfig, clubService, competitionService, personService);
+
+        const englishTokenizer = new EnglishTokenizer(advancedQueryConfig, globalResolveService, uuidSource);
+        advancedQueryConfig.enabledTokenizers.push(englishTokenizer);
 
         const personIdResolver = new PersonIdResolver(personService);
         const idResolvers: Map<FilterName, IdResolver> = new Map();
@@ -81,6 +89,7 @@ export class DependencyHelper {
         filterProviders.set(FilterName.Minute, new MinuteFilterProvider());
         filterProviders.set(FilterName.Opponent, new OpponentFilterProvider());
         filterProviders.set(FilterName.Player, new PlayerFilterProvider());
+        filterProviders.set(FilterName.PlayerGoalScored, new PlayerGoalScoredFilterProvider());
         filterProviders.set(FilterName.PlayerPenaltyMissed, new PlayerPenaltyMissedFilterProvider());
         filterProviders.set(FilterName.Referee, new RefereeFilterProvider());
         filterProviders.set(FilterName.ResultTendency, new ResultTendencyFilterProvider());
@@ -91,7 +100,7 @@ export class DependencyHelper {
         filterProviders.set(FilterName.TeamPenaltyConceded, new TeamPenaltyConcededFilterProvider());
         filterProviders.set(FilterName.Turnaround, new TurnaroundFilterProvider());
 
-        const advancedQueryService = new AdvancedQueryService(config, idResolvers, filterProviders, uuidSource);
+        const advancedQueryService = new AdvancedQueryService(advancedQueryConfig, idResolvers, filterProviders, uuidSource);
 
         const dependencies: Map<Dependencies, any> = new Map();
         

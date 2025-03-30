@@ -9,5 +9,5 @@ export interface TokenizerResult {
 
 export interface Tokenizer {
     getLanguage(): Language;
-    tokenize(raw: string): ScenarioDescriptor | null;
+    tokenize(raw: string): Promise<ScenarioDescriptor | null>;
 }

@@ -1,10 +1,9 @@
-import { Game } from "@src/model/internal/game";
-import { GameEvent } from "@src/model/internal/game-event";
-import { GoalGameEvent } from "@src/model/internal/game-event-goal";
+import { Cursor } from "@src/model/internal/db/cursor";
 
-export interface PostProcessingHandler {
-    order: number;
-    games?: (game: Game) => boolean;
-    gameEvents?: (event: GameEvent) => boolean;
-    goalGameEvents?: (event: GoalGameEvent) => boolean;
+export class PostProcessingHandler {
+
+    async handle<T>(): Promise<void> {
+        
+    }
+
 }

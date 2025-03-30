@@ -1,6 +1,6 @@
 import { ScenarioDescriptor } from "@src/module/advanced-query/scenario/descriptor";
 import { Tokenizer } from "@src/module/advanced-query/tokenizer/tokenizer";
-import { BooleanValueType, FilterName, Language, ParameterName, ScenarioName, SortOrder, SubjectName, TargetName } from "@src/module/advanced-query/scenario/constants";
+import { BooleanValueType, EntityName, FilterName, Language, ParameterName, ScenarioName, SortOrder, SubjectName, TargetName } from "@src/module/advanced-query/scenario/constants";
 import { FilterDescriptor } from "@src/module/advanced-query/filter/descriptor";
 import { AdvancedQueryConfig } from "@src/module/advanced-query/service";
 import { UuidSource } from "@src/util/uuid";
@@ -11,10 +11,16 @@ import { GameTarget } from "@src/module/advanced-query/target/game";
 import { PlayerTarget } from "@src/module/advanced-query/target/player";
 import { OrderDescriptor } from "@src/module/advanced-query/order/descriptor";
 import { LimitDescriptor } from "@src/module/advanced-query/limit/descriptor";
+import { addTargetIfNotExists } from "@src/module/advanced-query/helper";
+import { Block, GlobalResolveService } from "@src/module/advanced-query/global-resolver/service";
 
 export class EnglishTokenizer implements Tokenizer {
 
-    constructor(private readonly config: AdvancedQueryConfig, private readonly uuidSource: UuidSource) {}
+    constructor(
+        private readonly config: AdvancedQueryConfig, 
+        private readonly globalResolver: GlobalResolveService,
+        private readonly uuidSource: UuidSource,
+    ) {}
 
     private static readonly THRESHOLD_APPLICABLE_WORDS = 3;
 
@@ -23,14 +29,14 @@ export class EnglishTokenizer implements Tokenizer {
         "did", 
         "first",
         "last",
-        "game", "goals",
+        "game", "games", "goal", "goals",
         "home", "how", 
         "in", "last", 
         "many", "match",
         "of",
         "score",
         "the", "time", 
-        "when", "was", "were",
+        "when", "which", "was", "were",
     ];
 
     private static readonly GAME_TARGET_TRIGGERS = [
@@ -43,7 +49,7 @@ export class EnglishTokenizer implements Tokenizer {
 
     private static readonly NEGATION_STATEMENTS = ["not", "didn't"];
 
-    private static readonly NUMBER_MAP: Record<string, number> = {
+    private static readonly NUMBERS_MAP: Record<string, number> = {
         "one": 1,
         "two": 2,
         "three": 3,
@@ -70,10 +76,46 @@ export class EnglishTokenizer implements Tokenizer {
         return Language.English;
     }
 
-    tokenize(raw: string): ScenarioDescriptor | null {
+    async tokenize(raw: string): Promise<ScenarioDescriptor | null> {
         const parts = raw.split(" ");
         if (!this.isApplicable(parts)) {
             return null;
+        }
+
+        // TODO we might have to take words we don't recognise and run them through people, club names, competitions
+        // i.e. to find out if we want to know about a player, a club, a competition
+        const inputElements = await this.globalResolver.resolve(parts, [
+            ...EnglishTokenizer.TRIGGER_WORDS, 
+            ...Object.keys(EnglishTokenizer.NUMBERS_MAP), 
+            ...Object.values(EnglishTokenizer.NUMBERS_MAP).map(item => item.toString()),
+        ]);
+
+        const topLevelFilterDescriptors: FilterDescriptor[] = [];
+        for (let i = 0; i < inputElements.length; i++) {
+            const element = inputElements[i];
+
+            if (element.block !== undefined && element.resolvedEntity !== undefined) {
+                switch (element.resolvedEntity.name) {
+                    case EntityName.Person:
+                        // TODO: peek who this person should be (could be player, referee, manager)
+                        // TODO: this is weird, needs improving
+                        const parameterId = this.uuidSource.getRandom();
+                        topLevelFilterDescriptors.push({
+                            name: FilterName.Player,
+                            parameters: [{
+                                id: parameterId,
+                                name: ParameterName.Name,
+                                value: element.block.content,
+                                needsResolving: true,
+                            }],
+                            resolveResults: [{
+                                forId: parameterId,
+                                resolved: element.resolvedEntity.id,
+                            }],
+                        })
+                        break;
+                }
+            }
         }
 
         // check for scenario first, otherwise assume standard scenario and simply resolve targets
@@ -81,13 +123,14 @@ export class EnglishTokenizer implements Tokenizer {
 
         const subject = this.resolveSubject(parts);
         const targets = this.resolveTargets(raw, parts);
-        const filters = this.resolveFilterDescriptors(raw, parts, subject);
+        const filters = this.resolveFilterDescriptors(raw, parts, subject, targets);
         const orders = this.resolveOrders(parts, targets);
         const limit = this.resolveLimit(parts);
 
         /**
          * When did we last win an away derby after being behind 10 minutes before the end?
          * How many goals did Manprit Sarkaria score against Rapid in domestic games?
+         * In which games did William Boving score two goals?
          * When did we last win a game after being two goals down in the 60th minute?
          * When did we last have a player sent off in the first 10 minutes of a game and didn't lose?
          * What was our longest unbeaten streak in the season 2023/2024?
@@ -110,7 +153,10 @@ export class EnglishTokenizer implements Tokenizer {
         return {
             name: scenarioName,
             targets,
-            filters,
+            filters: [
+                ...filters,
+                ...topLevelFilterDescriptors,
+            ],
             orders,
             limit,
         }
@@ -187,11 +233,12 @@ export class EnglishTokenizer implements Tokenizer {
             const part = parts[i];
             
             if (EnglishTokenizer.GAME_TARGET_TRIGGERS.includes(part)) {
-                targets.push(new GameTarget());
+                addTargetIfNotExists(targets, new GameTarget());
             }
 
             if (EnglishTokenizer.PLAYER_TARGET_TRIGGERS.includes(part)) {
-                targets.push(new PlayerTarget());
+                addTargetIfNotExists(targets, new GameTarget());
+                addTargetIfNotExists(targets, new PlayerTarget());
             }
         }
 
@@ -203,9 +250,10 @@ export class EnglishTokenizer implements Tokenizer {
         return { limit: 1 };
     }
 
-    private resolveFilterDescriptors(raw: string, parts: string[], subject: SubjectName): FilterDescriptor[] {
+    private resolveFilterDescriptors(raw: string, parts: string[], subject: SubjectName, targets: Target[]): FilterDescriptor[] {
         return [
             ...this.getCompetitionDescriptors(raw, parts),
+            ...this.getGoalScoredDescriptors(raw, parts, targets),
             ...this.getLocationDescriptors(parts),
             ...this.getOpponentDescriptors(parts),
             ...this.getResultTendencyDescriptors(parts),
@@ -263,6 +311,22 @@ export class EnglishTokenizer implements Tokenizer {
                 ]
             });
         })));
+
+        return descriptors;
+    }
+
+    private getGoalScoredDescriptors(raw: string, parts: string[], targets: Target[]): FilterDescriptor[] {
+        const descriptors: FilterDescriptor[] = [];
+
+        // TODO here we will have to do some magic by factoring in the targets (e.g. if we are looking for a player, a club, ...)
+
+        ifPresent(raw, "score {goals:number} goals", (match) => {
+            const quantity = match.placeholders["goals"].resolved as number;
+            descriptors.push({ name: FilterName.PlayerGoalScored, parameters: [
+                this.createParameter(ParameterName.Quantity, [`${quantity}`]),
+                this.createParameter(ParameterName.AtLeast, []),        // TODO improve
+            ]})
+        }, EnglishTokenizer.NUMBERS_MAP);
 
         return descriptors;
     }

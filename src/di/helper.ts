@@ -35,6 +35,9 @@ import { MinuteFilterProvider } from "@src/module/advanced-query/provider/minute
 import { PlayerSentOffGameEventFilterProvider } from "@src/module/advanced-query/provider/player-sent-off-game-event";
 import { PlayerGoalScoredFilterProvider } from "@src/module/advanced-query/provider/player-goal-scored";
 import { GlobalResolveService, GlobalResolveServiceConfig } from "@src/module/advanced-query/global-resolver/service";
+import sql from "@src/db";
+import { GameService } from "@src/module/game/service";
+import { GameMapper } from "@src/module/game/mapper";
 
 export class DependencyHelper {
 
@@ -46,10 +49,14 @@ export class DependencyHelper {
 
     private static getDependencies(): Map<Dependencies, any> {
 
+        const sqlInstance = sql;
+
         const uuidSource = new UuidSource();
 
         const clubService = new ClubService();
         const competitionService = new CompetitionService();
+        const gameMapper = new GameMapper(sqlInstance);
+        const gameService = new GameService(gameMapper);
         const personService = new PersonService();
         const seasonService = new SeasonService();
         const venueService = new VenueService();
@@ -100,13 +107,14 @@ export class DependencyHelper {
         filterProviders.set(FilterName.TeamPenaltyConceded, new TeamPenaltyConcededFilterProvider());
         filterProviders.set(FilterName.Turnaround, new TurnaroundFilterProvider());
 
-        const advancedQueryService = new AdvancedQueryService(advancedQueryConfig, idResolvers, filterProviders, uuidSource);
+        const advancedQueryService = new AdvancedQueryService(advancedQueryConfig, idResolvers, filterProviders, gameService, sqlInstance, uuidSource);
 
         const dependencies: Map<Dependencies, any> = new Map();
         
         dependencies.set(Dependencies.AdvancedQueryService, advancedQueryService);
         dependencies.set(Dependencies.ClubService, clubService);
         dependencies.set(Dependencies.CompetitionService, competitionService);
+        dependencies.set(Dependencies.GameService, gameService);
         dependencies.set(Dependencies.PersonService, personService);
         dependencies.set(Dependencies.VenueService, venueService);
 

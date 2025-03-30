@@ -14,11 +14,11 @@ import { convertContextToSql } from "@src/module/advanced-query/helper";
 import { UuidSource } from "@src/util/uuid";
 import { StandardScenario } from "@src/module/advanced-query/scenario/standard";
 import { OrderModifier } from "@src/module/advanced-query/order/modifier";
-import { LimitModifier } from "./limit/modifier";
+import { LimitModifier } from "@src/module/advanced-query/limit/modifier";
 import { GameEvent } from "@src/model/internal/game-event";
-import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { GameEventPostProcessingFilter } from "@src/module/advanced-query/post-processor/game-event-processing-filter";
-import { isPostProcessingFilter } from "@src/module/advanced-query/post-processor/processing-filter";
+import { Sql } from "@src/db";
+import { GameService } from "@src/module/game/service";
 
 export interface AdvancedQueryConfig {
     mainClubId: number;
@@ -34,6 +34,8 @@ export class AdvancedQueryService {
         private readonly config: AdvancedQueryConfig, 
         private readonly idResolvers: Map<FilterName, IdResolver>,
         private readonly filterProviders: Map<FilterName, FilterProvider<unknown>>,
+        private readonly gameService: GameService,
+        private readonly sql: Sql,
         private readonly uuidSource: UuidSource,
     ) {}
 
@@ -76,6 +78,27 @@ export class AdvancedQueryService {
         }
 
         // stage 5: execute SQL query
+        const sqlQuery = convertContextToSql(context);
+        console.log(sqlQuery);
+        const queryResult = await this.sql.unsafe(sqlQuery);
+
+        // get all game ids
+        const targetParameterNames = descriptor.targets.map(target => target.getResultParameterName());
+        const resultMap = new Map<string, number[]>();
+        for (const name of targetParameterNames) {
+            resultMap.set(name, []);
+        }
+        queryResult.forEach(item => {
+            for (const name of targetParameterNames) {
+                resultMap.get(name)?.push(item[name]);
+            }
+        })
+
+        console.log(`queryResult`, queryResult);
+        console.log('resultMap', resultMap);
+
+        const games = await this.gameService.getMultipleByIds(resultMap.get('gameId') as number[]);
+        console.log('games', games);
 
         // returns game ids (batched to 50)
         // load game events for all ids
@@ -83,23 +106,23 @@ export class AdvancedQueryService {
         // if has not been reached and cursor has next, request next page
 
         // stage 6: apply post-processors to result
-        const gameEvents: GameEvent[] = [
+        /*const gameEvents: GameEvent[] = [
             { id: 1, eventType: GameEventType.VarDecision, minute: "7", sortOrder: 1, },
             { id: 2, eventType: GameEventType.RedCard, minute: "7", sortOrder: 2, },
-        ];
+        ];*/
 
         // TODO we need a way to determine whether a "qualified" filter is present (i.e. the minute filter is present)
         // otherwise we should not invoke it at all
 
-        const postProcessingFilters = queryModifiers
+        /*const postProcessingFilters = queryModifiers
             .filter(filter => isPostProcessingFilter(filter)) as GameEventPostProcessingFilter[];
 
         const checkResult = this.check(gameEvents, postProcessingFilters);
-        console.log(`checkResult is ${checkResult}`);
+        console.log(`checkResult is ${checkResult}`);*/
 
         // stage 7: return
-
-        return convertContextToSql(context);
+        return sqlQuery;
+        
     }
 
     private check(gameEvents: GameEvent[], filters: GameEventPostProcessingFilter[]): boolean {

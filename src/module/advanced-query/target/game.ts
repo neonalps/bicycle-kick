@@ -13,6 +13,10 @@ export class GameTarget implements Target {
         return TargetResultParameter.GameId;
     }
 
+    getResultParameterName(): string {
+        return "gameId";
+    }
+
     getSelector(): string {
         return `g.id`;
     }
@@ -22,7 +26,7 @@ export class GameTarget implements Target {
     }
 
     apply(context: QueryContext): void {
-        context.select.push(`${this.getSelector()} as '${this.getResultParameter()}'`);
+        context.select.push(`${this.getSelector()} as ${this.getResultParameter()}`);
         addFromIfNotExists(context.from, `game g`);
     }
     

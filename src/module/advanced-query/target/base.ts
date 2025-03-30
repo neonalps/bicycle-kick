@@ -6,4 +6,5 @@ export interface Target extends Filter {
     getResultParameter(): TargetResultParameter;
     getSelector(): string;
     getOrderSelector(): string;
+    getResultParameterName(): string
 }

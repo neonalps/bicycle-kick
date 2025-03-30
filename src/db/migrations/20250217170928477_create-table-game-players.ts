@@ -101,8 +101,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
     });
 
-    pgm.addConstraint("game_players", "uq_games_players_game_player", {
-        unique: ['game_id', 'player_id']
+    pgm.addConstraint("game_players", "uq_games_players_game_person", {
+        unique: ['game_id', 'person_id']
     });
 }
 

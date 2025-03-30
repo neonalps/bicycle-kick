@@ -1,9 +1,7 @@
-import { Tendency } from "@src/model/type/tendency";
-
-export interface Game {
+export interface GameDaoInterface {
     id: number;
     kickoff: Date;
-    resultTendency: Tendency;
+    resultTendency: string;
     opponentId: number;
     competitionId: number;
     round: string;

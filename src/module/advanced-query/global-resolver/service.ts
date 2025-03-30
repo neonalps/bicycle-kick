@@ -40,10 +40,10 @@ export class GlobalResolveService {
             }
 
             // TODO call services
-            element.resolvedEntity = {
+            /*element.resolvedEntity = {
                 name: EntityName.Person,
                 id: Math.floor(Math.random() * 100) + 1,
-            }
+            }*/
         }
 
         return inputElements;

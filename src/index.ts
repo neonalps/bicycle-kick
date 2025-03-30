@@ -5,10 +5,12 @@ import { DependencyHelper } from "@src/di/helper";
 import { RouteManager } from "@src/router/manager";
 import { CorsManager } from "@src/cors/manager";
 import { getRouteProviders } from "./api/providers";
+import { initAndTestDatabaseConnection } from "./db";
 
 const start = async () =>  {
   const server = fastify();
   
+  await initAndTestDatabaseConnection();
   DependencyHelper.initDependencies();
   RouteManager.registerRoutes(server, getRouteProviders());
   await CorsManager.registerCorsConfig(server, getCorsConfig());

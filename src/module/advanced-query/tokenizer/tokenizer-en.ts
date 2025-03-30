@@ -12,7 +12,7 @@ import { PlayerTarget } from "@src/module/advanced-query/target/player";
 import { OrderDescriptor } from "@src/module/advanced-query/order/descriptor";
 import { LimitDescriptor } from "@src/module/advanced-query/limit/descriptor";
 import { addTargetIfNotExists } from "@src/module/advanced-query/helper";
-import { Block, GlobalResolveService } from "@src/module/advanced-query/global-resolver/service";
+import { GlobalResolveService } from "@src/module/advanced-query/global-resolver/service";
 
 export class EnglishTokenizer implements Tokenizer {
 

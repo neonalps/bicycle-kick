@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./build && tsc && tsc-alias",
+    "db:up": "docker-compose --project-directory ./docker up",
+    "db:down": "docker-compose --project-directory ./docker down",
     "migrate": "node-pg-migrate --config-file pgmigrate.json",
     "start": "npm run build && node build/index.js",
     "test": "jest"

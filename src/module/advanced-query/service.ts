@@ -11,15 +11,14 @@ import { FilterProvider } from "@src/module/advanced-query/provider/base";
 import { getOrThrow } from "@src/util/common";
 import { createEmptyQueryContext } from "@src/module/advanced-query/scenario/helper";
 import { convertContextToSql } from "@src/module/advanced-query/helper";
-import { PostProcessingHandler } from "@src/module/advanced-query/post-processor/handler";
 import { UuidSource } from "@src/util/uuid";
 import { StandardScenario } from "@src/module/advanced-query/scenario/standard";
 import { OrderModifier } from "@src/module/advanced-query/order/modifier";
 import { LimitModifier } from "./limit/modifier";
-import { Game } from "@src/model/internal/game";
 import { GameEvent } from "@src/model/internal/game-event";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
-import { GameEventPostProcessingFilter } from "./post-processor/game-event-processing-filter";
+import { GameEventPostProcessingFilter } from "@src/module/advanced-query/post-processor/game-event-processing-filter";
+import { isPostProcessingFilter } from "@src/module/advanced-query/post-processor/processing-filter";
 
 export interface AdvancedQueryConfig {
     mainClubId: number;
@@ -50,7 +49,7 @@ export class AdvancedQueryService {
             .toLocaleLowerCase();
 
         // stage 1: get scenario descriptor
-        const tokenizerResult = this.getTokenizerResult(sanitizedInput);
+        const tokenizerResult = await this.getTokenizerResult(sanitizedInput);
         const descriptor = tokenizerResult.descriptor;
 
         console.log(descriptor.filters.map(filter => filter.name));
@@ -89,8 +88,11 @@ export class AdvancedQueryService {
             { id: 2, eventType: GameEventType.RedCard, minute: "7", sortOrder: 2, },
         ];
 
+        // TODO we need a way to determine whether a "qualified" filter is present (i.e. the minute filter is present)
+        // otherwise we should not invoke it at all
+
         const postProcessingFilters = queryModifiers
-            .filter(filter => this.isGameEventPostProcessingFilter(filter)) as GameEventPostProcessingFilter[];
+            .filter(filter => isPostProcessingFilter(filter)) as GameEventPostProcessingFilter[];
 
         const checkResult = this.check(gameEvents, postProcessingFilters);
         console.log(`checkResult is ${checkResult}`);
@@ -98,10 +100,6 @@ export class AdvancedQueryService {
         // stage 7: return
 
         return convertContextToSql(context);
-    }
-
-    private isGameEventPostProcessingFilter(object: any): object is GameEventPostProcessingFilter {
-        return 'process' in object;
     }
 
     private check(gameEvents: GameEvent[], filters: GameEventPostProcessingFilter[]): boolean {
@@ -118,9 +116,9 @@ export class AdvancedQueryService {
         return false;
     }
 
-    private getTokenizerResult(input: string): TokenizerResult {
+    private async getTokenizerResult(input: string): Promise<TokenizerResult> {
         for (const tokenizer of this.config.enabledTokenizers) {
-            const descriptor = tokenizer.tokenize(input);
+            const descriptor = await tokenizer.tokenize(input);
             if (descriptor !== null) {
                 return {
                     id: this.uuidSource.getRandom(),
@@ -134,7 +132,7 @@ export class AdvancedQueryService {
     }
 
     private async resolveFilters(descriptor: ScenarioDescriptor): Promise<void> {
-        await Promise.all(descriptor.filters.filter(filter => filter.parameters.some(parameter => parameter.needsResolving === true)).map(filter => this.resolveSingleFilter(filter)));
+        await Promise.all(descriptor.filters.filter(filter => filter.parameters.some(parameter => parameter.needsResolving === true && filter.resolveResults === undefined)).map(filter => this.resolveSingleFilter(filter)));
     }
 
     private async resolveSingleFilter(descriptor: FilterDescriptor): Promise<void> {

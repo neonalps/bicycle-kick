@@ -8,6 +8,12 @@ export enum ScenarioName {
     Standard = "Standard",
 }
 
+export enum EntityName {
+    Club = "club",
+    Competition = "competition",
+    Person = "person",
+}
+
 export enum FilterName {
     Competition = "Competition",
     Derby = "Derby",
@@ -16,6 +22,7 @@ export enum FilterName {
     Minute = "Minute",
     Opponent = "Opponent",
     Player = "Player",
+    PlayerGoalScored = "PlayerGoalScored",
     PlayerPenaltyMissed = "PlayerPenaltyMissed",
     Referee = "Referee",
     ResultTendency = "ResultTendency",

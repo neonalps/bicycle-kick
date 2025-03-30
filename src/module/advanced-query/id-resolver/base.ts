@@ -18,7 +18,7 @@ export abstract class IdResolver {
     abstract fetchPossibilities(parameter: FilterParameter): Promise<ResolvePossibility[]>;
 
     async resolve(parameters: FilterParameter[]): Promise<IdResolveResult[]> {
-        return Promise.all(parameters
+        return await Promise.all(parameters
             .filter(parameter => parameter.needsResolving === true)
             .map(parameter => this.resolveSingle(parameter))
         );

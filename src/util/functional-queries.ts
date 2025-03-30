@@ -131,7 +131,7 @@ function getPlaceholderDefinition(item: string): PlaceholderDefintion | null {
     if (itemContentParts.length === 1) {
         return { name, type: 'any' };
     } else {
-        const placeholderType: PlaceholderType = itemContentParts[1] === "n" ? 'number' : 'any';
+        const placeholderType: PlaceholderType = ["n", "number"].includes(itemContentParts[1]) ? 'number' : 'any';
         return { name, type: placeholderType };
     }
 }

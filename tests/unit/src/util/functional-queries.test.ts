@@ -3,7 +3,7 @@ import { Game } from '@src/model/internal/game';
 import { GoalGameEvent } from '@src/model/internal/game-event-goal'
 import { GameMinute } from '@src/model/internal/game-minute'
 import { Score } from '@src/model/internal/score';
-import { filterGoalDifferenceInPeriod, findLongestGameStreak, getScoreAfterMinute, isMinuteInPeriod } from '@src/util/functional-queries'
+import { filterGoalDifferenceInPeriod, findLongestGameStreak, getScoreAfterMinute, ifPresent, isMinuteInPeriod, PlaceholderMatch, PresenceMatch } from '@src/util/functional-queries'
 
 const HOME_2_1: Partial<GoalGameEvent>[] = [
     {
@@ -80,6 +80,61 @@ const HOME_5_0: Partial<GoalGameEvent>[] = [
 ];
 
 describe('Functional queries', () => {
+    describe('ifPresent', () => {
+        const numbers = {
+            "one": 1,
+            "two": 2,
+            "three": 3,
+            "four": 4,
+        };
+
+        it('should resolve number matches using full number syntax', () => {
+            ifPresent("When did Sturm last score three goals in the first half?", "score {goals:number} goals", (match: PresenceMatch) => {
+                expect(match).toStrictEqual({
+                    indexOfList: 4,
+                    placeholders: {
+                        "goals": {
+                            raw: "three",
+                            resolved: 3,
+                        },
+                    },
+                });
+            }, numbers);
+        });
+
+        it('should resolve number matches using shorthand number syntax', () => {
+            ifPresent("When did Sturm last score three goals in the first half?", "score {goals:n} goals", (match: PresenceMatch) => {
+                expect(match).toStrictEqual({
+                    indexOfList: 4,
+                    placeholders: {
+                        "goals": {
+                            raw: "three",
+                            resolved: 3,
+                        },
+                    },
+                });
+            }, numbers);
+        });
+
+        it('should resolve multiple matches in a single string', () => {
+            ifPresent("When did Sturm last win a game after being two goals behind in the second half?", "{goals:n} goals {tendency}", (match: PresenceMatch) => {
+                expect(match).toStrictEqual({
+                    indexOfList: 9,
+                    placeholders: {
+                        "goals": {
+                            raw: "two",
+                            resolved: 2,
+                        },
+                        "tendency": {
+                            raw: "behind",
+                            resolved: "behind",
+                        },
+                    },
+                });
+            });
+        });
+    });
+
     describe('getScoreAfterMinute', () => {
         type GetScoreAfterMinuteTest = {
             input: {

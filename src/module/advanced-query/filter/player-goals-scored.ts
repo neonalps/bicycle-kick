@@ -3,7 +3,7 @@ import { Filter, QuantityComparison } from "@src/module/advanced-query/filter/ba
 import { addFromIfNotExists, resolveQuantityComparison } from "@src/module/advanced-query/helper";
 
 export interface PlayerGoalsScoredFilterPayload extends QuantityComparison {
-    goals: number;
+    quantity: number;
 };
 
 export class PlayerGoalsScoredFilter implements Filter {
@@ -14,9 +14,9 @@ export class PlayerGoalsScoredFilter implements Filter {
         addFromIfNotExists(context.from, `game g`);
         addFromIfNotExists(context.from, `game_players gp`, `gp.game_id = g.id`);
 
-        const { goals } = this.payload;
+        const { quantity } = this.payload;
 
-        context.where.push(`gp.goals_scored ${resolveQuantityComparison(this.payload)} ${goals}`);
+        context.where.push(`gp.goals_scored ${resolveQuantityComparison(this.payload)} ${quantity}`);
     }
     
 }

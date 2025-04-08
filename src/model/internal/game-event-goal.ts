@@ -1,14 +1,14 @@
+import { GoalType } from "@src/model/type/goal-type";
 import { GameEvent } from "./game-event";
-import { Person } from "./person";
 
 export interface GoalGameEvent extends GameEvent {
-    scorer: Person;
-    assistBy?: Person;
-    penalty: boolean;
-    directFreeKick: boolean;
-    bicylceKick: boolean;
-    ownGoal: boolean;
+    scoredBy: number;
+    assistBy: number;
     scoreMain: number;
     scoreOpponent: number;
-    forMain: boolean;
+    goalType: GoalType;
+    penalty: boolean;
+    ownGoal: boolean;
+    directFreeKick: boolean;
+    bicycleKick: boolean;
 }

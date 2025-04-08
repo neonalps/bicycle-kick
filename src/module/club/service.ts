@@ -1,27 +1,31 @@
 import { Club } from "@src/model/internal/club";
+import { ClubMapper } from "./mapper";
+import { validateNotNull } from "@src/util/validation";
 
 export class ClubService {
 
-    searchByName(parts: string[]): Promise<Club[]> {
-        const returnValue = parts.indexOf("rapid") >= 0 ? this.getRapid() : parts.indexOf("salzburg") >= 0 ? this.getSalzburg() : this.getOther();
+    constructor(private readonly mapper: ClubMapper) {}
 
+    async getById(id: number): Promise<Club | null> {
+        validateNotNull(id, "id");
+
+        return await this.mapper.getById(id);
+    }
+
+    async getMapByIds(ids: number[]): Promise<Map<number, Club>> {
+        validateNotNull(ids, "ids");
+        if (ids.length === 0) {
+            return new Map();
+        }
+
+        return await this.mapper.getMapByIds(ids);
+    }
+
+    searchByName(parts: string[]): Promise<Club[]> {
         return new Promise((resolve) => {
             setTimeout(() => resolve([
-                returnValue,
             ]), 89);
         });
-    }
-
-    private getRapid(): Club {
-        return { id: 70, name: "SK Rapid Wien", shortName: "Rapid", };
-    }
-
-    private getSalzburg(): Club {
-        return { id: 71, name: "FC Red Bull Salzburg", shortName: "Salzburg", };
-    }
-
-    private getOther(): Club {
-        return { id: 77, name: "LASK Linz", shortName: "LASK", };
     }
 
 }

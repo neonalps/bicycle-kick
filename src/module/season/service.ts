@@ -1,6 +1,26 @@
 import { Season } from "@src/model/internal/season";
+import { SeasonMapper } from "./mapper";
+import { validateNotNull } from "@src/util/validation";
+import { DateSource } from "@src/util/date";
 
 export class SeasonService {
+
+    constructor(private readonly dateSource: DateSource, private readonly mapper: SeasonMapper) {}
+
+     async getById(id: number): Promise<Season | null> {
+        validateNotNull(id, "id");
+
+        return await this.mapper.getById(id);
+    }
+
+    async getMapByIds(ids: number[]): Promise<Map<number, Season>> {
+        validateNotNull(ids, "ids");
+        if (ids.length === 0) {
+            return new Map();
+        }
+
+        return await this.mapper.getMapByIds(ids);
+    }
 
     searchByName(parts: string[]): Promise<Season[]> {
         return new Promise((resolve) => {
@@ -10,20 +30,20 @@ export class SeasonService {
         });
     }
 
-    getCurrent(): Promise<Season> {
-        return new Promise((resolve) => {
-            setTimeout(() => resolve(
-                { id: 30, name: "2024/2025", shortName: "24/25", from: new Date(), to: new Date(), }
-            ), 108);
-        });
+    async getCurrent(): Promise<Season | null> {
+        return await this.mapper.getForDate(this.dateSource.getToday());
     }
 
-    getLast(): Promise<Season> {
-        return new Promise((resolve) => {
-            setTimeout(() => resolve(
-                { id: 31, name: "2023/2024", shortName: "23/24", from: new Date(), to: new Date(), }
-            ), 108);
-        });
+    async getLast(): Promise<Season | null> {
+        const currentSeason = await this.getCurrent();
+        if (currentSeason === null) {
+            return null;
+        }
+
+        const lastSeasonEnd = new Date();
+        lastSeasonEnd.setDate(currentSeason.start.getDate() - 1);
+
+        return await this.mapper.getForDate(lastSeasonEnd);
     }
 
 }

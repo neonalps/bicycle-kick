@@ -1,23 +1,24 @@
 import { Competition } from "@src/model/internal/competition";
+import { validateNotNull } from "@src/util/validation";
+import { CompetitionMapper } from "./mapper";
 
 export class CompetitionService {
 
-    searchByName(parts: string[]): Promise<Competition[]> {
-        const returnValue = parts.indexOf("cup") >= 0 ? this.getCup() : this.getLeague();
+    constructor(private readonly mapper: CompetitionMapper) {}
 
-        return new Promise((resolve) => {
-            setTimeout(() => resolve([
-               returnValue,
-            ]), 112);
-        });
+    async getById(id: number): Promise<Competition | null> {
+        validateNotNull(id, "id");
+
+        return await this.mapper.getById(id);
     }
 
-    private getCup(): Competition {
-        return { id: 4, name: "Österreichischer Cup", shortName: "Cup", };
-    }
+    async getMapByIds(ids: number[]): Promise<Map<number, Competition>> {
+        validateNotNull(ids, "ids");
+        if (ids.length === 0) {
+            return new Map();
+        }
 
-    private getLeague(): Competition {
-        return { id: 3, name: "Österreichische Bundesliga", shortName: "Bundesliga", };
+        return await this.mapper.getMapByIds(ids);
     }
 
 }

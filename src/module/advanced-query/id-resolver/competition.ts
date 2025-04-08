@@ -9,14 +9,7 @@ export class CompetitionIdResolver extends IdResolver {
     }
 
     async fetchPossibilities(parameter: FilterParameter): Promise<ResolvePossibility[]> {
-        const result = await this.competitionService.searchByName(parameter.value);
-
-        return result.map(item => {
-            return {
-                id: item.id,
-                name: item.name,
-            };
-        });
+        return [];
     }
 
 }

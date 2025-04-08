@@ -1,0 +1,1 @@
+export type GoalType = 'left' | 'right' | 'head' | 'other' | 'unknown';

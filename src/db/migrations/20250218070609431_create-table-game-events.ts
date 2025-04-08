@@ -10,17 +10,12 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: true,
             references: `"game"`,
         },
-        player_id: {
-            type: 'integer',
+        sort_order: {
+            type: 'smallint',
             notNull: true,
-            references: `"person"`,
         },
         event_type: {
             type: 'text',
-            notNull: true,
-        },
-        sort_order: {
-            type: 'smallint',
             notNull: true,
         },
         score_main: {
@@ -35,15 +30,29 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'text',
             notNull: true,
         },
-        substituted_player: {
+        scored_by: {
             type: 'integer',
             notNull: false,
-            references: `"person"`,
+            references: `"game_players"`,
         },
         assist_by: {
             type: 'integer',
             notNull: false,
-            references: `"person"`,
+            references: `"game_players"`,
+        },
+        player_on: {
+            type: 'integer',
+            notNull: false,
+            references: `"game_players"`,
+        },
+        player_off: {
+            type: 'integer',
+            notNull: false,
+            references: `"game_players"`,
+        },
+        goal_type: {
+            type: 'text',
+            notNull: false,
         },
         penalty: {
             type: 'boolean',
@@ -56,7 +65,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         penalty_saved_by: {
             type: 'integer',
             notNull: false,
-            references: `"person"`,
+            references: `"game_players"`,
         },
         direct_free_kick: {
             type: 'boolean',
@@ -69,8 +78,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         red_card_reason: {
             type: 'varchar(100)',
             notNull: false,
+        },
+        injured: {
+            type: 'boolean',
+            notNull: false,
         }
     });
+
+    pgm.addIndex("game_events", ['game_id', 'sort_order'], { name: 'idx_game_events_sort_order' })
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {}

@@ -1,8 +1,12 @@
 export enum Dependencies {
     AdvancedQueryService,
+    ApiHelperService,
     ClubService,
     CompetitionService,
+    DateSource,
     GameService,
+    GameEventService,
+    GamePlayerService,
     PersonService,
     ProfileService,
     SeasonService,

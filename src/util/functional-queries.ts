@@ -146,7 +146,7 @@ export function filterGoalDifferenceInPeriod(orderedEvents: GoalGameEvent[], goa
 
     return orderedEvents.some(goalEvent => {
         const difference = new Score(goalEvent.scoreMain, goalEvent.scoreOpponent).getGoalDifference();
-        return isMinuteInPeriod(new GameMinute(goalEvent.minute), from, to) && 
+        return isMinuteInPeriod(goalEvent.minute, from, to) && 
             ((goalDifference < 0 && difference < goalDifference) || 
                 (goalDifference > 0 && difference > goalDifference) ||
                 (goalDifference === difference));
@@ -161,8 +161,7 @@ export function getScoreAfterMinute(orderedEvents: GoalGameEvent[], minute: Game
     let currentScore = new Score(0, 0);
 
     for (const event of orderedEvents) {
-        const eventGameMinute = new GameMinute(event.minute);
-        if (!eventGameMinute.isAfter(minute)) {
+        if (!event.minute.isAfter(minute)) {
             currentScore = new Score(event.scoreMain, event.scoreOpponent);
         } else {
             // once we are at an event after the minute we are looking for, we can return
@@ -171,6 +170,65 @@ export function getScoreAfterMinute(orderedEvents: GoalGameEvent[], minute: Game
     }
 
     return currentScore;
+}
+
+export interface OccurrenceGroupResult<T> {
+    count: number;
+    items: T[];
+}
+export function groupByOccurrence<T>(items: T[]): OccurrenceGroupResult<T>[] {
+    if (items.length === 0) {
+        return [];
+    }
+
+    const occurrenceMap: Map<T, number> = new Map();
+    for (const item of items) {
+        const entry = occurrenceMap.get(item);
+        if (entry !== undefined) {
+            occurrenceMap.set(item, entry + 1);
+        } else {
+            occurrenceMap.set(item, 1);
+        }
+    }
+
+    const reverseMap: Map<number, T[]> = new Map();
+    occurrenceMap.forEach((value, key) => {
+        const entry = reverseMap.get(value);
+        if (entry !== undefined) {
+            entry.push(key);
+        } else {
+            reverseMap.set(value, [key]);
+        }
+    });
+
+    return Array.from(reverseMap.keys())
+        .sort((a, b) => b - a)
+        .map(occurrenceKey => {
+            return {
+                count: occurrenceKey,
+                items: reverseMap.get(occurrenceKey) as T[],
+            }
+        });
+}
+
+export function groupByOccurrenceAndGetLargest<T>(items: T[]): T[] {
+    if (items.length === 0) {
+        return [];
+    }
+
+    const occurrenceResult = groupByOccurrence(items);
+    
+    let currentHighestItems: T[] = [];
+    let currentHighestCount: number | null = null;
+
+    for (const occurrence of occurrenceResult) {
+        if (currentHighestCount === null || occurrence.count > currentHighestCount) {
+            currentHighestItems = occurrence.items;
+            currentHighestCount = occurrence.count;
+        }
+    }
+
+    return currentHighestItems;
 }
 
 export function findLongestGameStreak(orderedGames: Game[], condition: (game: Game) => boolean, minimumSequence: number = 3): Streak<Game> | null {

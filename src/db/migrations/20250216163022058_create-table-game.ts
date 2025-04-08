@@ -40,6 +40,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'boolean',
             notNull: true,
         },
+        venue_id: {
+            type: 'integer',
+            notNull: true,
+            references: `"venue"`,
+        },
         attendance: {
             type: 'integer',
             notNull: false,
@@ -124,11 +129,19 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'smallint',
             notNull: false,
         },
-        table_position_before: {
+        table_position_main_before: {
             type: 'integer',
             notNull: false,
         },
-        table_position_after: {
+        table_position_main_after: {
+            type: 'integer',
+            notNull: false,
+        },
+        table_position_opponent_before: {
+            type: 'integer',
+            notNull: false,
+        },
+        table_position_opponent_after: {
             type: 'integer',
             notNull: false,
         },
@@ -179,12 +192,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'boolean',
             notNull: true,
             default: false,
-        },
-        was_abandoned: {
-            type: 'boolean',
-            notNull: true,
-            default: false,
-        },
+        }
     });
 
     pgm.addIndex("game", ['kickoff'], { name: 'idx_game_kickoff' })

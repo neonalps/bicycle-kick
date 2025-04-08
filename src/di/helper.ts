@@ -38,6 +38,17 @@ import { GlobalResolveService, GlobalResolveServiceConfig } from "@src/module/ad
 import sql from "@src/db";
 import { GameService } from "@src/module/game/service";
 import { GameMapper } from "@src/module/game/mapper";
+import { GameEventMapper } from "@src/module/game-event/mapper";
+import { GameEventService } from "@src/module/game-event/service";
+import { GamePlayerMapper } from "@src/module/game-player/mapper";
+import { GamePlayerService } from "@src/module/game-player/service";
+import { ApiHelperService } from "@src/module/api-helper/service";
+import { CompetitionMapper } from "@src/module/competition/mapper";
+import { VenueMapper } from "@src/module/venue/mapper";
+import { ClubMapper } from "@src/module/club/mapper";
+import { PersonMapper } from "@src/module/person/mapper";
+import { SeasonMapper } from "@src/module/season/mapper";
+import { DateSource } from "@src/util/date";
 
 export class DependencyHelper {
 
@@ -51,15 +62,27 @@ export class DependencyHelper {
 
         const sqlInstance = sql;
 
+        const dateSource = new DateSource();
         const uuidSource = new UuidSource();
 
-        const clubService = new ClubService();
-        const competitionService = new CompetitionService();
+        const clubMapper = new ClubMapper(sqlInstance);
+        const clubService = new ClubService(clubMapper);
+        const competitionMapper = new CompetitionMapper(sqlInstance);
+        const competitionService = new CompetitionService(competitionMapper);
         const gameMapper = new GameMapper(sqlInstance);
         const gameService = new GameService(gameMapper);
-        const personService = new PersonService();
-        const seasonService = new SeasonService();
-        const venueService = new VenueService();
+        const gameEventMapper = new GameEventMapper(sqlInstance);
+        const gameEventService = new GameEventService(gameEventMapper);
+        const gamePlayerMapper = new GamePlayerMapper(sqlInstance);
+        const gamePlayerService = new GamePlayerService(gamePlayerMapper);
+        const personMapper = new PersonMapper(sqlInstance);
+        const personService = new PersonService(personMapper);
+        const seasonMapper = new SeasonMapper(sqlInstance);
+        const seasonService = new SeasonService(dateSource, seasonMapper);
+        const venueMapper = new VenueMapper(sqlInstance);
+        const venueService = new VenueService(venueMapper);
+
+        const apiHelperService = new ApiHelperService(clubService, competitionService, gameService, gameEventService, gamePlayerService, personService, seasonService, venueService);
 
         const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,
@@ -112,10 +135,16 @@ export class DependencyHelper {
         const dependencies: Map<Dependencies, any> = new Map();
         
         dependencies.set(Dependencies.AdvancedQueryService, advancedQueryService);
+        dependencies.set(Dependencies.ApiHelperService, apiHelperService);
         dependencies.set(Dependencies.ClubService, clubService);
         dependencies.set(Dependencies.CompetitionService, competitionService);
+        dependencies.set(Dependencies.DateSource, dateSource);
         dependencies.set(Dependencies.GameService, gameService);
+        dependencies.set(Dependencies.GameEventService, gameEventService);
+        dependencies.set(Dependencies.GamePlayerService, gamePlayerService);
         dependencies.set(Dependencies.PersonService, personService);
+        dependencies.set(Dependencies.SeasonService, seasonService);
+        dependencies.set(Dependencies.UuidSource, uuidSource);
         dependencies.set(Dependencies.VenueService, venueService);
 
         return dependencies;

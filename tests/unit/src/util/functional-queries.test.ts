@@ -3,7 +3,7 @@ import { Game } from '@src/model/internal/game';
 import { GoalGameEvent } from '@src/model/internal/game-event-goal'
 import { GameMinute } from '@src/model/internal/game-minute'
 import { Score } from '@src/model/internal/score';
-import { filterGoalDifferenceInPeriod, findLongestGameStreak, getScoreAfterMinute, ifPresent, isMinuteInPeriod, PlaceholderMatch, PresenceMatch } from '@src/util/functional-queries'
+import { filterGoalDifferenceInPeriod, findLongestGameStreak, getScoreAfterMinute, ifPresent, isMinuteInPeriod, groupByOccurrence, groupByOccurrenceAndGetLargest, PresenceMatch, OccurrenceGroupResult } from '@src/util/functional-queries'
 
 const HOME_2_1: Partial<GoalGameEvent>[] = [
     {
@@ -213,6 +213,54 @@ describe('Functional queries', () => {
         ])('$input.description', ({ input, expected }) => {
             const { goalEvents: goals, goalDifference, from, to } = input;
             expect(filterGoalDifferenceInPeriod(goals as GoalGameEvent[], goalDifference, from, to)).toBe(expected);
+        })
+    });
+
+    describe('groupByOccurrence', () => {
+        type GroupByOccurrenceTest = {
+            input: {
+                description: string;
+                items: number[];
+            },
+            expected: OccurrenceGroupResult<number>[];
+        };
+        
+        it.each<GroupByOccurrenceTest>([
+            { input: { description: "empty", items: [] }, expected: [] },
+            { input: { description: "one item", items: [1] }, expected: [{ count: 1, items: [1] }] },
+            { input: { description: "one item multiple times", items: [1, 1, 1, 1, 1] }, expected: [{ count: 5, items: [1] }] },
+            { input: { description: "two items single", items: [1, 2] }, expected: [{ count: 1, items: [1, 2] }] },
+            { input: { description: "two items multiple", items: [1, 2, 1, 2, 1, 2] }, expected: [{ count: 3, items: [1, 2] }] },
+            { input: { description: "simple scenario", items: [1, 2, 3, 3, 4, 5] }, expected: [{ count: 2, items: [3] }, { count: 1, items: [1, 2, 4, 5] }] },
+            { input: { description: "large scenario", items: [1, 2, 3, 3, 4, 5, 3, 6, 6, 6, 7, 2] }, expected: [{ count: 3, items: [3, 6] }, { count: 2, items: [2] }, { count: 1, items: [1, 4, 5, 7] }] },
+
+        ])('$input.description', ({ input, expected }) => {
+            const { items } = input;
+            expect(groupByOccurrence(items)).toStrictEqual(expected);
+        })
+    });
+
+    describe('groupByOccurrenceAndGetLargest', () => {
+        type GroupByOccurrenceAndGetLargestTest = {
+            input: {
+                description: string;
+                items: number[];
+            },
+            expected: number[],
+        };
+        
+        it.each<GroupByOccurrenceAndGetLargestTest>([
+            { input: { description: "empty", items: [] }, expected: [] },
+            { input: { description: "one item", items: [1] }, expected: [1] },
+            { input: { description: "one item multiple times", items: [1, 1, 1, 1, 1] }, expected: [1] },
+            { input: { description: "two items single", items: [1, 2] }, expected: [1, 2] },
+            { input: { description: "two items multiple", items: [1, 2, 1, 2, 1, 2] }, expected: [1, 2] },
+            { input: { description: "simple scenario", items: [1, 2, 3, 3, 4, 5] }, expected: [3] },
+            { input: { description: "large scenario", items: [1, 2, 3, 3, 4, 5, 3, 6, 6, 6, 7, 2] }, expected: [3, 6] },
+
+        ])('$input.description', ({ input, expected }) => {
+            const { items } = input;
+            expect(groupByOccurrenceAndGetLargest(items)).toStrictEqual(expected);
         })
     });
 

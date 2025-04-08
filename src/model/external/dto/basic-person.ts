@@ -1,7 +1,8 @@
 export interface BasicPersonDto {
     id: number;
-    name: string;
-    shortName: string;
+    lastName: string;
+    firstName: string;
     avatar: string;
+    birthday: Date;
     href: string;
 }

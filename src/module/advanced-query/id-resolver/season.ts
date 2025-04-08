@@ -12,9 +12,9 @@ export class SeasonIdResolver extends IdResolver {
 
     async fetchPossibilities(parameter: FilterParameter): Promise<ResolvePossibility[]> {
         if (parameter.name === ParameterName.Current) {
-            return [this.convertToPossibility(await this.seasonService.getCurrent())];
+            return [this.convertToPossibility(await this.seasonService.getCurrent() as Season)];
         } else if (parameter.name === ParameterName.Last) {
-            return [this.convertToPossibility(await this.seasonService.getLast())];
+            return [this.convertToPossibility(await this.seasonService.getLast() as Season)];
         }
 
         const result = await this.seasonService.searchByName(parameter.value);

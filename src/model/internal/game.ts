@@ -1,4 +1,5 @@
 import { Tendency } from "@src/model/type/tendency";
+import { GameStatus } from "@src/model/type/game-status";
 
 export interface Game {
     id: number;
@@ -6,14 +7,45 @@ export interface Game {
     resultTendency: Tendency;
     opponentId: number;
     competitionId: number;
-    round: string;
-    attendance: number;
+    competitionRound: string;
+    seasonId: number;
+    status: GameStatus;
+    venueId: number;
     isHomeTeam: boolean;
-    isSoldOut: boolean;
+    attendance: number;
     fullTimeGoalsMain: number;
     fullTimeGoalsOpponent: number;
     halfTimeGoalsMain: number;
     halfTimeGoalsOpponent: number;
+    tacticalFormationMain?: string;
+    tacticalFormationOpponent?: string;
+    yellowCardsMain: number;
+    yellowCardsOpponent: number;
+    yellowRedCardsMain: number;
+    yellowRedCardsOpponent: number;
+    redCardsMain: number;
+    redCardsOpponent: number;
+    penaltiesScoredMain: number;
+    penaltiesScoredOpponent: number;
+    penaltiesMissedMain: number;
+    penaltiesMissedOpponent: number;
     turnaroundsMain: number;
     turnaroundsOpponent: number;
+    bicycleKickGoalsMain: number;
+    bicycleKickGoalsOpponent: number;
+    tablePositionMainBefore?: number;
+    tablePositionOpponentBefore?: number;
+    tablePositionMainAfter?: number;
+    tablePositionOpponentAfter?: number;
+    tablePositionOffset: number;
+    isSoldOut: boolean;
+    leg?: number;
+    previousLeg?: number;
+    aetGoalsMain?: number;
+    aetGoalsOpponent?: number;
+    psoGoalsMain?: number;
+    psoGoalsOpponent?: number;
+    isPractice: boolean;
+    scheduled?: Date;
+    isNeutralGround: boolean;
 }

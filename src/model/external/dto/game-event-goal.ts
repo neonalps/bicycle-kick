@@ -1,14 +1,11 @@
-import { BasicPersonDto } from "./basic-person";
 import { GameEventDto } from "./game-event";
 
-export interface GoalGameEvent extends GameEventDto {
-    scorer: BasicPersonDto;
-    assistBy?: BasicPersonDto;
+export interface GoalGameEventDto extends GameEventDto {
+    scoreMain: number;
+    scoreOpponent: number;
+    assistBy: number;
     penalty: boolean;
     directFreeKick: boolean;
     bicycleKick: boolean;
     ownGoal: boolean;
-    scoreMain: number;
-    scoreOpponent: number;
-    forMain: boolean;
 }

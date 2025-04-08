@@ -16,8 +16,7 @@ export class MinuteFilter implements GameEventPostProcessingFilter {
 
     process(event: GameEvent): boolean {
         console.log(`[MinuteFilter] post processing game event: ${event.eventType}, ${event.minute}`);
-        const gameMinute = new GameMinute(event.minute);
-        return !gameMinute.isBefore(this.payload.from) && !gameMinute.isAfter(this.payload.to);
+        return !event.minute.isBefore(this.payload.from) && !event.minute.isAfter(this.payload.to);
     }
     
 }

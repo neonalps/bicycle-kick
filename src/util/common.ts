@@ -40,11 +40,15 @@ export function getAllowedHttpMethods(): string[] {
     return [...allowedHttpMethods];
 }
 
-export function getOrThrow<T>(map: Map<unknown, unknown>, key: unknown, errorMessage: string): T {
+export function getOrThrow<T>(map: Map<unknown, T>, key: unknown, errorMessage: string): T {
     const value = map.get(key);
     if (value === undefined) {
         throw new Error(errorMessage);
     }
 
-    return value as T;
+    return value;
+}
+
+export function uniqueArrayElements<T>(array: T[]): T[] {
+    return Array.from(new Set(array));
 }

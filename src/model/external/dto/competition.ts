@@ -3,5 +3,5 @@ export interface CompetitionDto {
     name: string;
     shortName: string;
     isDomestic: boolean;
-    parentCompetition: CompetitionDto;
+    parentCompetition?: CompetitionDto;
 }

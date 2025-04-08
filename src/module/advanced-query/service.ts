@@ -19,6 +19,8 @@ import { GameEvent } from "@src/model/internal/game-event";
 import { GameEventPostProcessingFilter } from "@src/module/advanced-query/post-processor/game-event-processing-filter";
 import { Sql } from "@src/db";
 import { GameService } from "@src/module/game/service";
+import { Game } from "@src/model/internal/game";
+import { AdvancedQueryResult } from "@src/module/advanced-query/result";
 
 export interface AdvancedQueryConfig {
     mainClubId: number;
@@ -39,7 +41,7 @@ export class AdvancedQueryService {
         private readonly uuidSource: UuidSource,
     ) {}
 
-    async search(raw: string): Promise<ClarificationQuery | string> {
+    async search(raw: string): Promise<ClarificationQuery | AdvancedQueryResult> {
         // TODO input validation
 
         // strip punctuation from input
@@ -97,8 +99,7 @@ export class AdvancedQueryService {
         console.log(`queryResult`, queryResult);
         console.log('resultMap', resultMap);
 
-        const games = await this.gameService.getMultipleByIds(resultMap.get('gameId') as number[]);
-        console.log('games', games);
+        const orderedGames = await this.resolveOrderedGameIds(resultMap.get('gameId') as number[]);
 
         // returns game ids (batched to 50)
         // load game events for all ids
@@ -121,7 +122,10 @@ export class AdvancedQueryService {
         console.log(`checkResult is ${checkResult}`);*/
 
         // stage 7: return
-        return sqlQuery;
+        return {
+            games: orderedGames,
+            query: sqlQuery,
+        }
         
     }
 
@@ -137,6 +141,15 @@ export class AdvancedQueryService {
         }
 
         return false;
+    }
+
+    private async resolveOrderedGameIds(orderedGameIds: number[]): Promise<Game[]> {
+        if (orderedGameIds.length === 0) {
+            return [];
+        }
+
+        const games = await this.gameService.getMultipleByIds(orderedGameIds);
+        return orderedGameIds.map(gameId => games.find(item => item.id === gameId) as Game);
     }
 
     private async getTokenizerResult(input: string): Promise<TokenizerResult> {

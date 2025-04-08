@@ -25,7 +25,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
         plays_for_main: {
             type: 'boolean',
-            notNull: false,
+            notNull: true,
         },
         is_starting: {
             type: 'boolean',

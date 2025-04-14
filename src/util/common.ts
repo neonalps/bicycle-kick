@@ -52,3 +52,7 @@ export function getOrThrow<T>(map: Map<unknown, T>, key: unknown, errorMessage: 
 export function uniqueArrayElements<T>(array: T[]): T[] {
     return Array.from(new Set(array));
 }
+
+export function getUrlSlug(id: number, name: string): string {
+    return [id, ...name.split(" ").map(item => item.toLowerCase())].join("-").replace(/[^a-zA-Z0-9-_]/g, '');
+}

@@ -5,7 +5,7 @@ import {GameService} from "@src/module/game/service";
 import {CompetitionService} from "@src/module/competition/service";
 import {VenueService} from "@src/module/venue/service";
 import {PersonService} from "@src/module/person/service";
-import {getOrThrow, uniqueArrayElements} from "@src/util/common";
+import {getOrThrow, getUrlSlug, uniqueArrayElements} from "@src/util/common";
 import {ClubService} from "@src/module/club/service";
 import {GamePlayer} from "@src/model/internal/game-player";
 import {SeasonService} from "@src/module/season/service";
@@ -23,11 +23,12 @@ import {Venue} from "@src/model/internal/venue";
 import {GameVenueDto} from "@src/model/external/dto/game-venue";
 import {GameEventDto} from "@src/model/external/dto/game-event";
 import {GameEventType} from "@src/model/external/dto/game-event-type";
-import {GoalGameEventDto} from "@src/model/external/dto/game-event-goal";
+import { ApiConfig } from "@src/api/v1/config";
 
 export class ApiHelperService {
 
     constructor(
+        private readonly apiConfig: ApiConfig,
         private readonly clubService: ClubService,
         private readonly competitionService: CompetitionService,
         private readonly gameService: GameService,
@@ -100,7 +101,17 @@ export class ApiHelperService {
             const gameEventDtos: GameEventDto[] = [];
             const gameEvents = gameEventsMap.get(game.id);
             if (gameEvents !== undefined && gameEvents.length > 0) {
-                
+                for (const gameEvent of gameEvents) {
+                    switch (gameEvent.eventType) {
+                        case GameEventType.Goal:
+                            gameEventDtos.push({
+                                id: gameEvent.id,
+                                type: gameEvent.eventType,
+                                minute: gameEvent.minute.toString(),
+                                sortOrder: gameEvent.sortOrder,
+                            })
+                    }
+                }
             }
 
             result.push({
@@ -153,13 +164,14 @@ export class ApiHelperService {
         }
     }
 
-    private convertSeasonToDto(season: Season): SeasonDto {
+    convertSeasonToDto(season: Season): SeasonDto {
         return {
             id: season.id,
             name: season.name,
             shortName: season.shortName,
             start: season.start,
             end: season.end,
+            href: this.getFrontendResourceHref('season', getUrlSlug(season.id, season.name)),
         };
     }
 
@@ -200,6 +212,11 @@ export class ApiHelperService {
             personIds.push(...gamePlayers.map(player => player.personId));
         }
         return uniqueArrayElements(personIds);
+    }
+
+    private getFrontendResourceHref(resourceName: string, resourcePath: string): string {
+        const pluralisedResourceName = resourceName.endsWith('s') ? resourceName : `${resourceName}s`;
+        return `${this.apiConfig.baseUrl}/${pluralisedResourceName}/${resourcePath}`
     }
 
 

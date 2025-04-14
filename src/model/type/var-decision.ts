@@ -1,1 +1,1 @@
-export type VarDecision = 'penalty' | 'penaltyCancelled' | 'yellowCardOverturned';
+export type VarDecision = 'goal' | 'noGoal' | 'penalty' | 'penaltyCancelled' | 'yellowCardOverturned';

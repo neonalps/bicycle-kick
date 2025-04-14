@@ -1,0 +1,1 @@
+export type PenaltyMissedReason = 'wide' | 'high' | 'post' | 'crossbar';

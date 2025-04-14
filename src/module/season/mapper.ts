@@ -1,6 +1,7 @@
 import { Sql } from "@src/db";
 import { SeasonDaoInterface } from "@src/model/internal/interface/season.interface";
 import { Season } from "@src/model/internal/season";
+import { SortOrder } from "../pagination/constants";
 
 export class SeasonMapper {
 
@@ -36,6 +37,19 @@ export class SeasonMapper {
         }
 
         return this.convertToEntity(result[0]);
+    }
+
+    async getAllPaginated(lastSeenDate: Date, limit: number, order: SortOrder): Promise<Season[]> {
+        const result = await this.sql<SeasonDaoInterface[]>`select * from season where start ${order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${lastSeenDate} order by start ${this.determineSortOrder(order)} limit ${limit}`;
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
+    }
+
+    private determineSortOrder(order: SortOrder) {
+        return order === SortOrder.Descending ? this.sql`desc` : this.sql`asc`;
     }
 
     private convertToEntity(item: SeasonDaoInterface): Season {

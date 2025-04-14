@@ -49,6 +49,11 @@ import { ClubMapper } from "@src/module/club/mapper";
 import { PersonMapper } from "@src/module/person/mapper";
 import { SeasonMapper } from "@src/module/season/mapper";
 import { DateSource } from "@src/util/date";
+import { ApiConfig } from "@src/api/v1/config";
+import { getCryptoKey, getFrontendBaseUrl } from "@src/config";
+import { CryptoService } from "@src/module/crypto/service";
+import { AccountService } from "@src/module/account/service";
+import { AccountMapper } from "@src/module/account/mapper";
 
 export class DependencyHelper {
 
@@ -62,13 +67,23 @@ export class DependencyHelper {
 
         const sqlInstance = sql;
 
+        const cryptoService = new CryptoService({
+            encryptionAlgorithm: "aes256",
+            hmacAlgorithm: "sha256",
+            ivSize: 16,
+            cryptoKey: getCryptoKey(),
+        });
+
         const dateSource = new DateSource();
         const uuidSource = new UuidSource();
 
+        const accountMapper = new AccountMapper(sqlInstance);
+        const accountService = new AccountService(accountMapper, cryptoService, uuidSource);
         const clubMapper = new ClubMapper(sqlInstance);
         const clubService = new ClubService(clubMapper);
         const competitionMapper = new CompetitionMapper(sqlInstance);
         const competitionService = new CompetitionService(competitionMapper);
+        
         const gameMapper = new GameMapper(sqlInstance);
         const gameService = new GameService(gameMapper);
         const gameEventMapper = new GameEventMapper(sqlInstance);
@@ -82,7 +97,21 @@ export class DependencyHelper {
         const venueMapper = new VenueMapper(sqlInstance);
         const venueService = new VenueService(venueMapper);
 
-        const apiHelperService = new ApiHelperService(clubService, competitionService, gameService, gameEventService, gamePlayerService, personService, seasonService, venueService);
+        const apiConfig: ApiConfig = {
+            baseUrl: getFrontendBaseUrl(),
+        };
+
+        const apiHelperService = new ApiHelperService(
+            apiConfig, 
+            clubService, 
+            competitionService, 
+            gameService, 
+            gameEventService, 
+            gamePlayerService, 
+            personService, 
+            seasonService, 
+            venueService
+        );
 
         const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,
@@ -134,10 +163,12 @@ export class DependencyHelper {
 
         const dependencies: Map<Dependencies, any> = new Map();
         
+        dependencies.set(Dependencies.AccountService, accountService);
         dependencies.set(Dependencies.AdvancedQueryService, advancedQueryService);
         dependencies.set(Dependencies.ApiHelperService, apiHelperService);
         dependencies.set(Dependencies.ClubService, clubService);
         dependencies.set(Dependencies.CompetitionService, competitionService);
+        dependencies.set(Dependencies.CryptoService, cryptoService);
         dependencies.set(Dependencies.DateSource, dateSource);
         dependencies.set(Dependencies.GameService, gameService);
         dependencies.set(Dependencies.GameEventService, gameEventService);

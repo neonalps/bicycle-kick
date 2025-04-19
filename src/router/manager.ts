@@ -8,13 +8,13 @@ import { IllegalStateError } from "@src/api/error/illegal-state";
 import { isDefined } from "@src/util/common";
 import { AuthenticationError } from "@src/api/error/authentication";
 import { Dependencies } from "@src/di/dependencies";
-import { ProfileService } from "@src/module/profile/service";
+import { AccountService } from "@src/module/account/service";
 
 export class RouteManager {
 
     private static readonly EMPTY_AUTHENTICATION: AuthenticationContext = {
         authenticated: false,
-        profile: null,
+        account: null,
     }
 
     private constructor() {}
@@ -97,19 +97,23 @@ export class RouteManager {
             throw new Error("No user ID for authenticated route while building authentication context");
         }
 
-        const profile = await dependencyManager.get<ProfileService>(Dependencies.ProfileService).getByPublicId(publicUserId);
-        if (profile === null) {
-            throw new Error("No profile with this user ID was found");
+        const account = await dependencyManager.get<AccountService>(Dependencies.AccountService).getByPublicId(publicUserId);
+        if (account === null) {
+            throw new Error("No account with this user ID was found");
+        }
+
+        if (account.enabled === false) {
+            throw new Error("Account is disabled");
         }
 
         return {
             authenticated: true,
-            profile: null,      // TODO change
+            account,
         };
     }
 
     private static hasValidAuthenthicationContextForAuthenticatedRequest(context: AuthenticationContext): boolean {
-        return !!context && context.authenticated === true && context.profile !== null;
+        return !!context && context.authenticated === true && context.account !== null;
     }
 
     private static sendSuccessResponse(reply: FastifyReply, route: RouteDefinition<unknown, unknown>, responseBody: unknown): void {

@@ -4,6 +4,7 @@ import { CreateAccountDto } from "@src/model/internal/create-account";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { CryptoService } from "../crypto/service";
 import { UuidSource } from "@src/util/uuid";
+import { AccountRole } from "@src/model/type/account-role";
 
 export class AccountService {
 
@@ -35,7 +36,7 @@ export class AccountService {
         validateNotBlank(dto.displayName, "dto.displayName");
         validateNotBlank(dto.hashedEmail, "dto.hashedEmail");
 
-        return await this.mapper.create(dto.publicId, dto.hashedEmail, dto.displayName);
+        return await this.mapper.create(dto.publicId, dto.hashedEmail, dto.displayName, [AccountRole.Substitute]);
     }
 
     async getByPublicId(publicId: string): Promise<Account | null> {

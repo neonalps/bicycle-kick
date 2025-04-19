@@ -5,6 +5,7 @@ import { DateSource } from "@src/util/date";
 import { PaginationParams } from "@src/module/pagination/constants";
 
 export interface GetAllSeasonsPaginationParams extends PaginationParams<Date> {}
+export interface GetSeasonGamesPaginationParams extends PaginationParams<Date> {}
 
 export class SeasonService {
 

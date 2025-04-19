@@ -5,4 +5,5 @@ export interface AccountDaoInterface {
     displayName: string;
     enabled: boolean;
     createdAt: Date;
+    roles: string;
 }

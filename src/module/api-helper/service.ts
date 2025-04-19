@@ -24,6 +24,8 @@ import {GameVenueDto} from "@src/model/external/dto/game-venue";
 import {GameEventDto} from "@src/model/external/dto/game-event";
 import {GameEventType} from "@src/model/external/dto/game-event-type";
 import { ApiConfig } from "@src/api/v1/config";
+import { BasicGameDto } from "@src/model/external/dto/basic-game";
+import { Game } from "@src/model/internal/game";
 
 export class ApiHelperService {
 
@@ -38,6 +40,53 @@ export class ApiHelperService {
         private readonly seasonService: SeasonService,
         private readonly venueService: VenueService,
     ) {}
+
+    async getOrderedBasicGameDtos(games: Game[]): Promise<BasicGameDto[]> {
+        const clubIds = uniqueArrayElements(games.map(game => game.opponentId));
+        const competitionIds = uniqueArrayElements(games.map(game => game.competitionId));
+        const seasonIds = uniqueArrayElements(games.map(game => game.seasonId));
+        const venueIds = uniqueArrayElements(games.map(game => game.venueId));
+
+        const [clubMap, competitionMap, seasonMap, venueMap] = await Promise.all([
+            this.clubService.getMapByIds(clubIds),
+            this.competitionService.getMapByIds(competitionIds),
+            this.seasonService.getMapByIds(seasonIds),
+            this.venueService.getMultipleByIds(venueIds),
+        ]);
+
+        return games.map(game => {
+            const competition = getOrThrow(competitionMap, game.competitionId, "competition not found in map");
+            // TODO handle parent competition?
+            const season = getOrThrow(seasonMap, game.seasonId, "season not found in map");
+            const opponent = getOrThrow(clubMap, game.opponentId, "opponent not found in map");
+            const venue = getOrThrow(venueMap, game.venueId, "venue was not found in map");
+
+            return {
+                id: game.id,
+                kickoff: game.kickoff,
+                season: this.convertSeasonToDto(season),
+                opponent: this.convertClubToBasicDto(opponent),
+                competition: this.convertCompetitionToDto(competition),
+                venue: this.convertVenueToGameVenueDto(venue),
+                round: game.competitionRound,
+                attendance: game.attendance,
+                resultTendency: game.resultTendency,
+                status: game.status,
+                fullTimeGoalsMain: game.fullTimeGoalsMain,
+                fullTimeGoalsOpponent: game.fullTimeGoalsOpponent,
+                halfTimeGoalsMain: game.halfTimeGoalsMain,
+                halfTimeGoalsOpponent: game.halfTimeGoalsOpponent,
+                aetGoalsMain: game.aetGoalsMain,
+                aetGoalsOpponent: game.aetGoalsOpponent,
+                psoGoalsMain: game.psoGoalsMain,
+                psoGoalsOpponent: game.psoGoalsOpponent,
+                isHomeGame: game.isHomeTeam,
+                isNeutralGround: game.isNeutralGround,
+                // TODO use config
+                href: this.getFrontendResourceHref('game', getUrlSlug(game.id, `Sturm Graz vs ${opponent.shortName}`)),
+            }
+        });
+    }
 
     async getMultipleGamesWithDetails(gameIds: number[]): Promise<DetailedGameDto[]> {
         const [basicGameInformation, gameEventsMap, gamePlayersMap] = await Promise.all([

@@ -1,9 +1,10 @@
 import { HttpMethod } from "@src/http/constants";
+import { Account } from "@src/model/internal/account";
 import { FastifySchema } from "fastify";
 
 export type AuthenticationContext = {
     authenticated: boolean,
-    profile: null,
+    account: Account | null,
 }
 
 export type RouteDefinition<S, T> = {

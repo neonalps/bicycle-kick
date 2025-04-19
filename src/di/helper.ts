@@ -50,10 +50,17 @@ import { PersonMapper } from "@src/module/person/mapper";
 import { SeasonMapper } from "@src/module/season/mapper";
 import { DateSource } from "@src/util/date";
 import { ApiConfig } from "@src/api/v1/config";
-import { getCryptoKey, getFrontendBaseUrl } from "@src/config";
+import { getAuthTokenConfig, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig } from "@src/config";
 import { CryptoService } from "@src/module/crypto/service";
 import { AccountService } from "@src/module/account/service";
 import { AccountMapper } from "@src/module/account/mapper";
+import { TimeSource } from "@src/util/time";
+import { AuthService } from "@src/module/auth/service";
+import { HttpClient } from "@src/http/client";
+import { OAuthService } from "@src/module/auth/oauth/service";
+import { GoogleOAuthClient } from "@src/module/auth/oauth/google/client";
+import { PaginationService } from "@src/module/pagination/service";
+import { Base64Utils } from "@src/util/base64";
 
 export class DependencyHelper {
 
@@ -74,8 +81,16 @@ export class DependencyHelper {
             cryptoKey: getCryptoKey(),
         });
 
+        const base64Utils = new Base64Utils();
         const dateSource = new DateSource();
+        const timeSource = new TimeSource();
         const uuidSource = new UuidSource();
+
+        const httpClient = new HttpClient();
+
+        const authService = new AuthService(getAuthTokenConfig(), timeSource);
+
+        const googleOAuthClient = new GoogleOAuthClient(getGoogleOAuthConfig(), httpClient);
 
         const accountMapper = new AccountMapper(sqlInstance);
         const accountService = new AccountService(accountMapper, cryptoService, uuidSource);
@@ -83,13 +98,13 @@ export class DependencyHelper {
         const clubService = new ClubService(clubMapper);
         const competitionMapper = new CompetitionMapper(sqlInstance);
         const competitionService = new CompetitionService(competitionMapper);
-        
         const gameMapper = new GameMapper(sqlInstance);
         const gameService = new GameService(gameMapper);
         const gameEventMapper = new GameEventMapper(sqlInstance);
         const gameEventService = new GameEventService(gameEventMapper);
         const gamePlayerMapper = new GamePlayerMapper(sqlInstance);
         const gamePlayerService = new GamePlayerService(gamePlayerMapper);
+        const oAuthService = new OAuthService(accountService, authService, googleOAuthClient);
         const personMapper = new PersonMapper(sqlInstance);
         const personService = new PersonService(personMapper);
         const seasonMapper = new SeasonMapper(sqlInstance);
@@ -112,6 +127,8 @@ export class DependencyHelper {
             seasonService, 
             venueService
         );
+
+        const paginationService = new PaginationService(base64Utils);
 
         const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,
@@ -166,6 +183,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.AccountService, accountService);
         dependencies.set(Dependencies.AdvancedQueryService, advancedQueryService);
         dependencies.set(Dependencies.ApiHelperService, apiHelperService);
+        dependencies.set(Dependencies.AuthService, authService);
         dependencies.set(Dependencies.ClubService, clubService);
         dependencies.set(Dependencies.CompetitionService, competitionService);
         dependencies.set(Dependencies.CryptoService, cryptoService);
@@ -173,8 +191,11 @@ export class DependencyHelper {
         dependencies.set(Dependencies.GameService, gameService);
         dependencies.set(Dependencies.GameEventService, gameEventService);
         dependencies.set(Dependencies.GamePlayerService, gamePlayerService);
+        dependencies.set(Dependencies.OAuthService, oAuthService);
+        dependencies.set(Dependencies.PaginationService, paginationService);
         dependencies.set(Dependencies.PersonService, personService);
         dependencies.set(Dependencies.SeasonService, seasonService);
+        dependencies.set(Dependencies.TimeSource, timeSource);
         dependencies.set(Dependencies.UuidSource, uuidSource);
         dependencies.set(Dependencies.VenueService, venueService);
 

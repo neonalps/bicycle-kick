@@ -23,6 +23,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'boolean',
             notNull: true,
         },
+        roles: {
+            type: 'text',
+            notNull: false,
+        },
         created_at: {
             type: 'timestamptz',
             notNull: true,

@@ -1,7 +1,6 @@
 import { Sql } from "@src/db";
 import { Competition } from "@src/model/internal/competition";
 import { CompetitionDaoInterface } from "@src/model/internal/interface/competition.interface";
-import { validateNotNull } from "@src/util/validation";
 
 export class CompetitionMapper {
 

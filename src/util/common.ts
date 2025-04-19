@@ -1,3 +1,5 @@
+import { SortOrder } from "@src/module/pagination/constants";
+
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const charactersLength = characters.length;
 const allowedHttpMethods = ["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS", "TRACE", "PATCH"];
@@ -55,4 +57,8 @@ export function uniqueArrayElements<T>(array: T[]): T[] {
 
 export function getUrlSlug(id: number, name: string): string {
     return [id, ...name.split(" ").map(item => item.toLowerCase())].join("-").replace(/[^a-zA-Z0-9-_]/g, '');
+}
+
+export function getSortOrderString(sortOrder: SortOrder): string {
+    return sortOrder === SortOrder.Ascending ? "asc" : "desc";
 }

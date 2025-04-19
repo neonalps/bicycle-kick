@@ -2,13 +2,17 @@ import { Sql } from "@src/db";
 import { Account } from "@src/model/internal/account";
 import { AccountDaoInterface } from "@src/model/internal/interface/account.interface";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
+import { AccountRole } from "@src/model/type/account-role";
 
 export class AccountMapper {
 
+    private static JOIN_CHAR = ",";
+
     constructor(private readonly sql: Sql) {}
 
-    async create(publicId: string, hashedEmail: string, displayName: string): Promise<Account> {
-        const result = await this.sql<IdInterface[]>`insert into account (public_id, hashed_email, display_name) values (${ publicId }, ${ hashedEmail }, ${ displayName }) returning id`;
+    async create(publicId: string, hashedEmail: string, displayName: string, roles: AccountRole[]): Promise<Account> {
+        const rolesString = roles.join(AccountMapper.JOIN_CHAR);
+        const result = await this.sql<IdInterface[]>`insert into account (public_id, hashed_email, display_name, roles) values (${ publicId }, ${ hashedEmail }, ${ displayName }, ${ rolesString }) returning id`;
         if (result.length !== 1) {
             this.throwCreateError();
         }
@@ -58,6 +62,7 @@ export class AccountMapper {
             publicId: item.publicId,
             hashedEmail: item.hashedEmail,
             displayName: item.displayName,
+            roles: item.roles.split(AccountMapper.JOIN_CHAR) as AccountRole[],
             enabled: item.enabled,
             createdAt: item.createdAt,
         }

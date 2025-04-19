@@ -30,4 +30,7 @@ export interface BasicGameDto {
     isNeutralGround: boolean;
     scheduled?: Date;
     href: string;
+    accountAttended?: boolean;
+    accountStarred?: boolean;
+    accountNotes?: string;
 }

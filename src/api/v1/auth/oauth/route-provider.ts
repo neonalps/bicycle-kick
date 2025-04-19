@@ -3,10 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { AuthResponseDto } from "@src/model/external/dto/auth-response";
 import { OauthLoginRequestDto as OAuthLoginRequestDto } from "@src/model/external/dto/oauth-login-request";
-
-export enum OAuthProvider {
-    Google = "google",
-}
+import { AuthProvider } from "@src/module/auth/oauth/constants";
 
 export class OAuthLoginRouteProvider implements RouteProvider<OAuthLoginRequestDto, AuthResponseDto> {
 
@@ -22,14 +19,14 @@ export class OAuthLoginRouteProvider implements RouteProvider<OAuthLoginRequestD
                 type: 'object',
                 required: ['provider', 'code'],
                 properties: {
-                    provider: { type: 'string', enum: [OAuthProvider.Google] },
+                    provider: { type: 'string', enum: [AuthProvider.Google] },
                     code: { type: 'string' },
                 },
             }
         };
 
         return {
-            name: 'OauthLogin',
+            name: 'OAuthLogin',
             method: 'POST',
             path: '/api/v1/auth/oauth',
             schema, 

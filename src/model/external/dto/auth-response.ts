@@ -1,9 +1,7 @@
+import { IdentityDto } from "./identity";
+
 export interface AuthResponseDto {
-    identity: {
-        displayName: string | null;
-        email: string;
-        publicId: string;
-    }
+    identity: IdentityDto;
     token: {
         accessToken: string;
         refreshToken: string;

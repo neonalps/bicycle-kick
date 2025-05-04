@@ -88,6 +88,10 @@ export class GameMapper {
         return orderedIds.map(gameId => getOrThrow(gamesMap, gameId, "game not found in map"));
     }
 
+    async deleteById(gameId: number): Promise<void> {
+        await this.sql`delete from game where id = ${gameId};`;
+    }
+
     async create(dto: CreateGameDto): Promise<number> {
         return await this.sql.begin(async tx => {
             const [opponentId, competitionId, venueId] = await Promise.all([

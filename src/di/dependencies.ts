@@ -12,6 +12,7 @@ export enum Dependencies {
     GamePlayerService,
     OAuthService,
     PaginationService,
+    PermissionService,
     PersonService,
     ProfileService,
     SeasonService,

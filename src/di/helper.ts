@@ -64,6 +64,7 @@ import { Base64Utils } from "@src/util/base64";
 import { SquadMapper } from "@src/module/squad/mapper";
 import { SquadService } from "@src/module/squad/service";
 import { SofascoreGameProvider } from "@src/module/external-provider/sofascore/game-provider";
+import { PermissionService } from "@src/module/permission/service";
 
 export class DependencyHelper {
 
@@ -134,6 +135,7 @@ export class DependencyHelper {
         );
 
         const paginationService = new PaginationService(base64Utils);
+        const permissionService = new PermissionService();
 
         const sofascoreGameProvider = new SofascoreGameProvider({ mainTeamName: ["Sturm Graz"] }, timeSource);
 
@@ -200,6 +202,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.GamePlayerService, gamePlayerService);
         dependencies.set(Dependencies.OAuthService, oAuthService);
         dependencies.set(Dependencies.PaginationService, paginationService);
+        dependencies.set(Dependencies.PermissionService, permissionService);
         dependencies.set(Dependencies.PersonService, personService);
         dependencies.set(Dependencies.SeasonService, seasonService);
         dependencies.set(Dependencies.SofascoreGameProvider, sofascoreGameProvider);

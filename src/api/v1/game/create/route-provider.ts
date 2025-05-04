@@ -24,7 +24,7 @@ export class CreateGameRouteProvider implements RouteProvider<CreateGameRequestD
             path: '/api/v1/games',
             schema,
             handler: this.handler,
-            authenticated: true,
+            authenticated: false,
         }
     }
 

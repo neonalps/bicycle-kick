@@ -17,11 +17,11 @@ export class CreateGameRouteHandler implements RouteHandler<CreateGameRequestDto
     ) {}
 
     public async handle(context: AuthenticationContext, dto: CreateGameRequestDto): Promise<DetailedGameDto> {
-        if (!context.authenticated || context.account === null) {
+        /*if (!context.authenticated || context.account === null) {
             throw new AuthenticationError(`No authentication present`);
         }
 
-        this.permissionService.validatePermission(AccountRole.Manager, context.account.roles);
+        this.permissionService.validatePermission(AccountRole.Manager, context.account.roles);*/
         
         const createdGame = await this.gameService.create(dto);
         const gameDetails = await this.apiHelperService.getOrderedDetailedGameDtos([createdGame.id]);

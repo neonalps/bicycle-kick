@@ -64,4 +64,15 @@ export class GameService {
         return createdGame;
     }
 
+    async deleteById(gameId: number): Promise<void> {
+        validateNotNull(gameId, "gameId");
+        
+        const game = await this.getById(gameId);
+        if (game === null) {
+            throw new Error(`No game with ID ${gameId} exists`);
+        }
+
+        return await this.mapper.deleteById(gameId);
+    }
+
 }

@@ -9,6 +9,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'integer',
             notNull: true,
             references: `"game"`,
+            onDelete: 'CASCADE'
         },
         sort_order: {
             type: 'smallint',

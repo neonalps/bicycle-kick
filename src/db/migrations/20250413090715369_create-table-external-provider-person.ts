@@ -20,7 +20,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
     });
 
-    pgm.addConstraint("external_provider_person", "uq_external_provider_external_id", {
+    pgm.addConstraint("external_provider_person", "uq_external_provider_external_id_person", {
         unique: ['external_provider', 'external_id']
     });
 

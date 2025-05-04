@@ -1,7 +1,7 @@
 import { Sql } from "@src/db";
 import { SeasonDaoInterface } from "@src/model/internal/interface/season.interface";
 import { Season } from "@src/model/internal/season";
-import { SortOrder } from "../pagination/constants";
+import { SortOrder } from "@src/module/pagination/constants";
 
 export class SeasonMapper {
 
@@ -31,7 +31,7 @@ export class SeasonMapper {
     }
 
     async getForDate(date: Date): Promise<Season | null> {
-        const result = await this.sql<SeasonDaoInterface[]>`select * from season where start >= ${date} and end <= ${date}`;
+        const result = await this.sql<SeasonDaoInterface[]>`select * from season where "start" <= ${date} and "end" >= ${date}`;
         if (result.length !== 1) {
             return null;
         }
@@ -40,7 +40,7 @@ export class SeasonMapper {
     }
 
     async getAllPaginated(lastSeenDate: Date, limit: number, order: SortOrder): Promise<Season[]> {
-        const result = await this.sql<SeasonDaoInterface[]>`select * from season where start ${order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${lastSeenDate} order by start ${this.determineSortOrder(order)} limit ${limit}`;
+        const result = await this.sql<SeasonDaoInterface[]>`select * from season where "start" ${order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${lastSeenDate} order by "start" ${this.determineSortOrder(order)} limit ${limit}`;
         if (result.length === 0) {
             return [];
         }

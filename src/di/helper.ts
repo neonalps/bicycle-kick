@@ -61,6 +61,9 @@ import { OAuthService } from "@src/module/auth/oauth/service";
 import { GoogleOAuthClient } from "@src/module/auth/oauth/google/client";
 import { PaginationService } from "@src/module/pagination/service";
 import { Base64Utils } from "@src/util/base64";
+import { SquadMapper } from "@src/module/squad/mapper";
+import { SquadService } from "@src/module/squad/service";
+import { SofascoreGameProvider } from "@src/module/external-provider/sofascore/game-provider";
 
 export class DependencyHelper {
 
@@ -98,8 +101,6 @@ export class DependencyHelper {
         const clubService = new ClubService(clubMapper);
         const competitionMapper = new CompetitionMapper(sqlInstance);
         const competitionService = new CompetitionService(competitionMapper);
-        const gameMapper = new GameMapper(sqlInstance);
-        const gameService = new GameService(gameMapper);
         const gameEventMapper = new GameEventMapper(sqlInstance);
         const gameEventService = new GameEventService(gameEventMapper);
         const gamePlayerMapper = new GamePlayerMapper(sqlInstance);
@@ -109,8 +110,12 @@ export class DependencyHelper {
         const personService = new PersonService(personMapper);
         const seasonMapper = new SeasonMapper(sqlInstance);
         const seasonService = new SeasonService(dateSource, seasonMapper);
+        const squadMapper = new SquadMapper(sqlInstance);
+        const squadService = new SquadService(squadMapper, seasonService);
         const venueMapper = new VenueMapper(sqlInstance);
         const venueService = new VenueService(venueMapper);
+        const gameMapper = new GameMapper(sqlInstance, clubMapper, competitionMapper, personMapper, venueMapper);
+        const gameService = new GameService(gameMapper, seasonService);
 
         const apiConfig: ApiConfig = {
             baseUrl: getFrontendBaseUrl(),
@@ -129,6 +134,8 @@ export class DependencyHelper {
         );
 
         const paginationService = new PaginationService(base64Utils);
+
+        const sofascoreGameProvider = new SofascoreGameProvider({ mainTeamName: ["Sturm Graz"] }, timeSource);
 
         const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,
@@ -195,6 +202,8 @@ export class DependencyHelper {
         dependencies.set(Dependencies.PaginationService, paginationService);
         dependencies.set(Dependencies.PersonService, personService);
         dependencies.set(Dependencies.SeasonService, seasonService);
+        dependencies.set(Dependencies.SofascoreGameProvider, sofascoreGameProvider);
+        dependencies.set(Dependencies.SquadService, squadService);
         dependencies.set(Dependencies.TimeSource, timeSource);
         dependencies.set(Dependencies.UuidSource, uuidSource);
         dependencies.set(Dependencies.VenueService, venueService);

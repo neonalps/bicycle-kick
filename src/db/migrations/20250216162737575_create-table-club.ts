@@ -41,7 +41,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'text',
             notNull: false
         },
-        home_venue: {
+        home_venue_id: {
             type: 'integer',
             notNull: false,
             references: `"venue"`,

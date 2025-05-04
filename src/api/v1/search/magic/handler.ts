@@ -13,7 +13,7 @@ export class MagicSearchRouteHandler implements RouteHandler<MagicSearchRequestD
         const queryResult = await this.advancedQueryService.search(dto.inquiry) as AdvancedQueryResult;
         
         const games = queryResult.games;
-        const detailedResults = await this.apiHelperService.getMultipleGamesWithDetails(games.map(game => game.id));
+        const detailedResults = await this.apiHelperService.getOrderedDetailedGameDtos(games.map(game => game.id));
 
         return {
             gameDetails: detailedResults,

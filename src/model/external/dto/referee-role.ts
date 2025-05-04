@@ -1,6 +1,6 @@
 export enum RefereeRole {
     AssistantReferee = "assistantReferee",
-    AssistantVar = "assistantVar",
+    AssistantVar = "avar",
     FourthOfficial = "fourthOfficial",
     Referee = "referee",
     Var = "var",

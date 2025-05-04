@@ -1,8 +1,9 @@
-import { ExternalPersonDto } from "./external-person";
+import { ManagingRole } from "@src/model/type/managing-role";
+import { PersonInputDto } from "./person-input";
 
 export interface CreateGameManagerDto {
     sortOrder: number;
-    personId?: number;
+    person: PersonInputDto;
     forMain: boolean;
-    externalPerson?: ExternalPersonDto;
+    role: ManagingRole;
 }

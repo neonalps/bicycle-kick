@@ -3,7 +3,7 @@ import { BasicPersonDto } from "./basic-person";
 export interface GamePlayerDto {
     player: BasicPersonDto;
     minutesPlayed?: number;
-    shirtNo: number;
+    shirt: number;
     positionKey: string;
     goalsScored: number;
     assists: number;

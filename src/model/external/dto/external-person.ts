@@ -6,4 +6,5 @@ export interface ExternalPersonDto {
     firstName: string;
     lastName: string;
     avatarUrl?: string;
+    birthday?: Date;
 }

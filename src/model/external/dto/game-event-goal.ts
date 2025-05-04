@@ -1,8 +1,7 @@
 import { GameEventDto } from "./game-event";
 
 export interface GoalGameEventDto extends GameEventDto {
-    scoreMain: number;
-    scoreOpponent: number;
+    scoredBy: number;
     assistBy: number;
     penalty: boolean;
     directFreeKick: boolean;

@@ -1,21 +1,32 @@
+import { GameEventType } from "@src/model/external/dto/game-event-type";
+import { GoalType } from "@src/model/type/goal-type";
+
+export type CreateGameEventDaoInterface = Omit<GameEventDaoInterface, 'id'>;
+
 export interface GameEventDaoInterface {
     id: number;
     gameId: number;
-    eventType: string;
+    type: GameEventType;
     sortOrder: number;
-    scoreMain: number;
-    scoreOpponent: number;
     minute: string;
-    scoredBy: number;
-    assistBy: number;
-    playerOn: number;
-    playerOff: number;
-    goalType: string;
-    penalty: boolean;
-    ownGoal: boolean;
-    penaltySavedBy: number;
-    directFreeKick: boolean;
-    bicycleKick: boolean;
-    redCardReason: string;
+    scoreMain?: number;
+    scoreOpponent?: number;
+    scoredBy?: number;
+    assistBy?: number;
+    goalType?: GoalType;
+    penalty?: boolean;
+    ownGoal?: boolean;
+    directFreeKick?: boolean;
+    bicycleKick?: boolean;
+    reason?: string;
+    decision?: string;
+    takenBy?: number;
+    goalkeeper?: number;
+    affectedPlayer?: number;
+    affectedManager?: number;
+    playerOn?: number;
+    playerOff?: number;
     injured?: boolean;
+    notOnPitch?: boolean;
+    additionalMinutes?: number;
 }

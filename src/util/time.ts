@@ -26,6 +26,10 @@ export class TimeSource {
         return Math.floor(Date.now() / 1000);
     }
 
+    public unixTimestampToDate(unix: number): Date {
+        return new Date(unix * 1000);
+    }
+
     public getTodayStartOfDay(): Date {
         const date = this.getNow();
         date.setUTCHours(0, 0, 0, 0);

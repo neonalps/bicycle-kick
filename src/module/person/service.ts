@@ -1,10 +1,24 @@
 import { Person } from "@src/model/internal/person";
 import { PersonMapper } from "./mapper";
-import { validateNotNull } from "@src/util/validation";
+import { validateNotBlank, validateNotNull } from "@src/util/validation";
+import { CreatePerson } from "@src/model/internal/create-person";
 
 export class PersonService {
 
     constructor(private readonly mapper: PersonMapper) {}
+
+    async create(createPerson: CreatePerson): Promise<Person> {
+        validateNotNull(createPerson, "createPerson");
+        validateNotBlank(createPerson.firstName, "createPerson.firstName");
+        validateNotBlank(createPerson.lastName, "createPerson.lastName");
+
+        const createdPersonId = await this.mapper.create(createPerson);
+        const createdPerson = await this.getById(createdPersonId);
+        if (createdPerson === null) {
+            throw new Error(`Something went wrong while creating person`);
+        }
+        return createdPerson;
+    }
 
     async getById(id: number): Promise<Person | null> {
         validateNotNull(id, "id");

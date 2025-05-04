@@ -5,11 +5,13 @@ export class GameMinute {
     private static readonly KEY_FULL_TIME = "FT";
     private static readonly KEY_HALF_TIME = "HT";
     private static readonly KEY_AFTER_EXTRA_TIME = "AET";
+    private static readonly KEY_PSO = "PSO";
     private static readonly INDICATOR_STOPPAGE_TIME = "+";
 
-    public static readonly FULL_TIME: GameMinute = new GameMinute(GameMinute.KEY_FULL_TIME);
-    public static readonly HALF_TIME: GameMinute = new GameMinute(GameMinute.KEY_HALF_TIME);
-    public static readonly AFTER_EXTRA_TIME: GameMinute = new GameMinute(GameMinute.KEY_AFTER_EXTRA_TIME);
+    public static readonly FULL_TIME = new GameMinute(GameMinute.KEY_FULL_TIME);
+    public static readonly HALF_TIME = new GameMinute(GameMinute.KEY_HALF_TIME);
+    public static readonly AFTER_EXTRA_TIME = new GameMinute(GameMinute.KEY_AFTER_EXTRA_TIME);
+    public static readonly PSO = new GameMinute(GameMinute.KEY_PSO);
 
     private readonly tuple: MinuteTuple;
 
@@ -54,6 +56,8 @@ export class GameMinute {
             return "HT";
         } else if (this.equals(GameMinute.AFTER_EXTRA_TIME)) {
             return "AET";
+        } else if (this.equals(GameMinute.PSO)) {
+            return "PSO";
         } else if (this.getStoppage() === 0) {
             return `${this.getBase()}`;
         } else {
@@ -69,13 +73,19 @@ export class GameMinute {
         return this.compareTo(other) === -1;
     }
 
+    public getMinutesPlayedValue(): number {
+        return this.getBase() - (this.getStoppage() > 0 ? 0 : 1);
+    }
+
     private parseGameMinute(minute: string): MinuteTuple {
         if (minute === GameMinute.KEY_HALF_TIME) {
-            return [45, 99];
+            return [45, 999];
         } else if (minute === GameMinute.KEY_FULL_TIME) {
-            return [90, 99];
+            return [90, 999];
         } else if (minute === GameMinute.KEY_AFTER_EXTRA_TIME) {
-            return [120, 99];
+            return [120, 999];
+        } else if (minute === GameMinute.KEY_PSO) {
+            return [121, 0];
         } else if (minute.indexOf(GameMinute.INDICATOR_STOPPAGE_TIME) < 0) {
             return [Number(minute), 0];
         } else {

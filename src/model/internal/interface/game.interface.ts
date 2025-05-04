@@ -28,6 +28,10 @@ export interface GameDaoInterface {
     penaltiesMissedOpponent: number;
     turnaroundsMain: number;
     turnaroundsOpponent: number;
+    ownGoalsMain: number;
+    ownGoalsOpponent: number;
+    directFreeKickGoalsMain: number;
+    directFreeKickGoalsOpponent: number;
     bicycleKickGoalsMain: number;
     bicycleKickGoalsOpponent: number;
     tablePositionMainBefore?: number;

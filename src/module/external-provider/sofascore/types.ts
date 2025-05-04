@@ -27,6 +27,9 @@ interface Venue {
         latitude: number;
         longitude: number;
     },
+    country: {
+        alpha2: string;
+    }
     hidden: boolean;
     name: string;
     capacity: number;
@@ -36,7 +39,8 @@ interface Venue {
     }
 }
 
-interface Team {
+export interface Team {
+    id: number;
     name: string;
     shortName: string;
     fullName: string;
@@ -44,6 +48,14 @@ interface Team {
         primary: string;
         secondary: string;
         text: string;
+    },
+    venue: {
+        city: {
+            name: string;
+        }
+    }
+    country: {
+        alpha2: string;
     }
 }
 
@@ -82,7 +94,7 @@ interface Event {
     startTimestamp: number;
 }
 
-interface TeamLineup {
+export interface TeamLineup {
     players: LineupPlayer[];
     formation: string;
     playerColor: ShirtColor;
@@ -101,29 +113,36 @@ interface LineupPlayer {
     }
 }
 
-interface GamePlayer {
-    id: string;
+export interface GamePlayer {
+    id: number;
     name: string;
-    firstName: string;
-    lastName: string;
     position: string;
     jerseyNumber: string;
 }
 
-interface Incident {
+export interface Incident {
     id: number;
     time: number;
+    addedTime?: number;
     isHome?: boolean;
     incidentType: string;
     incidentClass?: string;
     homeScore?: number;
     awayScore?: number;
     player?: GamePlayer;
+    manager?: Manager;
     playerIn?: GamePlayer;
     playerOut?: GamePlayer;
     assist1?: GamePlayer;
     rescinded?: boolean;
     reason?: string;
+    injury?: boolean;
+    length?: number;
+    footballPassingNetworkAction: {
+        eventType: string;
+        bodyPart: string;
+        goalType: string;
+    }[];
 }
 
 interface Manager {

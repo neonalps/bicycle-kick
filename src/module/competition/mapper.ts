@@ -1,10 +1,20 @@
 import { Sql } from "@src/db";
 import { Competition } from "@src/model/internal/competition";
 import { CompetitionDaoInterface } from "@src/model/internal/interface/competition.interface";
+import postgres from "postgres";
 
 export class CompetitionMapper {
 
     constructor(private readonly sql: Sql) {}
+
+    async create(create: Omit<Competition, 'id'>, tx?: postgres.TransactionSql): Promise<number> {
+        const query = tx || this.sql;
+        const result = await query`insert into competition ${ query(create, 'name', 'shortName', 'isDomestic', 'parentId', 'combineStatisticsWithParent') } returning id`;
+        if (result.length !== 1) {
+            throw new Error(`Failed to create competition`);
+        }
+        return result[0].id;
+    }
 
     async getById(id: number): Promise<Competition | null> {
         const result = await this.sql<CompetitionDaoInterface[]>`select * from competition where id = ${ id }`;

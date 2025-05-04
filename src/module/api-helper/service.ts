@@ -26,6 +26,8 @@ import {GameEventType} from "@src/model/external/dto/game-event-type";
 import { ApiConfig } from "@src/api/v1/config";
 import { BasicGameDto } from "@src/model/external/dto/basic-game";
 import { Game } from "@src/model/internal/game";
+import { Squad } from "@src/model/internal/squad";
+import { SquadMemberDto } from "@src/model/external/dto/squad-member";
 
 export class ApiHelperService {
 
@@ -88,7 +90,7 @@ export class ApiHelperService {
         });
     }
 
-    async getMultipleGamesWithDetails(gameIds: number[]): Promise<DetailedGameDto[]> {
+    async getOrderedDetailedGameDtos(gameIds: number[]): Promise<DetailedGameDto[]> {
         const [basicGameInformation, gameEventsMap, gamePlayersMap] = await Promise.all([
             this.gameService.getMultipleByIds(gameIds),
             this.gameEventService.getOrderedEventsForGamesMap(gameIds),
@@ -109,7 +111,7 @@ export class ApiHelperService {
             this.venueService.getMultipleByIds(venueIds),
         ]);
 
-        const result: DetailedGameDto[] = [];
+        const result = new Map<number, DetailedGameDto>();
         for (const game of basicGameInformation) {
             const competition = getOrThrow(competitionMap, game.competitionId, "competition not found in map");
             // TODO handle parent competition?
@@ -132,7 +134,7 @@ export class ApiHelperService {
             for (const gamePlayer of gamePlayers) {
                 const person = getOrThrow(personMap, gamePlayer.personId, "person not found in map");
                 const playerDto = this.convertGamePlayerToDto(gamePlayer, this.convertPersonToBasicDto(person));
-                if (gamePlayer.playsForMain) {
+                if (gamePlayer.forMain) {
                     if (gamePlayer.isStarting) {
                         mainTeamGameReport.starting.push(playerDto);
                     } else {
@@ -163,7 +165,7 @@ export class ApiHelperService {
                 }
             }
 
-            result.push({
+            result.set(game.id, {
                 id: game.id,
                 kickoff: game.kickoff,
                 season: this.convertSeasonToDto(season),
@@ -189,16 +191,32 @@ export class ApiHelperService {
                     opponent: opponentTeamGameReport,
                     events: gameEventDtos,
                 },
-                href: `/api/v1/games/${game.id}`,
+                // TODO use config
+                href: this.getFrontendResourceHref('game', getUrlSlug(game.id, `Sturm Graz vs ${opponent.shortName}`)),
             });
         }
-        return result;
+
+        return gameIds.map(gameId => getOrThrow(result, gameId, `Failed to find game details in result map for game ID ${gameId}`));
+    }
+
+    async getSquadDto(squad: Squad[]): Promise<SquadMemberDto[]> {
+        const playerIds = squad.map(item => item.personId);
+        const players = await this.personService.getMapByIds(playerIds);
+
+        return squad.map(item => {
+            return {
+                id: item.id,
+                player: this.convertPersonToBasicDto(getOrThrow(players, item.personId, `Failed to load squad member with player ID ${item.personId}`)),
+                shirt: item.shirt,
+                overallPosition: item.overallPosition,
+            }
+        });
     }
 
     private convertPersonToBasicDto(person: Person): BasicPersonDto {
         return {
             ...person,
-            href: `/api/v1/persons/${person.id}`,
+            href: this.getFrontendResourceHref('person', getUrlSlug(person.id, `${person.firstName} ${person.lastName}`)),
         }
     }
 
@@ -209,7 +227,7 @@ export class ApiHelperService {
             shortName: club.shortName,
             iconSmall: club.iconSmall,
             iconLarge: club.iconLarge,
-            href: `/api/v1/clubs/${club.id}`,
+            href: this.getFrontendResourceHref('club', getUrlSlug(club.id, club.name)),
         }
     }
 

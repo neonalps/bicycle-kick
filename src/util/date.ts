@@ -12,4 +12,8 @@ export class DateSource {
         return Math.floor(input.getTime() / 1000);
     }
 
+    getDateWithoutTime(input: Date): string {
+        return input.toISOString().slice(0, 10);
+    }
+
 }

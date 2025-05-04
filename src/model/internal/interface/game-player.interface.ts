@@ -2,9 +2,9 @@ export interface GamePlayerDaoInterface {
     id: number;
     gameId: number;
     personId: number;
-    shirtNo: number;
+    shirt: number;
     positionKey: string;
-    playsForMain: boolean;
+    forMain: boolean;
     isStarting: boolean;
     minutesPlayed: number;
     goalsScored: number;

@@ -1,3 +1,5 @@
+import { PrimitiveType, StringEnumType } from "@src/model/external/validation/types";
+
 export enum SortOrder {
     Ascending = "asc",
     Descending = "desc",
@@ -15,7 +17,7 @@ export interface PaginationQueryParams {
     order?: SortOrder;
 }
 
-export const PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES = {
+export const PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES: Record<string, PrimitiveType | StringEnumType> = {
     limit: { type: 'number' },
     order: { type: 'string', enum: [ SortOrder.Ascending, SortOrder.Descending ] },
     nextPageKey: { type: 'string' },

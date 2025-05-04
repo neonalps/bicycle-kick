@@ -21,6 +21,7 @@ export class MagicSearchRouteProvider implements RouteProvider<MagicSearchReques
                     inquiry: { type: 'string' },
                     channel: { type: 'string' },
                 },
+                additionalProperties: false,
             },
         };
 

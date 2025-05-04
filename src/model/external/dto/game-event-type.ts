@@ -1,7 +1,9 @@
 export enum GameEventType {
+    ExtraTime = "extraTime",
     Goal = "goal",
+    InjuryTime = "injuryTime",
     PenaltyMissed = "penaltyMissed",
-    PenaltySaved = "penaltySaved",
+    PenaltyShootOut = "pso",
     RedCard = "redCard",
     Substitution = "substitution",
     VarDecision = "varDecision",

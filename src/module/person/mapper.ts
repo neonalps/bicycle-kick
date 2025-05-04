@@ -1,11 +1,23 @@
 import { Sql } from "@src/db";
+import { CreatePerson } from "@src/model/internal/create-person";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { PersonDaoInterface } from "@src/model/internal/interface/person.interface";
 import { Person } from "@src/model/internal/person";
+import postgres from "postgres";
 
 export class PersonMapper {
 
     constructor(private readonly sql: Sql) {}
+
+    async create(createPerson: CreatePerson, tx?: postgres.TransactionSql): Promise<number> {
+        const query = tx || this.sql;
+        const result = await query`insert into person ${ query(createPerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday') } returning id`;
+        if (result.length !== 1) {
+            throw new Error(`Failed to insert person`);
+        }
+
+        return result[0].id;
+    }
 
     async getById(id: number): Promise<Person | null> {
         const result = await this.sql<PersonDaoInterface[]>`select * from person where id = ${ id }`;

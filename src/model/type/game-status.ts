@@ -3,4 +3,5 @@ export enum GameStatus {
     Scheduled = "Scheduled",
     Ongoing = "Ongoing",
     Abandoned = "Abandoned",
+    Postponed = "Postponed",
 }

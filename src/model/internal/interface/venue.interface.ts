@@ -6,6 +6,6 @@ export interface VenueDaoInterface {
     countryCode: string;
     district?: string;
     capacity: number;
-    locationLat?: number;
-    locationLng?: number;
+    latitude?: number;
+    longitude?: number;
 }

@@ -62,3 +62,11 @@ export function getUrlSlug(id: number, name: string): string {
 export function getSortOrderString(sortOrder: SortOrder): string {
     return sortOrder === SortOrder.Ascending ? "asc" : "desc";
 }
+
+export function requireSingleArrayElement<T>(array: T[], errorMessage?: string): T {
+    if (array === undefined || array === null || array.length !== 1) {
+        throw new Error(errorMessage || "Expected single array element");
+    }
+
+    return array[0];
+}

@@ -2,9 +2,15 @@ import { Sql } from "@src/db";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { GameEvent } from "@src/model/internal/game-event";
 import { GoalGameEvent } from "@src/model/internal/game-event-goal";
+import { InjuryTimeGameEvent } from "@src/model/internal/game-event-injury-time";
+import { RedCardGameEvent } from "@src/model/internal/game-event-red-card";
 import { SubstitutionGameEvent } from "@src/model/internal/game-event-substitution";
+import { YellowCardGameEvent } from "@src/model/internal/game-event-yellow-card";
+import { YellowRedCardGameEvent } from "@src/model/internal/game-event-yellow-red-card";
 import { GameMinute } from "@src/model/internal/game-minute";
 import { GameEventDaoInterface } from "@src/model/internal/interface/game-event.interface";
+import { BookableOffence } from "@src/model/type/bookable-offence";
+import { ExpulsionReason } from "@src/model/type/expulsion-reason";
 import { GoalType } from "@src/model/type/goal-type";
 
 export class GameEventMapper {
@@ -43,20 +49,28 @@ export class GameEventMapper {
     }
 
     private convertToEntity(item: GameEventDaoInterface): GameEvent {
-        switch (item.eventType as GameEventType) {
+        switch (item.type as GameEventType) {
             case GameEventType.Goal:
                 return this.convertGoalEvent(item);
             case GameEventType.Substitution:
                 return this.convertSubstitutionEvent(item);
+            case GameEventType.YellowCard:
+                return this.convertYellowCardEvent(item);
+            case GameEventType.YellowRedCard:
+                return this.convertYellowRedCardEvent(item);
+            case GameEventType.RedCard:
+                return this.convertRedCardEvent(item);
+            case GameEventType.InjuryTime:
+                return this.convertInjuryTimeEvent(item);
             default:
-                throw new Error(`Unhandled game event type ${item.eventType}`);
+                throw new Error(`Unhandled game event type ${item.type}`);
         }
     }
 
     private convertBaseEvent(item: GameEventDaoInterface): GameEvent {
         return {
             id: item.id,
-            eventType: item.eventType as GameEventType,
+            eventType: item.type as GameEventType,
             sortOrder: item.sortOrder,
             minute: new GameMinute(item.minute),
         };
@@ -65,24 +79,61 @@ export class GameEventMapper {
     private convertGoalEvent(item: GameEventDaoInterface): GoalGameEvent {
         return {
             ...this.convertBaseEvent(item),
-            scoredBy: item.scoredBy,
-            scoreMain: item.scoreMain,
-            scoreOpponent: item.scoreOpponent,
+            scoredBy: item.scoredBy as number,
+            scoreMain: item.scoreMain as number,
+            scoreOpponent: item.scoreOpponent as number,
             goalType: item.goalType as GoalType,
             assistBy: item.assistBy,
-            penalty: item.penalty,
-            ownGoal: item.ownGoal,
-            directFreeKick: item.directFreeKick,
-            bicycleKick: item.bicycleKick,
+            penalty: item.penalty as boolean,
+            ownGoal: item.ownGoal as boolean,
+            directFreeKick: item.directFreeKick as boolean,
+            bicycleKick: item.bicycleKick as boolean,
         }
     }
 
     private convertSubstitutionEvent(item: GameEventDaoInterface): SubstitutionGameEvent {
         return {
             ...this.convertBaseEvent(item),
-            playerOff: item.playerOff,
-            playerOn: item.playerOn,
+            playerOff: item.playerOff as number,
+            playerOn: item.playerOn as number,
             injured: item.injured,
+        }
+    }
+
+    private convertYellowCardEvent(item: GameEventDaoInterface): YellowCardGameEvent {
+        return {
+            ...this.convertBaseEvent(item),
+            affectedPlayer: item.affectedPlayer,
+            affectedManager: item.affectedManager,
+            reason: item.reason as BookableOffence,
+            notOnPitch: item.notOnPitch,
+        }
+    }
+
+    private convertYellowRedCardEvent(item: GameEventDaoInterface): YellowRedCardGameEvent {
+        return {
+            ...this.convertBaseEvent(item),
+            affectedPlayer: item.affectedPlayer,
+            affectedManager: item.affectedManager,
+            reason: item.reason as BookableOffence,
+            notOnPitch: item.notOnPitch,
+        }
+    }
+
+    private convertRedCardEvent(item: GameEventDaoInterface): RedCardGameEvent {
+        return {
+            ...this.convertBaseEvent(item),
+            affectedPlayer: item.affectedPlayer,
+            affectedManager: item.affectedManager,
+            reason: item.reason as ExpulsionReason,
+            notOnPitch: item.notOnPitch,
+        }
+    }
+
+    private convertInjuryTimeEvent(item: GameEventDaoInterface): InjuryTimeGameEvent {
+        return {
+            ...this.convertBaseEvent(item),
+            additionalMinutes: item.additionalMinutes as number,
         }
     }
 

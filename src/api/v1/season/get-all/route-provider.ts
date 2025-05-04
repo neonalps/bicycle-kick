@@ -22,6 +22,7 @@ export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRe
                 properties: {
                     ...PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES,
                 },
+                additionalProperties: false,
             },
         };
 

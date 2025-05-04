@@ -4,4 +4,5 @@ export interface Competition {
     shortName: string;
     isDomestic: boolean;
     parentId?: number;
+    combineStatisticsWithParent?: boolean;
 }

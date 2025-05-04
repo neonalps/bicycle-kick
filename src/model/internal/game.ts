@@ -29,8 +29,12 @@ export interface Game {
     penaltiesScoredOpponent: number;
     penaltiesMissedMain: number;
     penaltiesMissedOpponent: number;
+    ownGoalsMain: number;
+    ownGoalsOpponent: number;
     turnaroundsMain: number;
     turnaroundsOpponent: number;
+    directFreeKickGoalsMain: number;
+    directFreeKickGoalsOpponent: number;
     bicycleKickGoalsMain: number;
     bicycleKickGoalsOpponent: number;
     tablePositionMainBefore?: number;

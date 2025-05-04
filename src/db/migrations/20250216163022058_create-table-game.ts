@@ -49,19 +49,19 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'integer',
             notNull: false,
         },
-        ft_goals_main: {
+        full_time_goals_main: {
             type: 'smallint',
             notNull: false,
         },
-        ft_goals_opponent: {
+        full_time_goals_opponent: {
             type: 'smallint',
             notNull: false,
         },
-        ht_goals_main: {
+        half_time_goals_main: {
             type: 'smallint',
             notNull: false,
         },
-        ht_goals_opponent: {
+        half_time_goals_opponent: {
             type: 'smallint',
             notNull: false,
         },
@@ -118,6 +118,22 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: false,
         },
         turnarounds_opponent: {
+            type: 'smallint',
+            notNull: false,
+        },
+        own_goals_main: {
+            type: 'smallint',
+            notNull: false,
+        },
+        own_goals_opponent: {
+            type: 'smallint',
+            notNull: false,
+        },
+        direct_free_kick_goals_main: {
+            type: 'smallint',
+            notNull: false,
+        },
+        direct_free_kick_goals_opponent: {
             type: 'smallint',
             notNull: false,
         },
@@ -179,6 +195,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'smallint',
             notNull: false,
         },
+        is_neutral_ground: {
+            type: 'boolean',
+            notNull: true,
+            default: false,
+        },
         is_practice: {
             type: 'boolean',
             notNull: true,
@@ -188,11 +209,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'timestamptz',
             notNull: false,
         },
-        is_neutral_ground: {
-            type: 'boolean',
-            notNull: true,
-            default: false,
-        }
     });
 
     pgm.addIndex("game", ['kickoff'], { name: 'idx_game_kickoff' })

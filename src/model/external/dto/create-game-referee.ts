@@ -1,9 +1,8 @@
-import { ExternalPersonDto } from "./external-person";
+import { PersonInputDto } from "./person-input";
 import { RefereeRole } from "./referee-role";
 
 export interface CreateGameRefereeDto {
     sortOrder: number;
-    personId?: number;
+    person: PersonInputDto;
     role: RefereeRole;
-    externalPerson?: ExternalPersonDto;
 }

@@ -1,10 +1,20 @@
 import { Sql } from "@src/db";
 import { VenueDaoInterface } from "@src/model/internal/interface/venue.interface";
 import { Venue } from "@src/model/internal/venue";
+import postgres from "postgres";
 
 export class VenueMapper {
 
     constructor(private readonly sql: Sql) {}
+
+    async create(create: Omit<Venue, 'id'>, tx?: postgres.TransactionSql): Promise<number> {
+        const query = tx || this.sql;
+        const result = await query`insert into venue ${ query(create, 'name', 'shortName', 'capacity', 'city', 'countryCode', 'district', 'latitude', 'longitude') } returning id`;
+        if (result.length !== 1) {
+            throw new Error(`Failed to create venue`);
+        }
+        return result[0].id;
+    }
 
     async getById(id: number): Promise<Venue | null> {
         const result = await this.sql<VenueDaoInterface[]>`select * from venue where id = ${ id }`;

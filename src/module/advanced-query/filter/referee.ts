@@ -1,11 +1,11 @@
-import { OfficiatingType } from "@src/model/type/officiating-type";
+import { RefereeRole } from "@src/model/external/dto/referee-role";
 import { QueryContext } from "@src/module/advanced-query/context";
 import { Filter } from "@src/module/advanced-query/filter/base";
 import { addFromIfNotExists } from "@src/module/advanced-query/helper";
 
 export interface RefereeFilterPayload {
     id: number;
-    officiatingType?: OfficiatingType;
+    officiatingType?: RefereeRole;
 };
 
 export class RefereeFilter implements Filter { 

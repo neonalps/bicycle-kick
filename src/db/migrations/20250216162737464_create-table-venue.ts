@@ -29,11 +29,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'integer',
             notNull: true
         },
-        location_lat: {
+        latitude: {
             type: 'numeric',
             notNull: false,
         },
-        location_lng: {
+        longitude: {
             type: 'numeric',
             notNull: false,
         },

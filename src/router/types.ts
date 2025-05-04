@@ -1,4 +1,5 @@
 import { HttpMethod } from "@src/http/constants";
+import { ObjectType } from "@src/model/external/validation/types";
 import { Account } from "@src/model/internal/account";
 import { FastifySchema } from "fastify";
 
@@ -11,7 +12,7 @@ export type RouteDefinition<S, T> = {
     name?: string,
     path: string,
     method: HttpMethod,
-    schema: FastifySchema,
+    schema: RequestSchema,
     handler: RouteHandler<S, T>,
     authenticated: boolean,
     response?: ResponseSchema,
@@ -28,9 +29,9 @@ export interface RouteHandler<S, T> {
 }
 
 export type RequestSchema = {
-    body?: unknown
-    params?: unknown,
-    querystring?: unknown,
+    body?: ObjectType,
+    params?: ObjectType,
+    querystring?: ObjectType,
 }
 
 export type ResponseSchema = {

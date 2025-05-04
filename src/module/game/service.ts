@@ -1,12 +1,15 @@
 import { Game } from "@src/model/internal/game";
 import { GameMapper } from "./mapper";
 import { validateNotNull } from "@src/util/validation";
-import { SortOrder } from "@src/module/pagination/constants";
-import { GetSeasonGamesPaginationParams } from "../season/service";
+import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
+import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
 
 export class GameService {
 
-    constructor(private readonly mapper: GameMapper) {}
+    constructor(
+        private readonly mapper: GameMapper,
+        private readonly seasonService: SeasonService,
+    ) {}
 
     async getById(id: number): Promise<Game | null> {
         validateNotNull(id, "id");
@@ -30,7 +33,35 @@ export class GameService {
         validateNotNull(params.limit, "params.limit");
         validateNotNull(params.order, "params.order");
 
-        return await this.mapper.getOrderedSeasonGamesPaginated(seasonId, params.lastSeen, params.limit, params.order);
+        const season = await this.seasonService.getById(seasonId);
+        if (season === null) {
+            throw new Error(`No sesaon with ID ${seasonId} exists`);
+        }
+
+        return await this.mapper.getOrderedSeasonGamesPaginated(season.id, params.lastSeen, params.limit, params.order);
+    }
+
+    async create(dto: CreateGameRequestDto): Promise<Game> {
+        validateNotNull(dto, "dto");
+        validateNotNull(dto.kickoff, "dto.kickoff");
+
+        const season = await this.seasonService.getForDate(dto.kickoff);
+        if (season === null) {
+            throw new Error(`No season found for kickoff date ${dto.kickoff}`);
+        }
+
+        const createdGameId = await this.mapper.create({
+            ...dto,
+            seasonId: season.id,
+            isPractice: dto.isPractice ?? false,
+            isNeutralGround: dto.isNeutralGround ?? false,
+        });
+
+        const createdGame = await this.getById(createdGameId);
+        if (createdGame === null) {
+            throw new Error(`Failed to create new game`);
+        }
+        return createdGame;
     }
 
 }

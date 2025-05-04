@@ -3,7 +3,7 @@ import { GameEvent } from "./game-event";
 
 export interface GoalGameEvent extends GameEvent {
     scoredBy: number;
-    assistBy: number;
+    assistBy?: number;
     scoreMain: number;
     scoreOpponent: number;
     goalType: GoalType;

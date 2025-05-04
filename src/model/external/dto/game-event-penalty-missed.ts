@@ -1,7 +1,9 @@
-import { BasicPersonDto } from "./basic-person";
 import { GameEventDto } from "./game-event";
+import { PersonInputDto } from "./person-input";
 
 export interface PenaltyMissedGameEventDto extends GameEventDto {
-    penaltyTaker: BasicPersonDto;
-    reason: 'post' | 'crossbar' | 'wide' | 'high';
+    takenBy: PersonInputDto;
+    goalkeeper: PersonInputDto;
+    saved: boolean;
+    missReason: 'post' | 'crossbar' | 'wide' | 'high';
 }

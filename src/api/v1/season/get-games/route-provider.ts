@@ -20,8 +20,9 @@ export class GetSeasonGamesRouteProvider implements RouteProvider<GetSeasonGames
                 type: 'object',
                 required: ['seasonId'],
                 properties: {
-                    seasonId: { type: 'string' }
+                    seasonId: { type: 'string' },
                 },
+                additionalProperties: false,
             },
             querystring: {
                 type: 'object',
@@ -29,6 +30,7 @@ export class GetSeasonGamesRouteProvider implements RouteProvider<GetSeasonGames
                 properties: {
                     ...PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES,
                 },
+                additionalProperties: false,
             },
         };
 

@@ -1,8 +1,9 @@
 import {BookableOffence} from "@src/model/type/bookable-offence";
-import {BasicPersonDto} from "./basic-person";
 import {GameEventDto} from "./game-event";
+import { PersonInputDto } from "./person-input";
 
 export interface YellowCardGameEventDto extends GameEventDto {
-    player: BasicPersonDto;
+    affectedPlayer?: PersonInputDto;
+    affectedManager?: PersonInputDto;
     reason?: BookableOffence;
 }

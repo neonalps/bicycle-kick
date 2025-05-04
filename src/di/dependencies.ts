@@ -15,6 +15,8 @@ export enum Dependencies {
     PersonService,
     ProfileService,
     SeasonService,
+    SofascoreGameProvider,
+    SquadService,
     TimeSource,
     UuidSource,
     VenueService,

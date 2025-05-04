@@ -1,8 +1,9 @@
 import { ExpulsionReason } from "@src/model/type/expulsion-reason";
-import { BasicPersonDto } from "./basic-person";
 import { GameEventDto } from "./game-event";
+import { PersonInputDto } from "./person-input";
 
 export interface RedCardGameEventDto extends GameEventDto {
-    player: BasicPersonDto;
+    affectedPlayer?: PersonInputDto;
+    affectedManager?: PersonInputDto;
     reason?: ExpulsionReason;
 }

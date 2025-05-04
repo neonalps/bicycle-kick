@@ -3,7 +3,7 @@ import { FilterProvider } from "@src/module/advanced-query/provider/base";
 import { collectResolvedIds } from "@src/module/advanced-query/helper";
 import { RefereeFilter } from "@src/module/advanced-query/filter/referee";
 import { ParameterName } from "@src/module/advanced-query/scenario/constants";
-import { OfficiatingType } from "@src/model/type/officiating-type";
+import { RefereeRole } from "@src/model/external/dto/referee-role";
 
 export class RefereeFilterProvider implements FilterProvider<RefereeFilter> {
     
@@ -15,7 +15,7 @@ export class RefereeFilterProvider implements FilterProvider<RefereeFilter> {
 
         const officiatingTypeParameter = descriptor.parameters.find(parameter => parameter.name === ParameterName.OfficiatingType);
         if (officiatingTypeParameter !== undefined) {
-            return new RefereeFilter({ id: resolvedIds[0], officiatingType: officiatingTypeParameter.value[0] as OfficiatingType });
+            return new RefereeFilter({ id: resolvedIds[0], officiatingType: officiatingTypeParameter.value[0] as RefereeRole });
         }
 
         return new RefereeFilter({ id: resolvedIds[0] });

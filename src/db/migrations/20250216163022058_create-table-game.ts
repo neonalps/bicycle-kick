@@ -8,6 +8,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         kickoff: {
             type: 'timestamptz',
             notNull: true,
+            unique: true,
         },
         opponent_id: {
             type: 'integer',

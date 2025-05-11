@@ -136,8 +136,10 @@ export interface Incident {
     assist1?: GamePlayer;
     rescinded?: boolean;
     reason?: string;
+    description?: string;
     injury?: boolean;
     length?: number;
+    sequence?: number;
     footballPassingNetworkAction: {
         eventType: string;
         bodyPart: string;

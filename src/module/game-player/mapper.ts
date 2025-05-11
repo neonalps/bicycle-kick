@@ -16,7 +16,7 @@ export class GamePlayerMapper {
     }
 
     async getPlayersForGamesMap(gameIds: number[]): Promise<Map<number, GamePlayer[]>> {
-        const result = await this.sql<GamePlayerDaoInterface[]>`select * from game_players where game_id in ${ this.sql(gameIds) }`;
+        const result = await this.sql<GamePlayerDaoInterface[]>`select * from game_players where game_id in ${ this.sql(gameIds) } order by game_id, sort_order`;
         if (result.length === 0) {
             return new Map();
         }

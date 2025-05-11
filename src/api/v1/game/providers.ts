@@ -9,6 +9,8 @@ import { GameService } from "@src/module/game/service";
 import { DeleteGameByIdRouteProvider } from "./delete-by-id/route-provider";
 import { DeleteGameByIdRouteHandler } from "./delete-by-id/handler";
 import { PermissionService } from "@src/module/permission/service";
+import { GetGameByIdRouteHandler } from "./get-by-id/handler";
+import { GetGameByIdRouteProvider } from "./get-by-id/route-provider";
 
 export function getGameRouteProviders(): RouteProvider<any, any>[] {
 
@@ -18,10 +20,12 @@ export function getGameRouteProviders(): RouteProvider<any, any>[] {
     const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
 
     const createGameViaExternalProviderHandler = new CreateGameViaExternalProviderRouteHandler(apiHelperService, sofascoreGameProvider, gameService);
+    const getGameByIdHandler = new GetGameByIdRouteHandler(apiHelperService, gameService, permissionService);
     const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(gameService, permissionService);
 
     return [
         new CreateGameViaExternalProviderRouteProvider(createGameViaExternalProviderHandler),
+        new GetGameByIdRouteProvider(getGameByIdHandler),
         new DeleteGameByIdRouteProvider(deleteGameByIdHandler),
     ];
 }

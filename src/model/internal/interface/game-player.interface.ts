@@ -3,8 +3,10 @@ export interface GamePlayerDaoInterface {
     gameId: number;
     personId: number;
     shirt: number;
-    positionKey: string;
+    positionKey?: string;
+    positionGrid?: number;
     forMain: boolean;
+    sortOrder: number;
     isStarting: boolean;
     minutesPlayed: number;
     goalsScored: number;

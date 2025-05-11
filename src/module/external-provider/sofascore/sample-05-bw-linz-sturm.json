@@ -1,0 +1,3210 @@
+{
+    "home": {
+        "players": [
+            {
+                "player": {
+                    "name": "Radek Vitek",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "vitek-radek",
+                    "shortName": "R. V\u00edtek",
+                    "position": "G",
+                    "jerseyNumber": "1",
+                    "height": 198,
+                    "userCount": 694,
+                    "id": 1101989,
+                    "country": {
+                        "alpha2": "CZ",
+                        "alpha3": "CZE",
+                        "name": "Czechia",
+                        "slug": "czechia"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1066953600,
+                    "proposedMarketValueRaw": {
+                        "value": 725000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0641\u064a\u062a\u0643\u060c \u0631\u0627\u062f\u064a\u0643",
+                            "hi": "\u0935\u093f\u091f\u0947\u0915, \u0930\u093e\u0921\u0947\u0915",
+                            "bn": "\u09ad\u09bf\u099f\u09c7\u0995, \u09b0\u09be\u09a6\u09c7\u0995"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0631. \u0641\u064a\u062a\u0643",
+                            "hi": "\u0906\u0930. \u0935\u093f\u091f\u0947\u0915",
+                            "bn": "\u0986\u09b0. \u09ad\u09bf\u099f\u09c7\u0995"
+                        }
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 1,
+                "jerseyNumber": "1",
+                "position": "G",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 31,
+                    "accuratePass": 18,
+                    "totalLongBalls": 18,
+                    "accurateLongBalls": 5,
+                    "goalAssist": 0,
+                    "aerialWon": 1,
+                    "duelWon": 1,
+                    "totalClearance": 1,
+                    "goodHighClaim": 1,
+                    "savedShotsFromInsideTheBox": 3,
+                    "saves": 3,
+                    "minutesPlayed": 90,
+                    "touches": 41,
+                    "rating": 7,
+                    "possessionLostCtrl": 13,
+                    "ratingVersions": {
+                        "original": 7,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Alem Pa\u0161i\u0107",
+                    "slug": "alem-pasic",
+                    "shortName": "A. Pa\u0161i\u0107",
+                    "position": "D",
+                    "jerseyNumber": "17",
+                    "height": 194,
+                    "userCount": 6,
+                    "id": 940276,
+                    "country": {
+                        "alpha2": "SI",
+                        "alpha3": "SVN",
+                        "name": "Slovenia",
+                        "slug": "slovenia"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 872294400,
+                    "proposedMarketValueRaw": {
+                        "value": 475000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 17,
+                "jerseyNumber": "17",
+                "position": "D",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 27,
+                    "accuratePass": 19,
+                    "totalLongBalls": 4,
+                    "accurateLongBalls": 1,
+                    "goalAssist": 0,
+                    "aerialLost": 1,
+                    "aerialWon": 4,
+                    "duelLost": 3,
+                    "duelWon": 8,
+                    "totalClearance": 5,
+                    "outfielderBlock": 2,
+                    "totalTackle": 3,
+                    "wasFouled": 1,
+                    "fouls": 2,
+                    "minutesPlayed": 90,
+                    "touches": 44,
+                    "rating": 7.1,
+                    "possessionLostCtrl": 11,
+                    "keyPass": 1,
+                    "ratingVersions": {
+                        "original": 7.1,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Manuel Maranda",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "manuel-maranda",
+                    "shortName": "M. Maranda",
+                    "position": "D",
+                    "jerseyNumber": "15",
+                    "height": 188,
+                    "userCount": 19,
+                    "id": 827461,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 868406400,
+                    "proposedMarketValueRaw": {
+                        "value": 550000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 15,
+                "jerseyNumber": "15",
+                "position": "D",
+                "substitute": false,
+                "captain": true,
+                "statistics": {
+                    "totalPass": 60,
+                    "accuratePass": 53,
+                    "totalLongBalls": 9,
+                    "accurateLongBalls": 6,
+                    "goalAssist": 0,
+                    "aerialLost": 2,
+                    "aerialWon": 1,
+                    "duelLost": 4,
+                    "duelWon": 4,
+                    "challengeLost": 2,
+                    "totalClearance": 10,
+                    "totalTackle": 3,
+                    "minutesPlayed": 90,
+                    "touches": 80,
+                    "rating": 7.1,
+                    "possessionLostCtrl": 9,
+                    "ratingVersions": {
+                        "original": 7.1,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Martin Moormann",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "martin-moormann",
+                    "shortName": "M. Moormann",
+                    "position": "D",
+                    "jerseyNumber": "16",
+                    "height": 185,
+                    "userCount": 37,
+                    "id": 918415,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 988588800,
+                    "proposedMarketValueRaw": {
+                        "value": 515000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0645\u0627\u0631\u062a\u0646 \u0645\u0648\u0631\u0645\u0627\u0646",
+                            "hi": "\u092e\u093e\u0930\u094d\u091f\u093f\u0928 \u092e\u0942\u0930\u092e\u0928",
+                            "bn": "\u09ae\u09be\u09b0\u09cd\u099f\u09bf\u09a8 \u09ae\u09c1\u09b0\u09ae\u09cd\u09af\u09be\u09a8"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0645. \u0645\u0648\u0631\u0645\u0627\u0646",
+                            "hi": "\u090f\u092e. \u092e\u0942\u0930\u092e\u0928",
+                            "bn": "\u098f\u09ae. \u09ae\u09c1\u09b0\u09ae\u09cd\u09af\u09be\u09a8"
+                        }
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 16,
+                "jerseyNumber": "16",
+                "position": "D",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 53,
+                    "accuratePass": 44,
+                    "totalLongBalls": 13,
+                    "accurateLongBalls": 7,
+                    "goalAssist": 0,
+                    "totalCross": 2,
+                    "aerialWon": 4,
+                    "duelLost": 4,
+                    "duelWon": 8,
+                    "challengeLost": 3,
+                    "totalClearance": 15,
+                    "outfielderBlock": 1,
+                    "interceptionWon": 3,
+                    "totalTackle": 2,
+                    "errorLeadToAShot": 1,
+                    "wasFouled": 2,
+                    "fouls": 1,
+                    "minutesPlayed": 90,
+                    "touches": 84,
+                    "rating": 7.4,
+                    "possessionLostCtrl": 12,
+                    "ratingVersions": {
+                        "original": 7.4,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Anderson",
+                    "slug": "anderson",
+                    "shortName": "Anderson",
+                    "position": "M",
+                    "jerseyNumber": "28",
+                    "height": 184,
+                    "userCount": 66,
+                    "id": 980464,
+                    "country": {
+                        "alpha2": "BR",
+                        "alpha3": "BRA",
+                        "name": "Brazil",
+                        "slug": "brazil"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 883785600,
+                    "proposedMarketValueRaw": {
+                        "value": 730000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 28,
+                "jerseyNumber": "28",
+                "position": "M",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 28,
+                    "accuratePass": 14,
+                    "totalLongBalls": 3,
+                    "accurateLongBalls": 1,
+                    "goalAssist": 0,
+                    "totalCross": 2,
+                    "aerialWon": 1,
+                    "duelLost": 2,
+                    "duelWon": 6,
+                    "dispossessed": 1,
+                    "totalClearance": 1,
+                    "interceptionWon": 1,
+                    "totalTackle": 4,
+                    "wasFouled": 1,
+                    "fouls": 1,
+                    "minutesPlayed": 90,
+                    "touches": 54,
+                    "rating": 6.8,
+                    "possessionLostCtrl": 22,
+                    "ratingVersions": {
+                        "original": 6.8,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Soumaila Diabate",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "diabate-soumaila",
+                    "shortName": "S. Diabate",
+                    "position": "M",
+                    "jerseyNumber": "18",
+                    "height": 168,
+                    "userCount": 147,
+                    "id": 1468564,
+                    "country": {
+                        "alpha2": "ML",
+                        "alpha3": "MLI",
+                        "name": "Mali",
+                        "slug": "mali"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1101081600,
+                    "proposedMarketValueRaw": {
+                        "value": 935000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 18,
+                "jerseyNumber": "18",
+                "position": "M",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 28,
+                    "accuratePass": 25,
+                    "totalLongBalls": 1,
+                    "goalAssist": 0,
+                    "aerialLost": 2,
+                    "aerialWon": 3,
+                    "duelLost": 7,
+                    "duelWon": 7,
+                    "challengeLost": 1,
+                    "dispossessed": 2,
+                    "totalClearance": 6,
+                    "outfielderBlock": 2,
+                    "interceptionWon": 5,
+                    "totalTackle": 3,
+                    "wasFouled": 1,
+                    "fouls": 2,
+                    "minutesPlayed": 79,
+                    "touches": 50,
+                    "rating": 7.1,
+                    "possessionLostCtrl": 6,
+                    "ratingVersions": {
+                        "original": 7.1,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Alexander Briedl",
+                    "slug": "briedl-alexander",
+                    "shortName": "A. Briedl",
+                    "position": "M",
+                    "jerseyNumber": "19",
+                    "height": 180,
+                    "userCount": 27,
+                    "id": 1105690,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1019347200,
+                    "proposedMarketValueRaw": {
+                        "value": 825000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 19,
+                "jerseyNumber": "19",
+                "position": "M",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 36,
+                    "accuratePass": 32,
+                    "totalLongBalls": 3,
+                    "goalAssist": 0,
+                    "totalCross": 4,
+                    "accurateCross": 1,
+                    "aerialLost": 1,
+                    "duelLost": 2,
+                    "duelWon": 5,
+                    "dispossessed": 1,
+                    "totalContest": 1,
+                    "wonContest": 1,
+                    "totalClearance": 1,
+                    "interceptionWon": 1,
+                    "totalTackle": 4,
+                    "minutesPlayed": 90,
+                    "touches": 57,
+                    "rating": 7.2,
+                    "possessionLostCtrl": 9,
+                    "ratingVersions": {
+                        "original": 7.2,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Simon Pirkl",
+                    "slug": "simon-pirkl",
+                    "shortName": "S. Pirkl",
+                    "position": "M",
+                    "jerseyNumber": "60",
+                    "height": 176,
+                    "userCount": 16,
+                    "id": 355496,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 860025600,
+                    "proposedMarketValueRaw": {
+                        "value": 600000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 60,
+                "jerseyNumber": "60",
+                "position": "M",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 17,
+                    "accuratePass": 9,
+                    "totalLongBalls": 9,
+                    "accurateLongBalls": 2,
+                    "goalAssist": 0,
+                    "totalCross": 3,
+                    "accurateCross": 1,
+                    "aerialLost": 1,
+                    "aerialWon": 1,
+                    "duelLost": 3,
+                    "duelWon": 3,
+                    "totalContest": 1,
+                    "totalClearance": 4,
+                    "totalTackle": 1,
+                    "wasFouled": 1,
+                    "fouls": 1,
+                    "minutesPlayed": 63,
+                    "touches": 34,
+                    "rating": 6.6,
+                    "possessionLostCtrl": 11,
+                    "keyPass": 2,
+                    "ratingVersions": {
+                        "original": 6.6,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Simon Seidl",
+                    "firstName": "Simon Seidl",
+                    "lastName": "",
+                    "slug": "simon-seidl",
+                    "shortName": "S. Seidl",
+                    "position": "F",
+                    "jerseyNumber": "20",
+                    "height": 172,
+                    "userCount": 37,
+                    "id": 1131565,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1031097600,
+                    "proposedMarketValueRaw": {
+                        "value": 1100000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 20,
+                "jerseyNumber": "20",
+                "position": "F",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 17,
+                    "accuratePass": 15,
+                    "goalAssist": 0,
+                    "aerialLost": 3,
+                    "duelLost": 6,
+                    "duelWon": 6,
+                    "dispossessed": 1,
+                    "totalContest": 1,
+                    "bigChanceMissed": 1,
+                    "shotOffTarget": 3,
+                    "hitWoodwork": 1,
+                    "totalClearance": 1,
+                    "totalTackle": 4,
+                    "wasFouled": 2,
+                    "fouls": 1,
+                    "totalOffside": 1,
+                    "minutesPlayed": 63,
+                    "touches": 36,
+                    "rating": 6.8,
+                    "possessionLostCtrl": 7,
+                    "ratingVersions": {
+                        "original": 6.8,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Kristijan Dobra\u0161",
+                    "slug": "kristijan-dobras",
+                    "shortName": "K. Dobra\u0161",
+                    "position": "M",
+                    "jerseyNumber": "30",
+                    "height": 175,
+                    "userCount": 15,
+                    "id": 164089,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 718588800,
+                    "proposedMarketValueRaw": {
+                        "value": 265000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 30,
+                "jerseyNumber": "30",
+                "position": "F",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 35,
+                    "accuratePass": 25,
+                    "totalLongBalls": 7,
+                    "accurateLongBalls": 5,
+                    "goalAssist": 0,
+                    "totalCross": 6,
+                    "accurateCross": 1,
+                    "duelLost": 2,
+                    "duelWon": 3,
+                    "dispossessed": 1,
+                    "totalContest": 2,
+                    "wonContest": 1,
+                    "bigChanceCreated": 1,
+                    "totalTackle": 2,
+                    "minutesPlayed": 90,
+                    "touches": 54,
+                    "rating": 7.3,
+                    "possessionLostCtrl": 21,
+                    "keyPass": 2,
+                    "ratingVersions": {
+                        "original": 7.3,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Ronivaldo",
+                    "slug": "ronivaldo",
+                    "shortName": "Ronivaldo",
+                    "position": "F",
+                    "jerseyNumber": "9",
+                    "height": 173,
+                    "userCount": 324,
+                    "id": 314304,
+                    "country": {
+                        "alpha2": "BR",
+                        "alpha3": "BRA",
+                        "name": "Brazil",
+                        "slug": "brazil"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 606700800,
+                    "proposedMarketValueRaw": {
+                        "value": 320000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 9,
+                "jerseyNumber": "9",
+                "position": "F",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 22,
+                    "accuratePass": 16,
+                    "goalAssist": 0,
+                    "aerialLost": 6,
+                    "aerialWon": 3,
+                    "duelLost": 9,
+                    "duelWon": 4,
+                    "dispossessed": 2,
+                    "shotOffTarget": 1,
+                    "totalClearance": 4,
+                    "totalTackle": 1,
+                    "fouls": 2,
+                    "totalOffside": 1,
+                    "minutesPlayed": 79,
+                    "touches": 35,
+                    "rating": 6.7,
+                    "possessionLostCtrl": 10,
+                    "ratingVersions": {
+                        "original": 6.7,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Julian G\u00f6lles",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "julian-golles",
+                    "shortName": "J. G\u00f6lles",
+                    "position": "D",
+                    "jerseyNumber": "14",
+                    "height": 188,
+                    "userCount": 16,
+                    "id": 858869,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 937958400,
+                    "proposedMarketValueRaw": {
+                        "value": 265000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 14,
+                "jerseyNumber": "14",
+                "position": "D",
+                "substitute": true,
+                "statistics": {
+                    "totalPass": 10,
+                    "accuratePass": 8,
+                    "totalLongBalls": 1,
+                    "accurateLongBalls": 1,
+                    "goalAssist": 0,
+                    "aerialLost": 1,
+                    "duelLost": 5,
+                    "challengeLost": 1,
+                    "dispossessed": 2,
+                    "shotOffTarget": 1,
+                    "totalClearance": 1,
+                    "fouls": 1,
+                    "minutesPlayed": 27,
+                    "touches": 17,
+                    "rating": 6.4,
+                    "possessionLostCtrl": 5,
+                    "ratingVersions": {
+                        "original": 6.4,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Conor No\u00df",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "conor-noss",
+                    "shortName": "C. No\u00df",
+                    "position": "M",
+                    "jerseyNumber": "7",
+                    "height": 181,
+                    "userCount": 88,
+                    "id": 990249,
+                    "country": {
+                        "alpha2": "IE",
+                        "alpha3": "IRL",
+                        "name": "Ireland",
+                        "slug": "ireland"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 978307200,
+                    "proposedMarketValueRaw": {
+                        "value": 370000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0643\u0648\u0646\u0648\u0631 \u0646\u0648\u0633",
+                            "hi": "\u0915\u094b\u0928\u094b\u0930 \u0928\u094b\u0938",
+                            "bn": "\u0995\u09a8\u09b0 \u09a8\u09cb\u09b8"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0643. \u0646\u0648\u0633",
+                            "hi": "\u0938\u0940. \u0928\u094b\u0938",
+                            "bn": "\u09b8\u09bf. \u09a8\u09cb\u09b8"
+                        }
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 7,
+                "jerseyNumber": "7",
+                "position": "M",
+                "substitute": true,
+                "statistics": {
+                    "totalPass": 9,
+                    "accuratePass": 7,
+                    "goalAssist": 0,
+                    "minutesPlayed": 27,
+                    "touches": 12,
+                    "rating": 6.6,
+                    "possessionLostCtrl": 3,
+                    "ratingVersions": {
+                        "original": 6.6,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Elias Bakatukanda",
+                    "firstName": "Elias Bakatukanda",
+                    "lastName": "",
+                    "slug": "bakatukanda-elias",
+                    "shortName": "E. Bakatukanda",
+                    "position": "D",
+                    "jerseyNumber": "4",
+                    "height": 193,
+                    "userCount": 80,
+                    "id": 1146120,
+                    "country": {
+                        "alpha2": "DE",
+                        "alpha3": "DEU",
+                        "name": "Germany",
+                        "slug": "germany"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1081814400,
+                    "proposedMarketValueRaw": {
+                        "value": 260000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0628\u0627\u0643\u0627\u062a\u0648\u0643\u0627\u0646\u062f\u0627\u060c \u0625\u0644\u064a\u0627\u0633",
+                            "hi": "\u092c\u0915\u093e\u091f\u0941\u0915\u093e\u0902\u0921\u093e, \u090f\u0932\u093f\u092f\u093e\u0938",
+                            "bn": "\u09ac\u0995\u09be\u099f\u09c1\u0995\u09be\u09a8\u09cd\u09a6\u09be, \u0987\u09b2\u09bf\u09af\u09bc\u09be\u09b8"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0625. \u0628\u0627\u0643\u0627\u062a\u0648\u0643\u0627\u0646\u062f\u0627",
+                            "hi": "\u0908. \u092c\u0915\u093e\u091f\u0941\u0915\u093e\u0902\u0921\u093e",
+                            "bn": "\u0987. \u09ac\u0995\u09be\u099f\u09c1\u0995\u09be\u09a8\u09cd\u09a6\u09be"
+                        }
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 4,
+                "jerseyNumber": "4",
+                "position": "D",
+                "substitute": true,
+                "statistics": {
+                    "totalPass": 12,
+                    "accuratePass": 12,
+                    "goalAssist": 0,
+                    "totalCross": 1,
+                    "aerialLost": 1,
+                    "duelLost": 1,
+                    "interceptionWon": 1,
+                    "minutesPlayed": 11,
+                    "touches": 15,
+                    "rating": 6.7,
+                    "possessionLostCtrl": 1,
+                    "ratingVersions": {
+                        "original": 6.7,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Alexander Schmidt",
+                    "slug": "alexander-schmidt",
+                    "shortName": "A. Schmidt",
+                    "position": "F",
+                    "jerseyNumber": "13",
+                    "height": 193,
+                    "userCount": 78,
+                    "id": 842499,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 885168000,
+                    "proposedMarketValueRaw": {
+                        "value": 290000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0627\u0644\u0643\u0633\u0646\u062f\u0631 \u0634\u0645\u064a\u062f\u062a",
+                            "hi": "\u0905\u0932\u0947\u0915\u094d\u091c\u0947\u0902\u0921\u0930 \u0936\u094d\u092e\u093f\u091f",
+                            "bn": "\u0986\u09b2\u09c7\u0995\u099c\u09be\u09a8\u09cd\u09a1\u09be\u09b0 \u09b6\u09cd\u09ae\u09bf\u099f"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0627. \u0634\u0645\u064a\u062f\u062a",
+                            "hi": "\u090f. \u0936\u094d\u092e\u093f\u091f",
+                            "bn": "\u098f. \u09b6\u09cd\u09ae\u09bf\u099f"
+                        }
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 13,
+                "jerseyNumber": "13",
+                "position": "F",
+                "substitute": true,
+                "statistics": {
+                    "totalPass": 4,
+                    "accuratePass": 2,
+                    "totalLongBalls": 1,
+                    "accurateLongBalls": 1,
+                    "goalAssist": 0,
+                    "duelLost": 2,
+                    "duelWon": 1,
+                    "dispossessed": 2,
+                    "totalContest": 1,
+                    "wonContest": 1,
+                    "shotOffTarget": 1,
+                    "minutesPlayed": 11,
+                    "touches": 10,
+                    "rating": 6.7,
+                    "possessionLostCtrl": 4,
+                    "ratingVersions": {
+                        "original": 6.7,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Thomas Turner",
+                    "slug": "thomas-turner",
+                    "shortName": "T. Turner",
+                    "position": "G",
+                    "jerseyNumber": "24",
+                    "height": 191,
+                    "userCount": 3,
+                    "id": 940297,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 888883200,
+                    "proposedMarketValueRaw": {
+                        "value": 145000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 24,
+                "jerseyNumber": "24",
+                "position": "G",
+                "substitute": true,
+                "statistics": {}
+            },
+            {
+                "player": {
+                    "name": "Fabio Strauss",
+                    "slug": "fabio-strauss",
+                    "shortName": "F. Strauss",
+                    "position": "D",
+                    "jerseyNumber": "2",
+                    "height": 195,
+                    "userCount": 15,
+                    "id": 335863,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 776131200,
+                    "proposedMarketValueRaw": {
+                        "value": 325000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 2,
+                "jerseyNumber": "2",
+                "position": "D",
+                "substitute": true,
+                "statistics": {}
+            },
+            {
+                "player": {
+                    "name": "Oliver Wahling",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "oliver-wahling",
+                    "shortName": "O. Wahling",
+                    "position": "M",
+                    "jerseyNumber": "8",
+                    "height": 183,
+                    "userCount": 11,
+                    "id": 939666,
+                    "country": {
+                        "alpha2": "DE",
+                        "alpha3": "DEU",
+                        "name": "Germany",
+                        "slug": "germany"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 936576000,
+                    "proposedMarketValueRaw": {
+                        "value": 120000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2113,
+                "shirtNumber": 8,
+                "jerseyNumber": "8",
+                "position": "M",
+                "substitute": true,
+                "statistics": {}
+            }
+        ],
+        "supportStaff": [],
+        "formation": "3-4-2-1",
+        "playerColor": {
+            "primary": "0043b3",
+            "number": "ffffff",
+            "outline": "0043b3",
+            "fancyNumber": "ffffff"
+        },
+        "goalkeeperColor": {
+            "primary": "e21313",
+            "number": "000000",
+            "outline": "e21313",
+            "fancyNumber": "ffffff"
+        }
+    },
+    "away": {
+        "players": [
+            {
+                "player": {
+                    "name": "Kjell Scherpen",
+                    "slug": "kjell-scherpen",
+                    "shortName": "K. Scherpen",
+                    "position": "G",
+                    "jerseyNumber": "1",
+                    "height": 205,
+                    "userCount": 486,
+                    "id": 852394,
+                    "country": {
+                        "alpha2": "NL",
+                        "alpha3": "NLD",
+                        "name": "Netherlands",
+                        "slug": "netherlands"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 948585600,
+                    "proposedMarketValueRaw": {
+                        "value": 3800000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0643\u064a\u064a\u0644 \u0634\u064a\u0631\u0628\u064a\u0646",
+                            "hi": "\u0915\u0947\u091c\u0947\u0932 \u0936\u0947\u0930\u092a\u0947\u0928",
+                            "bn": "\u0995\u09c7\u099c\u09c7\u09b2 \u09b6\u09c7\u09b0\u09aa\u09c7\u09a8"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0643. \u0634\u064a\u0631\u0628\u064a\u0646",
+                            "hi": "\u0915\u0947. \u0936\u0947\u0930\u092a\u0947\u0928",
+                            "bn": "\u0995\u09c7. \u09b6\u09c7\u09b0\u09aa\u09c7\u09a8"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 1,
+                "jerseyNumber": "1",
+                "position": "G",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 26,
+                    "accuratePass": 13,
+                    "totalLongBalls": 15,
+                    "accurateLongBalls": 3,
+                    "goalAssist": 0,
+                    "aerialWon": 1,
+                    "duelWon": 1,
+                    "totalClearance": 3,
+                    "goodHighClaim": 1,
+                    "punches": 1,
+                    "totalKeeperSweeper": 1,
+                    "accurateKeeperSweeper": 1,
+                    "minutesPlayed": 90,
+                    "touches": 38,
+                    "rating": 6.9,
+                    "possessionLostCtrl": 15,
+                    "ratingVersions": {
+                        "original": 6.9,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Max Johnston",
+                    "firstName": "Max Johnston",
+                    "lastName": "",
+                    "slug": "max-johnston",
+                    "shortName": "M. Johnston",
+                    "position": "D",
+                    "jerseyNumber": "2",
+                    "height": 185,
+                    "userCount": 160,
+                    "id": 1048192,
+                    "country": {
+                        "alpha2": "SX",
+                        "alpha3": "SCO",
+                        "name": "Scotland",
+                        "slug": "scotland"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1072396800,
+                    "proposedMarketValueRaw": {
+                        "value": 1900000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0645\u0627\u0643\u0633 \u062c\u0648\u0646\u0633\u062a\u0648\u0646",
+                            "hi": "\u092e\u0948\u0915\u094d\u0938 \u091c\u0949\u0928\u0938\u094d\u091f\u0928",
+                            "bn": "\u09ae\u09cd\u09af\u09be\u0995\u09cd\u09b8 \u099c\u09a8\u09b8\u09cd\u099f\u09a8"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0645. \u062c\u0648\u0646\u0633\u062a\u0648\u0646",
+                            "hi": "\u090f\u092e. \u091c\u0949\u0928\u0938\u094d\u091f\u0928",
+                            "bn": "\u098f\u09ae. \u099c\u09a8\u09b8\u09cd\u099f\u09a8"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 2,
+                "jerseyNumber": "2",
+                "position": "D",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 21,
+                    "accuratePass": 15,
+                    "totalLongBalls": 4,
+                    "accurateLongBalls": 2,
+                    "goalAssist": 1,
+                    "totalCross": 4,
+                    "duelWon": 1,
+                    "bigChanceCreated": 1,
+                    "totalClearance": 6,
+                    "totalTackle": 1,
+                    "minutesPlayed": 90,
+                    "touches": 55,
+                    "rating": 8,
+                    "possessionLostCtrl": 16,
+                    "keyPass": 2,
+                    "ratingVersions": {
+                        "original": 8,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Emanuel Aiwu",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "emanuel-aiwu",
+                    "shortName": "E. Aiwu",
+                    "position": "D",
+                    "jerseyNumber": "47",
+                    "height": 187,
+                    "userCount": 214,
+                    "id": 924690,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 977702400,
+                    "proposedMarketValueRaw": {
+                        "value": 2900000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0625\u064a\u0645\u0627\u0646\u0648\u064a\u0644 \u0622\u064a\u0648",
+                            "hi": "\u0907\u092e\u093e\u0928\u0941\u090f\u0932 \u0910\u0935\u0941",
+                            "bn": "\u0987\u09ae\u09be\u09a8\u09c1\u09af\u09bc\u09c7\u09b2 \u0986\u0987\u09af\u09bc\u09c1"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0625. \u0622\u064a\u0648",
+                            "hi": "\u0908. \u0910\u0935\u0941",
+                            "bn": "\u0987. \u0986\u0987\u09af\u09bc\u09c1"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 47,
+                "jerseyNumber": "47",
+                "position": "D",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 43,
+                    "accuratePass": 32,
+                    "totalLongBalls": 9,
+                    "accurateLongBalls": 2,
+                    "goalAssist": 0,
+                    "aerialLost": 2,
+                    "aerialWon": 2,
+                    "duelLost": 3,
+                    "duelWon": 6,
+                    "challengeLost": 1,
+                    "totalClearance": 4,
+                    "totalTackle": 3,
+                    "wasFouled": 1,
+                    "fouls": 1,
+                    "minutesPlayed": 90,
+                    "touches": 52,
+                    "rating": 6.8,
+                    "possessionLostCtrl": 11,
+                    "ratingVersions": {
+                        "original": 6.8,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Gregory W\u00fcthrich",
+                    "slug": "gregory-wuthrich",
+                    "shortName": "G. W\u00fcthrich",
+                    "position": "D",
+                    "jerseyNumber": "5",
+                    "height": 192,
+                    "userCount": 179,
+                    "id": 331465,
+                    "country": {
+                        "alpha2": "CH",
+                        "alpha3": "CHE",
+                        "name": "Switzerland",
+                        "slug": "switzerland"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 786499200,
+                    "proposedMarketValueRaw": {
+                        "value": 3600000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u063a\u0631\u064a\u063a\u0648\u0631\u064a \u0648\u0648\u062a\u0631\u064a\u062e",
+                            "hi": "\u0917\u094d\u0930\u0947\u0917\u0930\u0940 \u0935\u0941\u0925\u0930\u093f\u091a",
+                            "bn": "\u0997\u09cd\u09b0\u09c7\u0997\u09b0\u09bf \u0989\u09a5\u09cd\u09b0\u09bf\u099a"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u063a. \u0648\u0648\u062a\u0631\u064a\u062e",
+                            "hi": "\u091c\u0940. \u0935\u0941\u0925\u0930\u093f\u091a",
+                            "bn": "\u099c\u09bf. \u0989\u0987\u09a5\u09b0\u09bf\u099a"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 5,
+                "jerseyNumber": "5",
+                "position": "D",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 51,
+                    "accuratePass": 44,
+                    "totalLongBalls": 7,
+                    "accurateLongBalls": 3,
+                    "goalAssist": 0,
+                    "totalCross": 1,
+                    "aerialLost": 1,
+                    "aerialWon": 5,
+                    "duelLost": 2,
+                    "duelWon": 6,
+                    "shotOffTarget": 1,
+                    "totalClearance": 5,
+                    "interceptionWon": 2,
+                    "wasFouled": 1,
+                    "fouls": 2,
+                    "minutesPlayed": 90,
+                    "touches": 65,
+                    "rating": 7.2,
+                    "possessionLostCtrl": 8,
+                    "ratingVersions": {
+                        "original": 7.2,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Dimitri Laval\u0117e",
+                    "slug": "dimitri-lavalee",
+                    "shortName": "D. Laval\u0117e",
+                    "position": "D",
+                    "jerseyNumber": "24",
+                    "height": 187,
+                    "userCount": 116,
+                    "id": 857458,
+                    "country": {
+                        "alpha2": "BE",
+                        "alpha3": "BEL",
+                        "name": "Belgium",
+                        "slug": "belgium"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 853113600,
+                    "proposedMarketValueRaw": {
+                        "value": 4099999,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u062f\u064a\u0645\u062a\u0631\u064a \u0644\u0627\u0641\u0627\u0644\u064a",
+                            "hi": "\u0926\u093f\u092e\u093f\u0924\u094d\u0930\u0940 \u0932\u093e\u0935\u0932\u0947",
+                            "bn": "\u09a6\u09bf\u09ae\u09bf\u09a4\u09cd\u09b0\u09bf \u09b2\u09be\u09ad\u09be\u09b2\u09c7"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u062f. \u0644\u0627\u0641\u0627\u0644\u064a",
+                            "hi": "\u0921\u0940. \u0932\u093e\u0935\u0932\u0947",
+                            "bn": "\u09a1\u09bf. \u09b2\u09be\u09ad\u09be\u09b2\u09c7"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 24,
+                "jerseyNumber": "24",
+                "position": "D",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 47,
+                    "accuratePass": 36,
+                    "totalLongBalls": 7,
+                    "accurateLongBalls": 2,
+                    "goalAssist": 0,
+                    "totalCross": 2,
+                    "duelLost": 5,
+                    "duelWon": 2,
+                    "totalContest": 4,
+                    "blockedScoringAttempt": 1,
+                    "totalClearance": 8,
+                    "interceptionWon": 1,
+                    "totalTackle": 1,
+                    "wasFouled": 1,
+                    "fouls": 1,
+                    "minutesPlayed": 90,
+                    "touches": 83,
+                    "rating": 7.1,
+                    "possessionLostCtrl": 23,
+                    "keyPass": 1,
+                    "ratingVersions": {
+                        "original": 7.1,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Tochi Chukwuani",
+                    "slug": "tochi-chukwuani",
+                    "shortName": "T. P. Chukwuani",
+                    "position": "M",
+                    "jerseyNumber": "21",
+                    "height": 187,
+                    "userCount": 437,
+                    "id": 994007,
+                    "country": {
+                        "alpha2": "DK",
+                        "alpha3": "DNK",
+                        "name": "Denmark",
+                        "slug": "denmark"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1048464000,
+                    "proposedMarketValueRaw": {
+                        "value": 4300000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u062a\u0648\u062a\u0634\u064a \u062a\u0634\u0648\u0643\u0648\u0648\u0627\u0646\u064a",
+                            "hi": "\u0924\u094b\u091a\u0940 \u091a\u0941\u0915\u094d\u0935\u093e\u0928\u0940",
+                            "bn": "\u09a4\u09cb\u099a\u09bf \u099a\u09c1\u0995\u0993\u09af\u09bc\u09be\u09a8\u09bf"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u062a. \u062a\u0634\u0648\u0643\u0648\u0648\u0627\u0646\u064a",
+                            "hi": "\u091f\u0940\u092a\u0940 \u091a\u0941\u0915\u094d\u0935\u093e\u0928\u0940",
+                            "bn": "\u099f\u09bf. \u09aa\u09bf. \u099a\u09c1\u0995\u0993\u09af\u09bc\u09be\u09a8\u09bf"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 21,
+                "jerseyNumber": "21",
+                "position": "M",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 37,
+                    "accuratePass": 32,
+                    "totalLongBalls": 2,
+                    "accurateLongBalls": 1,
+                    "goalAssist": 0,
+                    "aerialWon": 4,
+                    "duelLost": 4,
+                    "duelWon": 6,
+                    "challengeLost": 1,
+                    "dispossessed": 1,
+                    "totalContest": 1,
+                    "bigChanceMissed": 1,
+                    "shotOffTarget": 2,
+                    "totalTackle": 2,
+                    "wasFouled": 1,
+                    "fouls": 1,
+                    "minutesPlayed": 90,
+                    "touches": 49,
+                    "rating": 6.7,
+                    "possessionLostCtrl": 8,
+                    "ratingVersions": {
+                        "original": 6.7,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Jon Gorenc Stankovi\u0107",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "jon-gorenc-stankovic",
+                    "shortName": "J. G. Stankovi\u0107",
+                    "position": "M",
+                    "jerseyNumber": "4",
+                    "height": 190,
+                    "userCount": 291,
+                    "id": 280565,
+                    "country": {
+                        "alpha2": "SI",
+                        "alpha3": "SVN",
+                        "name": "Slovenia",
+                        "slug": "slovenia"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 821577600,
+                    "proposedMarketValueRaw": {
+                        "value": 3700000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u062c\u0648\u0646 \u062c\u0648\u0631\u064a\u0646\u0643 \u0633\u062a\u0627\u0646\u0643\u0648\u0641\u064a\u062a\u0634",
+                            "hi": "\u091c\u0949\u0928 \u0917\u094b\u0930\u0947\u0928\u094d\u0915 \u0938\u094d\u091f\u0947\u0928\u0915\u094b\u0935\u093f\u0915",
+                            "bn": "\u099c\u09a8 \u0997\u09cb\u09b0\u09c7\u0999\u09cd\u0995 \u09b8\u09cd\u099f\u09cd\u09af\u09be\u09a8\u0995\u09cb\u09ad\u09bf\u099a"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u062c. \u062c. \u0633\u062a\u0627\u0646\u0643\u0648\u0641\u064a\u062a\u0634",
+                            "hi": "\u091c\u0947.\u091c\u0940. \u0938\u094d\u091f\u0947\u0928\u0915\u094b\u0935\u093f\u0915",
+                            "bn": "\u099c\u09c7 \u099c\u09bf \u09b8\u09cd\u099f\u09cd\u09af\u09be\u09a8\u0995\u09cb\u09ad\u09bf\u099a"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 4,
+                "jerseyNumber": "4",
+                "position": "M",
+                "substitute": false,
+                "captain": true,
+                "statistics": {
+                    "totalPass": 38,
+                    "accuratePass": 27,
+                    "totalLongBalls": 7,
+                    "accurateLongBalls": 1,
+                    "goalAssist": 0,
+                    "totalCross": 1,
+                    "aerialLost": 5,
+                    "aerialWon": 2,
+                    "duelLost": 6,
+                    "duelWon": 4,
+                    "dispossessed": 1,
+                    "shotOffTarget": 2,
+                    "totalClearance": 5,
+                    "interceptionWon": 3,
+                    "totalTackle": 2,
+                    "minutesPlayed": 90,
+                    "touches": 55,
+                    "rating": 7.2,
+                    "possessionLostCtrl": 13,
+                    "keyPass": 2,
+                    "ratingVersions": {
+                        "original": 7.2,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Tomi Horvat",
+                    "firstName": "",
+                    "lastName": "",
+                    "slug": "tomi-horvat",
+                    "shortName": "T. Horvat",
+                    "position": "M",
+                    "jerseyNumber": "19",
+                    "height": 176,
+                    "userCount": 364,
+                    "id": 906698,
+                    "country": {
+                        "alpha2": "SI",
+                        "alpha3": "SVN",
+                        "name": "Slovenia",
+                        "slug": "slovenia"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 922233600,
+                    "proposedMarketValueRaw": {
+                        "value": 3700000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u062a\u0648\u0645\u064a \u0647\u0648\u0631\u0641\u0627\u062b",
+                            "hi": "\u091f\u094b\u092e\u0940 \u0939\u094b\u0930\u094d\u0935\u093e\u091f",
+                            "bn": "\u099f\u09ae\u09bf \u09b9\u09b0\u09ad\u09be\u099f"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u062a. \u0647\u0648\u0631\u0641\u0627\u062b",
+                            "hi": "\u091f\u0940. \u0939\u094b\u0930\u094d\u0935\u093e\u091f",
+                            "bn": "\u099f\u09bf. \u09b9\u09b0\u09ad\u09be\u099f"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 19,
+                "jerseyNumber": "19",
+                "position": "M",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 39,
+                    "accuratePass": 24,
+                    "totalLongBalls": 1,
+                    "goalAssist": 0,
+                    "totalCross": 6,
+                    "accurateCross": 2,
+                    "aerialLost": 1,
+                    "duelLost": 8,
+                    "duelWon": 5,
+                    "challengeLost": 1,
+                    "dispossessed": 4,
+                    "totalContest": 3,
+                    "wonContest": 1,
+                    "shotOffTarget": 3,
+                    "blockedScoringAttempt": 2,
+                    "hitWoodwork": 1,
+                    "interceptionWon": 1,
+                    "totalTackle": 3,
+                    "wasFouled": 1,
+                    "minutesPlayed": 76,
+                    "touches": 68,
+                    "rating": 7.3,
+                    "possessionLostCtrl": 25,
+                    "keyPass": 2,
+                    "ratingVersions": {
+                        "original": 7.3,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Otar Kiteishvili",
+                    "slug": "otar-kiteishvili",
+                    "shortName": "O. Kiteishvili",
+                    "position": "M",
+                    "jerseyNumber": "10",
+                    "height": 170,
+                    "userCount": 1771,
+                    "id": 797994,
+                    "country": {
+                        "alpha2": "GE",
+                        "alpha3": "GEO",
+                        "name": "Georgia",
+                        "slug": "georgia"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 827798400,
+                    "proposedMarketValueRaw": {
+                        "value": 4600000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0623\u0648\u062a\u0627\u0631 \u0643\u064a\u062a\u064a\u0634\u0641\u064a\u0644\u064a",
+                            "hi": "\u0913\u0924\u093e\u0930 \u0915\u093f\u0924\u0947\u0907\u0936\u094d\u0935\u093f\u0932\u0940",
+                            "bn": "\u0993\u099f\u09be\u09b0 \u0995\u09be\u0987\u099f\u09bf\u09b6\u09ad\u09bf\u09b2\u09bf"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0623. \u0643\u064a\u062a\u064a\u0634\u0641\u064a\u0644\u064a",
+                            "hi": "\u0913. \u0915\u093f\u0924\u0947\u0907\u0936\u094d\u0935\u093f\u0932\u0940",
+                            "bn": "\u0993. \u0995\u09be\u0987\u099f\u09bf\u09b6\u09ad\u09bf\u09b2\u09bf"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 10,
+                "jerseyNumber": "10",
+                "position": "M",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 38,
+                    "accuratePass": 32,
+                    "goalAssist": 0,
+                    "totalCross": 3,
+                    "accurateCross": 1,
+                    "aerialLost": 2,
+                    "duelLost": 6,
+                    "duelWon": 2,
+                    "dispossessed": 2,
+                    "totalContest": 1,
+                    "shotOffTarget": 1,
+                    "onTargetScoringAttempt": 1,
+                    "blockedScoringAttempt": 1,
+                    "goals": 1,
+                    "totalClearance": 2,
+                    "totalTackle": 1,
+                    "wasFouled": 1,
+                    "fouls": 1,
+                    "minutesPlayed": 90,
+                    "touches": 60,
+                    "rating": 8,
+                    "possessionLostCtrl": 14,
+                    "keyPass": 5,
+                    "ratingVersions": {
+                        "original": 8,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Malick Yalcouy\u00e9",
+                    "firstName": "Malick Yalcouy\u00e9",
+                    "slug": "malick-yalcouye",
+                    "shortName": "M. Yalcouy\u00e9",
+                    "position": "M",
+                    "jerseyNumber": "8",
+                    "height": 171,
+                    "userCount": 1028,
+                    "id": 1568186,
+                    "country": {
+                        "alpha2": "ML",
+                        "alpha3": "MLI",
+                        "name": "Mali",
+                        "slug": "mali"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1132272000,
+                    "proposedMarketValueRaw": {
+                        "value": 13600000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 8,
+                "jerseyNumber": "8",
+                "position": "M",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 18,
+                    "accuratePass": 17,
+                    "totalLongBalls": 1,
+                    "accurateLongBalls": 1,
+                    "goalAssist": 0,
+                    "aerialLost": 4,
+                    "aerialWon": 1,
+                    "duelLost": 12,
+                    "duelWon": 6,
+                    "dispossessed": 3,
+                    "totalContest": 5,
+                    "wonContest": 1,
+                    "shotOffTarget": 1,
+                    "onTargetScoringAttempt": 2,
+                    "interceptionWon": 1,
+                    "totalTackle": 2,
+                    "wasFouled": 2,
+                    "fouls": 1,
+                    "minutesPlayed": 84,
+                    "touches": 45,
+                    "rating": 7,
+                    "possessionLostCtrl": 11,
+                    "keyPass": 1,
+                    "ratingVersions": {
+                        "original": 7,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Amady Camara",
+                    "firstName": "Amady Camara",
+                    "slug": "camara-amady",
+                    "shortName": "A. Camara",
+                    "position": "F",
+                    "jerseyNumber": "36",
+                    "height": 180,
+                    "userCount": 434,
+                    "id": 1516047,
+                    "country": {
+                        "alpha2": "ML",
+                        "alpha3": "MLI",
+                        "name": "Mali",
+                        "slug": "mali"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1117238400,
+                    "proposedMarketValueRaw": {
+                        "value": 1500000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 36,
+                "jerseyNumber": "36",
+                "position": "F",
+                "substitute": false,
+                "statistics": {
+                    "totalPass": 7,
+                    "accuratePass": 6,
+                    "totalLongBalls": 1,
+                    "accurateLongBalls": 1,
+                    "goalAssist": 0,
+                    "aerialLost": 2,
+                    "aerialWon": 1,
+                    "duelLost": 5,
+                    "duelWon": 4,
+                    "dispossessed": 1,
+                    "totalContest": 3,
+                    "wonContest": 2,
+                    "shotOffTarget": 1,
+                    "onTargetScoringAttempt": 1,
+                    "wasFouled": 1,
+                    "fouls": 1,
+                    "totalOffside": 1,
+                    "minutesPlayed": 66,
+                    "touches": 23,
+                    "rating": 7,
+                    "possessionLostCtrl": 8,
+                    "keyPass": 1,
+                    "ratingVersions": {
+                        "original": 7,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Belmin Beganovi\u0107",
+                    "firstName": "Belmin Beganovic",
+                    "lastName": "",
+                    "slug": "belmin-beganovic",
+                    "shortName": "B. Beganovi\u0107",
+                    "position": "F",
+                    "jerseyNumber": "26",
+                    "height": 183,
+                    "userCount": 94,
+                    "id": 1212322,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1094688000,
+                    "proposedMarketValueRaw": {
+                        "value": 455000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2103,
+                "shirtNumber": 26,
+                "jerseyNumber": "26",
+                "position": "F",
+                "substitute": true,
+                "statistics": {
+                    "goalAssist": 0,
+                    "aerialLost": 1,
+                    "aerialWon": 2,
+                    "duelLost": 4,
+                    "duelWon": 4,
+                    "totalContest": 1,
+                    "shotOffTarget": 1,
+                    "blockedScoringAttempt": 1,
+                    "totalClearance": 1,
+                    "interceptionWon": 1,
+                    "wasFouled": 2,
+                    "fouls": 2,
+                    "minutesPlayed": 13,
+                    "touches": 7,
+                    "rating": 6.2,
+                    "possessionLostCtrl": 1,
+                    "ratingVersions": {
+                        "original": 6.2,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Jacob H\u00f6dl",
+                    "slug": "jacob-hodl",
+                    "shortName": "J. H\u00f6dl",
+                    "position": "M",
+                    "jerseyNumber": "43",
+                    "height": 175,
+                    "userCount": 73,
+                    "id": 1488043,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1170201600,
+                    "proposedMarketValueRaw": {
+                        "value": 430000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2103,
+                "shirtNumber": 43,
+                "jerseyNumber": "43",
+                "position": "M",
+                "substitute": true,
+                "statistics": {
+                    "totalPass": 3,
+                    "accuratePass": 1,
+                    "goalAssist": 0,
+                    "duelLost": 1,
+                    "duelWon": 3,
+                    "totalContest": 4,
+                    "wonContest": 3,
+                    "minutesPlayed": 14,
+                    "touches": 8,
+                    "rating": 6.8,
+                    "possessionLostCtrl": 3,
+                    "ratingVersions": {
+                        "original": 6.8,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Peter Kiedl",
+                    "firstName": "Peter Kiedl",
+                    "lastName": "",
+                    "slug": "peter-kiedl",
+                    "shortName": "P. Kiedl",
+                    "position": "F",
+                    "jerseyNumber": "32",
+                    "userCount": 25,
+                    "id": 1386287,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1073952000,
+                    "proposedMarketValueRaw": {
+                        "value": 320000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2103,
+                "shirtNumber": 32,
+                "jerseyNumber": "32",
+                "position": "F",
+                "substitute": true,
+                "statistics": {
+                    "totalPass": 1,
+                    "accuratePass": 1,
+                    "goalAssist": 0,
+                    "minutesPlayed": 9,
+                    "touches": 3,
+                    "rating": 6.5,
+                    "possessionLostCtrl": 1,
+                    "ratingVersions": {
+                        "original": 6.5,
+                        "alternative": null
+                    }
+                }
+            },
+            {
+                "player": {
+                    "name": "Daniil Khudyakov",
+                    "firstName": "Daniil",
+                    "lastName": "Khudyakov",
+                    "slug": "daniil-khudyakov",
+                    "shortName": "D. Khudyakov",
+                    "position": "G",
+                    "jerseyNumber": "53",
+                    "height": 194,
+                    "userCount": 433,
+                    "id": 1101753,
+                    "country": {
+                        "alpha2": "RU",
+                        "alpha3": "RUS",
+                        "name": "Russia",
+                        "slug": "russia"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1073606400,
+                    "proposedMarketValueRaw": {
+                        "value": 970000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u062f\u0627\u0646\u064a\u064a\u0644 \u062e\u0648\u062f\u064a\u0627\u0643\u0648\u0641",
+                            "hi": "\u0921\u0947\u0928\u093f\u092f\u0932 \u0916\u0941\u0926\u094d\u092f\u093e\u0915\u094b\u0935",
+                            "bn": "\u09a1\u09cd\u09af\u09be\u09a8\u09bf\u09b2 \u0996\u09c1\u09a6\u09bf\u09af\u09bc\u09be\u0995\u09ad"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u062f. \u062e\u0648\u062f\u064a\u0627\u0643\u0648\u0641",
+                            "hi": "\u0921\u0940. \u0916\u0941\u0926\u094d\u092f\u093e\u0915\u094b\u0935",
+                            "bn": "\u09a1\u09bf. \u0996\u09c1\u09a6\u09bf\u09af\u09bc\u09be\u0995\u09ad"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 53,
+                "jerseyNumber": "53",
+                "position": "G",
+                "substitute": true,
+                "statistics": {}
+            },
+            {
+                "player": {
+                    "name": "Emir Kari\u0107",
+                    "slug": "emir-karic",
+                    "shortName": "E. Kari\u0107",
+                    "position": "D",
+                    "jerseyNumber": "17",
+                    "height": 186,
+                    "userCount": 128,
+                    "id": 796032,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 865814400,
+                    "proposedMarketValueRaw": {
+                        "value": 720000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0623\u0645\u064a\u0631 \u0643\u0627\u0631\u064a\u062a\u0634",
+                            "hi": "\u090f\u092e\u093f\u0930 \u0915\u0930\u093f\u0915",
+                            "bn": "\u0986\u09ae\u09bf\u09b0 \u0995\u09be\u09b0\u09bf\u099a"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0623. \u0643\u0627\u0631\u064a\u062a\u0634",
+                            "hi": "\u0908. \u0915\u0930\u093f\u0915",
+                            "bn": "\u0987. \u0995\u09be\u09b0\u09bf\u099a"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 17,
+                "jerseyNumber": "17",
+                "position": "D",
+                "substitute": true,
+                "statistics": {}
+            },
+            {
+                "player": {
+                    "name": "Arjan Mali\u0107",
+                    "firstName": "Arjan Malic",
+                    "slug": "arjan-malic",
+                    "shortName": "A. Mali\u0107",
+                    "position": "D",
+                    "jerseyNumber": "23",
+                    "height": 186,
+                    "userCount": 555,
+                    "id": 1500291,
+                    "country": {
+                        "alpha2": "BA",
+                        "alpha3": "BIH",
+                        "name": "Bosnia & Herzegovina",
+                        "slug": "bosnia-and-herzegovina"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 1125187200,
+                    "proposedMarketValueRaw": {
+                        "value": 830000,
+                        "currency": "EUR"
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 23,
+                "jerseyNumber": "23",
+                "position": "D",
+                "substitute": true,
+                "statistics": {}
+            },
+            {
+                "player": {
+                    "name": "Stefan Hierl\u00e4nder",
+                    "slug": "stefan-hierlander",
+                    "shortName": "S. Hierl\u00e4nder",
+                    "position": "M",
+                    "jerseyNumber": "25",
+                    "height": 180,
+                    "userCount": 64,
+                    "id": 49021,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "marketValueCurrency": "EUR",
+                    "dateOfBirthTimestamp": 665539200,
+                    "proposedMarketValueRaw": {
+                        "value": 265000,
+                        "currency": "EUR"
+                    },
+                    "fieldTranslations": {
+                        "nameTranslation": {
+                            "ar": "\u0633\u062a\u064a\u0641\u0627\u0646 \u0647\u064a\u0631\u0644\u0646\u062f\u0631",
+                            "hi": "\u0938\u094d\u091f\u0940\u092b\u093c\u0928 \u0939\u0940\u0930\u0932\u0948\u0902\u0921\u0930",
+                            "bn": "\u09b8\u09cd\u099f\u09c7\u09ab\u09be\u09a8 \u09b9\u09be\u09af\u09bc\u09be\u09b0\u09b2\u09cd\u09af\u09be\u09a8\u09cd\u09a1\u09be\u09b0"
+                        },
+                        "shortNameTranslation": {
+                            "ar": "\u0633. \u0647\u064a\u0631\u0644\u0646\u062f\u0631",
+                            "hi": "\u090f\u0938. \u0939\u0940\u0930\u0932\u0948\u0902\u0921\u0930",
+                            "bn": "\u098f\u09b8. \u09b9\u09be\u09af\u09bc\u09be\u09b0\u09b2\u09cd\u09af\u09be\u09a8\u09cd\u09a1\u09be\u09b0"
+                        }
+                    }
+                },
+                "teamId": 2051,
+                "shirtNumber": 25,
+                "jerseyNumber": "25",
+                "position": "M",
+                "substitute": true,
+                "statistics": {}
+            }
+        ],
+        "supportStaff": [],
+        "formation": "4-2-3-1",
+        "playerColor": {
+            "primary": "ffffff",
+            "number": "000000",
+            "outline": "ffffff",
+            "fancyNumber": "222226"
+        },
+        "goalkeeperColor": {
+            "primary": "01cee9",
+            "number": "ffffff",
+            "outline": "01cee9",
+            "fancyNumber": "222226"
+        }
+    },
+    "awayManager": {
+        "id": 803838,
+        "name": "Jürgen Säumel",
+        "slug": "saumel-jurgen",
+        "shortName": "J. Säumel"
+    },
+    "homeManager": {
+        "id": 787455,
+        "name": "Gerald Scheiblehner",
+        "slug": "gerald-scheiblehner",
+        "shortName": "G. Scheiblehner",
+        "fieldTranslations": {
+            "nameTranslation": {
+                "ar": "جيرالد شيبليهنير",
+                "hi": "गेराल्ड शेइब्लेहनेर",
+                "bn": "জেরাল্ড শেইবলহনার"
+            },
+            "shortNameTranslation": {
+                "ar": "ج. شيبليهنير",
+                "hi": "जी. शेइब्लेहनेर",
+                "bn": "জি. শেইবলহনার"
+            }
+        }
+    },
+    "incidents": [
+        {
+            "text": "FT",
+            "homeScore": 0,
+            "awayScore": 1,
+            "isLive": false,
+            "time": 90,
+            "addedTime": 999,
+            "timeSeconds": 5400,
+            "reversedPeriodTime": 1,
+            "reversedPeriodTimeSeconds": 0,
+            "periodTimeSeconds": 2700,
+            "incidentType": "period"
+        },
+        {
+            "length": 3,
+            "time": 90,
+            "addedTime": 0,
+            "reversedPeriodTime": 1,
+            "incidentType": "injuryTime"
+        },
+        {
+            "playerIn": {
+                "name": "Peter Kiedl",
+                "firstName": "Peter Kiedl",
+                "lastName": "",
+                "slug": "peter-kiedl",
+                "shortName": "P. Kiedl",
+                "position": "F",
+                "jerseyNumber": "32",
+                "userCount": 25,
+                "id": 1386287,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1073952000,
+                "proposedMarketValueRaw": {
+                    "value": 320000,
+                    "currency": "EUR"
+                }
+            },
+            "playerOut": {
+                "name": "Malick Yalcouy\u00e9",
+                "firstName": "Malick Yalcouy\u00e9",
+                "slug": "malick-yalcouye",
+                "shortName": "M. Yalcouy\u00e9",
+                "position": "M",
+                "jerseyNumber": "8",
+                "height": 171,
+                "userCount": 1028,
+                "id": 1568186,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1132272000,
+                "proposedMarketValueRaw": {
+                    "value": 13600000,
+                    "currency": "EUR"
+                }
+            },
+            "id": 123956588,
+            "time": 84,
+            "injury": false,
+            "isHome": false,
+            "incidentClass": "regular",
+            "reversedPeriodTime": 7,
+            "incidentType": "substitution"
+        },
+        {
+            "player": {
+                "name": "Belmin Beganovi\u0107",
+                "firstName": "Belmin Beganovic",
+                "lastName": "",
+                "slug": "belmin-beganovic",
+                "shortName": "B. Beganovi\u0107",
+                "position": "F",
+                "jerseyNumber": "26",
+                "height": 183,
+                "userCount": 94,
+                "id": 1212322,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1094688000,
+                "proposedMarketValueRaw": {
+                    "value": 455000,
+                    "currency": "EUR"
+                }
+            },
+            "playerName": "Belmin Beganovi\u0107",
+            "reason": "Foul",
+            "rescinded": false,
+            "id": 123426095,
+            "time": 79,
+            "isHome": false,
+            "incidentClass": "yellowRed",
+            "reversedPeriodTime": 12,
+            "incidentType": "card"
+        },
+        {
+            "playerIn": {
+                "name": "Elias Bakatukanda",
+                "firstName": "Elias Bakatukanda",
+                "lastName": "",
+                "slug": "bakatukanda-elias",
+                "shortName": "E. Bakatukanda",
+                "position": "D",
+                "jerseyNumber": "4",
+                "height": 193,
+                "userCount": 80,
+                "id": 1146120,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1081814400,
+                "proposedMarketValueRaw": {
+                    "value": 260000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0628\u0627\u0643\u0627\u062a\u0648\u0643\u0627\u0646\u062f\u0627\u060c \u0625\u0644\u064a\u0627\u0633",
+                        "hi": "\u092c\u0915\u093e\u091f\u0941\u0915\u093e\u0902\u0921\u093e, \u090f\u0932\u093f\u092f\u093e\u0938",
+                        "bn": "\u09ac\u0995\u09be\u099f\u09c1\u0995\u09be\u09a8\u09cd\u09a6\u09be, \u0987\u09b2\u09bf\u09af\u09bc\u09be\u09b8"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u0625. \u0628\u0627\u0643\u0627\u062a\u0648\u0643\u0627\u0646\u062f\u0627",
+                        "hi": "\u0908. \u092c\u0915\u093e\u091f\u0941\u0915\u093e\u0902\u0921\u093e",
+                        "bn": "\u0987. \u09ac\u0995\u09be\u099f\u09c1\u0995\u09be\u09a8\u09cd\u09a6\u09be"
+                    }
+                }
+            },
+            "playerOut": {
+                "name": "Soumaila Diabate",
+                "firstName": "",
+                "lastName": "",
+                "slug": "diabate-soumaila",
+                "shortName": "S. Diabate",
+                "position": "M",
+                "jerseyNumber": "18",
+                "height": 168,
+                "userCount": 147,
+                "id": 1468564,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1101081600,
+                "proposedMarketValueRaw": {
+                    "value": 935000,
+                    "currency": "EUR"
+                }
+            },
+            "id": 123956520,
+            "time": 79,
+            "injury": false,
+            "isHome": true,
+            "incidentClass": "regular",
+            "reversedPeriodTime": 12,
+            "incidentType": "substitution"
+        },
+        {
+            "playerIn": {
+                "name": "Alexander Schmidt",
+                "slug": "alexander-schmidt",
+                "shortName": "A. Schmidt",
+                "position": "F",
+                "jerseyNumber": "13",
+                "height": 193,
+                "userCount": 78,
+                "id": 842499,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 885168000,
+                "proposedMarketValueRaw": {
+                    "value": 290000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0627\u0644\u0643\u0633\u0646\u062f\u0631 \u0634\u0645\u064a\u062f\u062a",
+                        "hi": "\u0905\u0932\u0947\u0915\u094d\u091c\u0947\u0902\u0921\u0930 \u0936\u094d\u092e\u093f\u091f",
+                        "bn": "\u0986\u09b2\u09c7\u0995\u099c\u09be\u09a8\u09cd\u09a1\u09be\u09b0 \u09b6\u09cd\u09ae\u09bf\u099f"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u0627. \u0634\u0645\u064a\u062f\u062a",
+                        "hi": "\u090f. \u0936\u094d\u092e\u093f\u091f",
+                        "bn": "\u098f. \u09b6\u09cd\u09ae\u09bf\u099f"
+                    }
+                }
+            },
+            "playerOut": {
+                "name": "Ronivaldo",
+                "slug": "ronivaldo",
+                "shortName": "Ronivaldo",
+                "position": "F",
+                "jerseyNumber": "9",
+                "height": 173,
+                "userCount": 324,
+                "id": 314304,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 606700800,
+                "proposedMarketValueRaw": {
+                    "value": 320000,
+                    "currency": "EUR"
+                }
+            },
+            "id": 123956509,
+            "time": 79,
+            "injury": false,
+            "isHome": true,
+            "incidentClass": "regular",
+            "reversedPeriodTime": 12,
+            "incidentType": "substitution"
+        },
+        {
+            "playerIn": {
+                "name": "Jacob H\u00f6dl",
+                "slug": "jacob-hodl",
+                "shortName": "J. H\u00f6dl",
+                "position": "M",
+                "jerseyNumber": "43",
+                "height": 175,
+                "userCount": 73,
+                "id": 1488043,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1170201600,
+                "proposedMarketValueRaw": {
+                    "value": 430000,
+                    "currency": "EUR"
+                }
+            },
+            "playerOut": {
+                "name": "Tomi Horvat",
+                "firstName": "",
+                "lastName": "",
+                "slug": "tomi-horvat",
+                "shortName": "T. Horvat",
+                "position": "M",
+                "jerseyNumber": "19",
+                "height": 176,
+                "userCount": 364,
+                "id": 906698,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 922233600,
+                "proposedMarketValueRaw": {
+                    "value": 3700000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u062a\u0648\u0645\u064a \u0647\u0648\u0631\u0641\u0627\u062b",
+                        "hi": "\u091f\u094b\u092e\u0940 \u0939\u094b\u0930\u094d\u0935\u093e\u091f",
+                        "bn": "\u099f\u09ae\u09bf \u09b9\u09b0\u09ad\u09be\u099f"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u062a. \u0647\u0648\u0631\u0641\u0627\u062b",
+                        "hi": "\u091f\u0940. \u0939\u094b\u0930\u094d\u0935\u093e\u091f",
+                        "bn": "\u099f\u09bf. \u09b9\u09b0\u09ad\u09be\u099f"
+                    }
+                }
+            },
+            "id": 123956483,
+            "time": 76,
+            "injury": false,
+            "isHome": false,
+            "incidentClass": "regular",
+            "reversedPeriodTime": 15,
+            "incidentType": "substitution"
+        },
+        {
+            "player": {
+                "name": "Belmin Beganovi\u0107",
+                "firstName": "Belmin Beganovic",
+                "lastName": "",
+                "slug": "belmin-beganovic",
+                "shortName": "B. Beganovi\u0107",
+                "position": "F",
+                "jerseyNumber": "26",
+                "height": 183,
+                "userCount": 94,
+                "id": 1212322,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1094688000,
+                "proposedMarketValueRaw": {
+                    "value": 455000,
+                    "currency": "EUR"
+                }
+            },
+            "playerName": "Belmin Beganovi\u0107",
+            "reason": "Foul",
+            "rescinded": false,
+            "id": 123426069,
+            "time": 72,
+            "isHome": false,
+            "incidentClass": "yellow",
+            "reversedPeriodTime": 19,
+            "incidentType": "card"
+        },
+        {
+            "player": {
+                "name": "Martin Moormann",
+                "firstName": "",
+                "lastName": "",
+                "slug": "martin-moormann",
+                "shortName": "M. Moormann",
+                "position": "D",
+                "jerseyNumber": "16",
+                "height": 185,
+                "userCount": 37,
+                "id": 918415,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 988588800,
+                "proposedMarketValueRaw": {
+                    "value": 515000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0645\u0627\u0631\u062a\u0646 \u0645\u0648\u0631\u0645\u0627\u0646",
+                        "hi": "\u092e\u093e\u0930\u094d\u091f\u093f\u0928 \u092e\u0942\u0930\u092e\u0928",
+                        "bn": "\u09ae\u09be\u09b0\u09cd\u099f\u09bf\u09a8 \u09ae\u09c1\u09b0\u09ae\u09cd\u09af\u09be\u09a8"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u0645. \u0645\u0648\u0631\u0645\u0627\u0646",
+                        "hi": "\u090f\u092e. \u092e\u0942\u0930\u092e\u0928",
+                        "bn": "\u098f\u09ae. \u09ae\u09c1\u09b0\u09ae\u09cd\u09af\u09be\u09a8"
+                    }
+                }
+            },
+            "playerName": "Martin Moormann",
+            "reason": "Foul",
+            "rescinded": false,
+            "id": 123426052,
+            "time": 70,
+            "isHome": true,
+            "incidentClass": "yellow",
+            "reversedPeriodTime": 21,
+            "incidentType": "card"
+        },
+        {
+            "playerIn": {
+                "name": "Belmin Beganovi\u0107",
+                "firstName": "Belmin Beganovic",
+                "lastName": "",
+                "slug": "belmin-beganovic",
+                "shortName": "B. Beganovi\u0107",
+                "position": "F",
+                "jerseyNumber": "26",
+                "height": 183,
+                "userCount": 94,
+                "id": 1212322,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1094688000,
+                "proposedMarketValueRaw": {
+                    "value": 455000,
+                    "currency": "EUR"
+                }
+            },
+            "playerOut": {
+                "name": "Amady Camara",
+                "firstName": "Amady Camara",
+                "slug": "camara-amady",
+                "shortName": "A. Camara",
+                "position": "F",
+                "jerseyNumber": "36",
+                "height": 180,
+                "userCount": 434,
+                "id": 1516047,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1117238400,
+                "proposedMarketValueRaw": {
+                    "value": 1500000,
+                    "currency": "EUR"
+                }
+            },
+            "id": 123956358,
+            "time": 66,
+            "injury": false,
+            "isHome": false,
+            "incidentClass": "regular",
+            "reversedPeriodTime": 25,
+            "incidentType": "substitution"
+        },
+        {
+            "playerIn": {
+                "name": "Conor No\u00df",
+                "firstName": "",
+                "lastName": "",
+                "slug": "conor-noss",
+                "shortName": "C. No\u00df",
+                "position": "M",
+                "jerseyNumber": "7",
+                "height": 181,
+                "userCount": 88,
+                "id": 990249,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 978307200,
+                "proposedMarketValueRaw": {
+                    "value": 370000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0643\u0648\u0646\u0648\u0631 \u0646\u0648\u0633",
+                        "hi": "\u0915\u094b\u0928\u094b\u0930 \u0928\u094b\u0938",
+                        "bn": "\u0995\u09a8\u09b0 \u09a8\u09cb\u09b8"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u0643. \u0646\u0648\u0633",
+                        "hi": "\u0938\u0940. \u0928\u094b\u0938",
+                        "bn": "\u09b8\u09bf. \u09a8\u09cb\u09b8"
+                    }
+                }
+            },
+            "playerOut": {
+                "name": "Simon Seidl",
+                "firstName": "Simon Seidl",
+                "lastName": "",
+                "slug": "simon-seidl",
+                "shortName": "S. Seidl",
+                "position": "F",
+                "jerseyNumber": "20",
+                "height": 172,
+                "userCount": 37,
+                "id": 1131565,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1031097600,
+                "proposedMarketValueRaw": {
+                    "value": 1100000,
+                    "currency": "EUR"
+                }
+            },
+            "id": 123956344,
+            "time": 63,
+            "injury": false,
+            "isHome": true,
+            "incidentClass": "regular",
+            "reversedPeriodTime": 28,
+            "incidentType": "substitution"
+        },
+        {
+            "playerIn": {
+                "name": "Julian G\u00f6lles",
+                "firstName": "",
+                "lastName": "",
+                "slug": "julian-golles",
+                "shortName": "J. G\u00f6lles",
+                "position": "D",
+                "jerseyNumber": "14",
+                "height": 188,
+                "userCount": 16,
+                "id": 858869,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 937958400,
+                "proposedMarketValueRaw": {
+                    "value": 265000,
+                    "currency": "EUR"
+                }
+            },
+            "playerOut": {
+                "name": "Simon Pirkl",
+                "slug": "simon-pirkl",
+                "shortName": "S. Pirkl",
+                "position": "M",
+                "jerseyNumber": "60",
+                "height": 176,
+                "userCount": 16,
+                "id": 355496,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 860025600,
+                "proposedMarketValueRaw": {
+                    "value": 600000,
+                    "currency": "EUR"
+                }
+            },
+            "id": 123956338,
+            "time": 63,
+            "injury": false,
+            "isHome": true,
+            "incidentClass": "regular",
+            "reversedPeriodTime": 28,
+            "incidentType": "substitution"
+        },
+        {
+            "player": {
+                "name": "Soumaila Diabate",
+                "firstName": "",
+                "lastName": "",
+                "slug": "diabate-soumaila",
+                "shortName": "S. Diabate",
+                "position": "M",
+                "jerseyNumber": "18",
+                "height": 168,
+                "userCount": 147,
+                "id": 1468564,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1101081600,
+                "proposedMarketValueRaw": {
+                    "value": 935000,
+                    "currency": "EUR"
+                }
+            },
+            "playerName": "Soumaila Diabate",
+            "reason": "Foul",
+            "rescinded": false,
+            "id": 123425922,
+            "time": 55,
+            "isHome": true,
+            "incidentClass": "yellow",
+            "reversedPeriodTime": 36,
+            "incidentType": "card"
+        },
+        {
+            "player": {
+                "name": "Gregory W\u00fcthrich",
+                "slug": "gregory-wuthrich",
+                "shortName": "G. W\u00fcthrich",
+                "position": "D",
+                "jerseyNumber": "5",
+                "height": 192,
+                "userCount": 179,
+                "id": 331465,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 786499200,
+                "proposedMarketValueRaw": {
+                    "value": 3600000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u063a\u0631\u064a\u063a\u0648\u0631\u064a \u0648\u0648\u062a\u0631\u064a\u062e",
+                        "hi": "\u0917\u094d\u0930\u0947\u0917\u0930\u0940 \u0935\u0941\u0925\u0930\u093f\u091a",
+                        "bn": "\u0997\u09cd\u09b0\u09c7\u0997\u09b0\u09bf \u0989\u09a5\u09cd\u09b0\u09bf\u099a"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u063a. \u0648\u0648\u062a\u0631\u064a\u062e",
+                        "hi": "\u091c\u0940. \u0935\u0941\u0925\u0930\u093f\u091a",
+                        "bn": "\u099c\u09bf. \u0989\u0987\u09a5\u09b0\u09bf\u099a"
+                    }
+                }
+            },
+            "playerName": "Gregory W\u00fcthrich",
+            "reason": "Handball",
+            "rescinded": false,
+            "id": 123425889,
+            "time": 51,
+            "isHome": false,
+            "incidentClass": "yellow",
+            "reversedPeriodTime": 40,
+            "incidentType": "card"
+        },
+        {
+            "homeScore": 0,
+            "awayScore": 1,
+            "player": {
+                "name": "Otar Kiteishvili",
+                "slug": "otar-kiteishvili",
+                "shortName": "O. Kiteishvili",
+                "position": "M",
+                "jerseyNumber": "10",
+                "height": 170,
+                "userCount": 1771,
+                "id": 797994,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 827798400,
+                "proposedMarketValueRaw": {
+                    "value": 4600000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0623\u0648\u062a\u0627\u0631 \u0643\u064a\u062a\u064a\u0634\u0641\u064a\u0644\u064a",
+                        "hi": "\u0913\u0924\u093e\u0930 \u0915\u093f\u0924\u0947\u0907\u0936\u094d\u0935\u093f\u0932\u0940",
+                        "bn": "\u0993\u099f\u09be\u09b0 \u0995\u09be\u0987\u099f\u09bf\u09b6\u09ad\u09bf\u09b2\u09bf"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u0623. \u0643\u064a\u062a\u064a\u0634\u0641\u064a\u0644\u064a",
+                        "hi": "\u0913. \u0915\u093f\u0924\u0947\u0907\u0936\u094d\u0935\u093f\u0932\u0940",
+                        "bn": "\u0993. \u0995\u09be\u0987\u099f\u09bf\u09b6\u09ad\u09bf\u09b2\u09bf"
+                    }
+                }
+            },
+            "assist1": {
+                "name": "Max Johnston",
+                "firstName": "Max Johnston",
+                "lastName": "",
+                "slug": "max-johnston",
+                "shortName": "M. Johnston",
+                "position": "D",
+                "jerseyNumber": "2",
+                "height": 185,
+                "userCount": 160,
+                "id": 1048192,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1072396800,
+                "proposedMarketValueRaw": {
+                    "value": 1900000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0645\u0627\u0643\u0633 \u062c\u0648\u0646\u0633\u062a\u0648\u0646",
+                        "hi": "\u092e\u0948\u0915\u094d\u0938 \u091c\u0949\u0928\u0938\u094d\u091f\u0928",
+                        "bn": "\u09ae\u09cd\u09af\u09be\u0995\u09cd\u09b8 \u099c\u09a8\u09b8\u09cd\u099f\u09a8"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u0645. \u062c\u0648\u0646\u0633\u062a\u0648\u0646",
+                        "hi": "\u090f\u092e. \u091c\u0949\u0928\u0938\u094d\u091f\u0928",
+                        "bn": "\u098f\u09ae. \u099c\u09a8\u09b8\u09cd\u099f\u09a8"
+                    }
+                }
+            },
+            "footballPassingNetworkAction": [
+                {
+                    "player": {
+                        "name": "Max Johnston",
+                        "firstName": "Max Johnston",
+                        "lastName": "",
+                        "slug": "max-johnston",
+                        "shortName": "M. Johnston",
+                        "position": "D",
+                        "jerseyNumber": "2",
+                        "height": 185,
+                        "userCount": 160,
+                        "id": 1048192,
+                        "marketValueCurrency": "EUR",
+                        "dateOfBirthTimestamp": 1072396800,
+                        "proposedMarketValueRaw": {
+                            "value": 1900000,
+                            "currency": "EUR"
+                        },
+                        "fieldTranslations": {
+                            "nameTranslation": {
+                                "ar": "\u0645\u0627\u0643\u0633 \u062c\u0648\u0646\u0633\u062a\u0648\u0646",
+                                "hi": "\u092e\u0948\u0915\u094d\u0938 \u091c\u0949\u0928\u0938\u094d\u091f\u0928",
+                                "bn": "\u09ae\u09cd\u09af\u09be\u0995\u09cd\u09b8 \u099c\u09a8\u09b8\u09cd\u099f\u09a8"
+                            },
+                            "shortNameTranslation": {
+                                "ar": "\u0645. \u062c\u0648\u0646\u0633\u062a\u0648\u0646",
+                                "hi": "\u090f\u092e. \u091c\u0949\u0928\u0938\u094d\u091f\u0928",
+                                "bn": "\u098f\u09ae. \u099c\u09a8\u09b8\u09cd\u099f\u09a8"
+                            }
+                        }
+                    },
+                    "eventType": "pass",
+                    "isAssist": true,
+                    "time": 48,
+                    "playerCoordinates": {
+                        "x": 21.8,
+                        "y": 85.6
+                    },
+                    "passEndCoordinates": {
+                        "x": 4.6,
+                        "y": 48.7
+                    },
+                    "isHome": false
+                },
+                {
+                    "player": {
+                        "name": "Otar Kiteishvili",
+                        "slug": "otar-kiteishvili",
+                        "shortName": "O. Kiteishvili",
+                        "position": "M",
+                        "jerseyNumber": "10",
+                        "height": 170,
+                        "userCount": 1771,
+                        "id": 797994,
+                        "marketValueCurrency": "EUR",
+                        "dateOfBirthTimestamp": 827798400,
+                        "proposedMarketValueRaw": {
+                            "value": 4600000,
+                            "currency": "EUR"
+                        },
+                        "fieldTranslations": {
+                            "nameTranslation": {
+                                "ar": "\u0623\u0648\u062a\u0627\u0631 \u0643\u064a\u062a\u064a\u0634\u0641\u064a\u0644\u064a",
+                                "hi": "\u0913\u0924\u093e\u0930 \u0915\u093f\u0924\u0947\u0907\u0936\u094d\u0935\u093f\u0932\u0940",
+                                "bn": "\u0993\u099f\u09be\u09b0 \u0995\u09be\u0987\u099f\u09bf\u09b6\u09ad\u09bf\u09b2\u09bf"
+                            },
+                            "shortNameTranslation": {
+                                "ar": "\u0623. \u0643\u064a\u062a\u064a\u0634\u0641\u064a\u0644\u064a",
+                                "hi": "\u0913. \u0915\u093f\u0924\u0947\u0907\u0936\u094d\u0935\u093f\u0932\u0940",
+                                "bn": "\u0993. \u0995\u09be\u0987\u099f\u09bf\u09b6\u09ad\u09bf\u09b2\u09bf"
+                            }
+                        }
+                    },
+                    "eventType": "goal",
+                    "bodyPart": "left-foot",
+                    "time": 48,
+                    "playerCoordinates": {
+                        "x": 6.5,
+                        "y": 48.6
+                    },
+                    "gkCoordinates": {
+                        "x": 1.1,
+                        "y": 50.2
+                    },
+                    "goalShotCoordinates": {
+                        "x": 0,
+                        "y": 47.2
+                    },
+                    "goalMouthCoordinates": {
+                        "x": 34.95,
+                        "y": 67.33
+                    },
+                    "goalkeeper": {
+                        "name": "Radek Vitek",
+                        "firstName": "",
+                        "lastName": "",
+                        "slug": "vitek-radek",
+                        "shortName": "R. V\u00edtek",
+                        "position": "G",
+                        "jerseyNumber": "1",
+                        "height": 198,
+                        "userCount": 694,
+                        "id": 1101989,
+                        "marketValueCurrency": "EUR",
+                        "dateOfBirthTimestamp": 1066953600,
+                        "proposedMarketValueRaw": {
+                            "value": 725000,
+                            "currency": "EUR"
+                        },
+                        "fieldTranslations": {
+                            "nameTranslation": {
+                                "ar": "\u0641\u064a\u062a\u0643\u060c \u0631\u0627\u062f\u064a\u0643",
+                                "hi": "\u0935\u093f\u091f\u0947\u0915, \u0930\u093e\u0921\u0947\u0915",
+                                "bn": "\u09ad\u09bf\u099f\u09c7\u0995, \u09b0\u09be\u09a6\u09c7\u0995"
+                            },
+                            "shortNameTranslation": {
+                                "ar": "\u0631. \u0641\u064a\u062a\u0643",
+                                "hi": "\u0906\u0930. \u0935\u093f\u091f\u0947\u0915",
+                                "bn": "\u0986\u09b0. \u09ad\u09bf\u099f\u09c7\u0995"
+                            }
+                        }
+                    },
+                    "isHome": false,
+                    "goalType": "regular"
+                }
+            ],
+            "id": 313314841,
+            "time": 48,
+            "isHome": false,
+            "incidentClass": "regular",
+            "reversedPeriodTime": 43,
+            "incidentType": "goal"
+        },
+        {
+            "text": "HT",
+            "homeScore": 0,
+            "awayScore": 0,
+            "isLive": false,
+            "time": 45,
+            "addedTime": 999,
+            "timeSeconds": 2700,
+            "reversedPeriodTime": 1,
+            "reversedPeriodTimeSeconds": 0,
+            "periodTimeSeconds": 2700,
+            "incidentType": "period"
+        },
+        {
+            "length": 1,
+            "time": 45,
+            "addedTime": 0,
+            "reversedPeriodTime": 1,
+            "incidentType": "injuryTime"
+        },
+        {
+            "player": {
+                "name": "Radek Vitek",
+                "firstName": "",
+                "lastName": "",
+                "slug": "vitek-radek",
+                "shortName": "R. V\u00edtek",
+                "position": "G",
+                "jerseyNumber": "1",
+                "height": 198,
+                "userCount": 694,
+                "id": 1101989,
+                "marketValueCurrency": "EUR",
+                "dateOfBirthTimestamp": 1066953600,
+                "proposedMarketValueRaw": {
+                    "value": 725000,
+                    "currency": "EUR"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0641\u064a\u062a\u0643\u060c \u0631\u0627\u062f\u064a\u0643",
+                        "hi": "\u0935\u093f\u091f\u0947\u0915, \u0930\u093e\u0921\u0947\u0915",
+                        "bn": "\u09ad\u09bf\u099f\u09c7\u0995, \u09b0\u09be\u09a6\u09c7\u0995"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u0631. \u0641\u064a\u062a\u0643",
+                        "hi": "\u0906\u0930. \u0935\u093f\u091f\u0947\u0915",
+                        "bn": "\u0986\u09b0. \u09ad\u09bf\u099f\u09c7\u0995"
+                    }
+                }
+            },
+            "playerName": "Radek Vitek",
+            "reason": "Argument",
+            "rescinded": false,
+            "id": 123425642,
+            "time": 44,
+            "isHome": true,
+            "incidentClass": "yellow",
+            "reversedPeriodTime": 2,
+            "incidentType": "card"
+        }
+    ],
+    "event": {
+        "tournament": {
+            "name": "Bundesliga, Championship Round",
+            "slug": "bundesliga-championship-round",
+            "category": {
+                "id": 17,
+                "country": {
+                    "alpha2": "AT",
+                    "alpha3": "AUT",
+                    "name": "Austria",
+                    "slug": "austria"
+                },
+                "name": "Austria",
+                "slug": "austria",
+                "sport": {
+                    "name": "Football",
+                    "slug": "football",
+                    "id": 1
+                },
+                "flag": "austria",
+                "alpha2": "AT"
+            },
+            "uniqueTournament": {
+                "name": "Austrian Bundesliga",
+                "slug": "bundesliga",
+                "primaryColorHex": "#b80a0c",
+                "secondaryColorHex": "#eb544a",
+                "category": {
+                    "id": 17,
+                    "country": {
+                        "alpha2": "AT",
+                        "alpha3": "AUT",
+                        "name": "Austria",
+                        "slug": "austria"
+                    },
+                    "name": "Austria",
+                    "slug": "austria",
+                    "sport": {
+                        "name": "Football",
+                        "slug": "football",
+                        "id": 1
+                    },
+                    "flag": "austria",
+                    "alpha2": "AT"
+                },
+                "userCount": 26852,
+                "id": 45,
+                "country": {},
+                "hasPerformanceGraphFeature": false,
+                "hasEventPlayerStatistics": true,
+                "displayInverseHomeAwayTeams": false
+            },
+            "priority": 314,
+            "isGroup": false,
+            "competitionType": 1,
+            "isLive": false,
+            "id": 71900
+        },
+        "season": {
+            "name": "Bundesliga 24\/25",
+            "year": "24\/25",
+            "editor": false,
+            "id": 62629
+        },
+        "roundInfo": {
+            "round": 29
+        },
+        "customId": "bQsnR",
+        "status": {
+            "code": 100,
+            "description": "Ended",
+            "type": "finished"
+        },
+        "winnerCode": 2,
+        "venue": {
+            "city": {
+                "name": "Linz"
+            },
+            "venueCoordinates": {
+                "latitude": 14.28611,
+                "longitude": 48.30639
+            },
+            "hidden": true,
+            "slug": "hofmann-personal-stadion",
+            "name": "Hofmann Personal Stadion",
+            "capacity": 5595,
+            "id": 39121,
+            "country": {
+                "alpha2": "AT",
+                "alpha3": "AUT",
+                "name": "Austria",
+                "slug": "austria"
+            },
+            "fieldTranslations": {
+                "nameTranslation": {
+                    "ar": "\u0645\u0644\u0639\u0628 \u0647\u0648\u0641\u0645\u0627\u0646 \u0627\u0644\u0634\u062e\u0635\u064a",
+                    "hi": "\u0939\u0949\u092b\u092e\u0948\u0928 \u092a\u0930\u094d\u0938\u0928\u0932 \u0938\u094d\u091f\u0947\u0921\u093f\u092f\u0928",
+                    "bn": "\u09b9\u09ab\u09ae\u09cd\u09af\u09be\u09a8 \u09aa\u09be\u09b0\u09b8\u09cb\u09a8\u09be\u09b2 \u09b8\u09cd\u099f\u09c7\u09a1\u09bf\u09af\u09bc\u09be\u09a8"
+                },
+                "shortNameTranslation": {}
+            },
+            "stadium": {
+                "name": "Hofmann Personal Stadion",
+                "capacity": 5595
+            }
+        },
+        "referee": {
+            "name": "Harald Lechner",
+            "slug": "lechner-harald",
+            "yellowCards": 1623,
+            "redCards": 54,
+            "yellowRedCards": 44,
+            "games": 368,
+            "sport": {
+                "id": 1,
+                "slug": "football",
+                "name": "Football"
+            },
+            "id": 52558,
+            "country": {
+                "alpha2": "AT",
+                "alpha3": "AUT",
+                "name": "Austria",
+                "slug": "austria"
+            },
+            "fieldTranslations": {
+                "nameTranslation": {
+                    "ar": "\u0644\u064a\u062e\u0646\u0631\u060c \u0647\u0627\u0631\u0627\u0644\u062f",
+                    "hi": "\u0932\u0947\u091a\u0928\u0930, \u0939\u0947\u0930\u093e\u0932\u094d\u0921",
+                    "bn": "\u09b2\u09c7\u099a\u09a8\u09be\u09b0, \u09b9\u09cd\u09af\u09be\u09b0\u09be\u09b2\u09cd\u09a1"
+                },
+                "shortNameTranslation": {}
+            }
+        },
+        "homeTeam": {
+            "name": "FC Blau Weiss Linz",
+            "slug": "fc-blau-weiss-linz",
+            "shortName": "BW Linz",
+            "gender": "M",
+            "sport": {
+                "name": "Football",
+                "slug": "football",
+                "id": 1
+            },
+            "userCount": 6114,
+            "manager": {
+                "id": 787455,
+                "country": {
+                    "alpha2": "AT",
+                    "alpha3": "AUT",
+                    "name": "Austria",
+                    "slug": "austria"
+                },
+                "name": "Gerald Scheiblehner",
+                "slug": "gerald-scheiblehner",
+                "shortName": "G. Scheiblehner",
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u062c\u064a\u0631\u0627\u0644\u062f \u0634\u064a\u0628\u0644\u064a\u0647\u0646\u064a\u0631",
+                        "hi": "\u0917\u0947\u0930\u093e\u0932\u094d\u0921 \u0936\u0947\u0907\u092c\u094d\u0932\u0947\u0939\u0928\u0947\u0930",
+                        "bn": "\u099c\u09c7\u09b0\u09be\u09b2\u09cd\u09a1 \u09b6\u09c7\u0987\u09ac\u09b2\u09b9\u09a8\u09be\u09b0"
+                    },
+                    "shortNameTranslation": {
+                        "ar": "\u062c. \u0634\u064a\u0628\u0644\u064a\u0647\u0646\u064a\u0631",
+                        "hi": "\u091c\u0940. \u0936\u0947\u0907\u092c\u094d\u0932\u0947\u0939\u0928\u0947\u0930",
+                        "bn": "\u099c\u09bf. \u09b6\u09c7\u0987\u09ac\u09b2\u09b9\u09a8\u09be\u09b0"
+                    }
+                }
+            },
+            "venue": {
+                "city": {
+                    "name": "Linz"
+                },
+                "venueCoordinates": {
+                    "latitude": 14.28611,
+                    "longitude": 48.30639
+                },
+                "hidden": true,
+                "slug": "hofmann-personal-stadion",
+                "name": "Hofmann Personal Stadion",
+                "capacity": 5595,
+                "id": 39121,
+                "country": {
+                    "alpha2": "AT",
+                    "alpha3": "AUT",
+                    "name": "Austria",
+                    "slug": "austria"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0645\u0644\u0639\u0628 \u0647\u0648\u0641\u0645\u0627\u0646 \u0627\u0644\u0634\u062e\u0635\u064a",
+                        "hi": "\u0939\u0949\u092b\u092e\u0948\u0928 \u092a\u0930\u094d\u0938\u0928\u0932 \u0938\u094d\u091f\u0947\u0921\u093f\u092f\u0928",
+                        "bn": "\u09b9\u09ab\u09ae\u09cd\u09af\u09be\u09a8 \u09aa\u09be\u09b0\u09b8\u09cb\u09a8\u09be\u09b2 \u09b8\u09cd\u099f\u09c7\u09a1\u09bf\u09af\u09bc\u09be\u09a8"
+                    },
+                    "shortNameTranslation": {}
+                },
+                "stadium": {
+                    "name": "Hofmann Personal Stadion",
+                    "capacity": 5595
+                }
+            },
+            "nameCode": "BWL",
+            "disabled": false,
+            "national": false,
+            "type": 0,
+            "id": 2113,
+            "country": {
+                "alpha2": "AT",
+                "alpha3": "AUT",
+                "name": "Austria",
+                "slug": "austria"
+            },
+            "fullName": "FC Blau Weiss Linz",
+            "subTeams": [],
+            "teamColors": {
+                "primary": "#ffffff",
+                "secondary": "#0000b2",
+                "text": "#0000b2"
+            },
+            "foundationDateTimestamp": 870393600,
+            "fieldTranslations": {
+                "nameTranslation": {
+                    "ar": "\u0625\u0641 \u0633\u064a \u0628\u0644\u0627\u0648 \u0641\u0627\u064a\u0633 \u0644\u064a\u0646\u0632",
+                    "ru": "\u0411\u0412 \u041b\u0438\u043d\u0446",
+                    "hi": "\u090f\u092b\u0938\u0940 \u092c\u094d\u0932\u093e\u0909 \u0935\u093e\u0907\u0938 \u0932\u093f\u0902\u091c\u093c",
+                    "bn": "\u098f\u09ab\u09b8\u09bf \u09ac\u09cd\u09b2\u09be\u0989 \u0993\u09af\u09bc\u09c7\u0987\u09b8 \u09b2\u09bf\u099e\u09cd\u099c"
+                },
+                "shortNameTranslation": {
+                    "ar": "\u0628\u064a \u062f\u0628\u0644\u064a\u0648 \u0644\u064a\u0646\u0632",
+                    "hi": "\u092c\u0940\u0921\u092c\u094d\u0932\u094d\u092f\u0942 \u0932\u093f\u0902\u091c\u093c",
+                    "bn": "\u09ac\u09bf\u09a1\u09ac\u09cd\u09b2\u09bf\u0989 \u09b2\u09bf\u099e\u09cd\u099c"
+                }
+            },
+            "timeActive": []
+        },
+        "awayTeam": {
+            "name": "SK Sturm Graz",
+            "slug": "sk-sturm-graz",
+            "shortName": "Sturm",
+            "gender": "M",
+            "sport": {
+                "name": "Football",
+                "slug": "football",
+                "id": 1
+            },
+            "userCount": 83888,
+            "manager": {
+                "id": 803838,
+                "country": {
+                    "alpha2": "AT",
+                    "alpha3": "AUT",
+                    "name": "Austria",
+                    "slug": "austria"
+                },
+                "name": "J\u00fcrgen S\u00e4umel",
+                "slug": "saumel-jurgen",
+                "shortName": "J. S\u00e4umel"
+            },
+            "venue": {
+                "city": {
+                    "name": "Graz"
+                },
+                "venueCoordinates": {
+                    "latitude": 47.046367,
+                    "longitude": 15.454008
+                },
+                "hidden": true,
+                "slug": "merkur-arena",
+                "name": "Merkur Arena",
+                "capacity": 16764,
+                "id": 808,
+                "country": {
+                    "alpha2": "AT",
+                    "alpha3": "AUT",
+                    "name": "Austria",
+                    "slug": "austria"
+                },
+                "fieldTranslations": {
+                    "nameTranslation": {
+                        "ar": "\u0645\u064a\u0631\u0643\u0648\u0631 \u0623\u0631\u064a\u0646\u0627",
+                        "hi": "\u092e\u0930\u094d\u0915\u0941\u0930 \u090f\u0930\u093f\u0928\u093e",
+                        "bn": "\u09ae\u09c7\u09b0\u0995\u09c1\u09b0 \u098f\u09b0\u09bf\u09a8\u09be"
+                    },
+                    "shortNameTranslation": {}
+                },
+                "stadium": {
+                    "name": "Merkur Arena",
+                    "capacity": 16764
+                }
+            },
+            "nameCode": "STU",
+            "class": 4,
+            "disabled": false,
+            "national": false,
+            "type": 0,
+            "id": 2051,
+            "country": {
+                "alpha2": "AT",
+                "alpha3": "AUT",
+                "name": "Austria",
+                "slug": "austria"
+            },
+            "fullName": "SK Sturm Graz",
+            "subTeams": [],
+            "teamColors": {
+                "primary": "#000000",
+                "secondary": "#0000ff",
+                "text": "#0000ff"
+            },
+            "foundationDateTimestamp": -1914624000,
+            "fieldTranslations": {
+                "nameTranslation": {
+                    "ar": "\u0625\u0633 \u0643\u064a\u0647 \u0634\u062a\u0648\u0631\u0645 \u063a\u0631\u0627\u062a\u0633",
+                    "ru": "\u0428\u0442\u0443\u0440\u043c \u0413\u0440\u0430\u0446",
+                    "hi": "\u090f\u0938\u0915\u0947 \u0938\u094d\u091f\u0930\u094d\u092e \u0917\u094d\u0930\u093e\u091c\u093c",
+                    "bn": "\u098f\u09b8\u0995\u09c7 \u09b8\u09cd\u099f\u09b0\u09cd\u09ae \u0997\u09cd\u09b0\u09cd\u09af\u09be\u099c"
+                },
+                "shortNameTranslation": {
+                    "ar": "\u0634\u062a\u0648\u0631\u0645",
+                    "hi": "\u0938\u094d\u091f\u0930\u094d\u092e",
+                    "bn": "\u09b8\u09cd\u099f\u09b0\u09cd\u09ae"
+                }
+            },
+            "timeActive": []
+        },
+        "homeScore": {
+            "current": 0,
+            "display": 0,
+            "period1": 0,
+            "period2": 0,
+            "normaltime": 0
+        },
+        "awayScore": {
+            "current": 1,
+            "display": 1,
+            "period1": 0,
+            "period2": 1,
+            "normaltime": 1
+        },
+        "time": {
+            "injuryTime1": 1,
+            "injuryTime2": 3,
+            "currentPeriodStartTimestamp": 1746368480
+        },
+        "changes": {
+            "changes": [
+                "status.code",
+                "status.description",
+                "status.type",
+                "homeScore.period2",
+                "homeScore.normaltime",
+                "awayScore.period2",
+                "awayScore.normaltime",
+                "time.currentPeriodStart"
+            ],
+            "changeTimestamp": 1746368483
+        },
+        "hasGlobalHighlights": false,
+        "hasEventPlayerStatistics": true,
+        "hasEventPlayerHeatMap": true,
+        "detailId": 1,
+        "crowdsourcingDataDisplayEnabled": false,
+        "id": 13629506,
+        "awayRedCards": 1,
+        "defaultPeriodCount": 2,
+        "defaultPeriodLength": 45,
+        "defaultOvertimeLength": 15,
+        "slug": "fc-blau-weiss-linz-sk-sturm-graz",
+        "currentPeriodStartTimestamp": 1746368480,
+        "startTimestamp": 1746361800,
+        "finalResultOnly": false,
+        "feedLocked": false,
+        "fanRatingEvent": false,
+        "seasonStatisticsType": "overall",
+        "showTotoPromo": true,
+        "isEditor": false
+    }
+}

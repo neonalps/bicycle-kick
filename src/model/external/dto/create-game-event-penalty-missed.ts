@@ -5,8 +5,6 @@ import { PersonInputDto } from "./person-input";
 
 export interface CreatePenaltyMissedGameEventDto extends CreateGameEventDto {
     type: GameEventType.PenaltyMissed;
-    reason?: PenaltyMissedReason;
+    reason: PenaltyMissedReason;
     takenBy: PersonInputDto;
-    goalkeeper: PersonInputDto;
-    saved: boolean;
 }

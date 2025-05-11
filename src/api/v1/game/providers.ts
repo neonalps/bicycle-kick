@@ -11,21 +11,41 @@ import { DeleteGameByIdRouteHandler } from "./delete-by-id/handler";
 import { PermissionService } from "@src/module/permission/service";
 import { GetGameByIdRouteHandler } from "./get-by-id/handler";
 import { GetGameByIdRouteProvider } from "./get-by-id/route-provider";
+import { GameStarService } from "@src/module/game-star/service";
+import { StarGameHandler } from "./star/handler";
+import { StarGameRouteProvider } from "./star/route-provider";
+import { UnstarGameHandler } from "./unstar/handler";
+import { UnstarGameRouteProvider } from "./unstar/route-provider";
+import { AttendGameHandler } from "./attend/handler";
+import { GameAttendedService } from "@src/module/game-attended/service";
+import { AttendGameRouteProvider } from "./attend/route-provider";
+import { UnattendGameHandler } from "./unattend/handler";
+import { UnattendGameRouteProvider } from "./unattend/route-provider";
 
 export function getGameRouteProviders(): RouteProvider<any, any>[] {
 
     const apiHelperService = dependencyManager.get<ApiHelperService>(Dependencies.ApiHelperService);
+    const gameAttendService = dependencyManager.get<GameAttendedService>(Dependencies.GameAttendedService);
     const sofascoreGameProvider = dependencyManager.get<SofascoreGameProvider>(Dependencies.SofascoreGameProvider);
     const gameService = dependencyManager.get<GameService>(Dependencies.GameService);
+    const gameStarService = dependencyManager.get<GameStarService>(Dependencies.GameStarService);
     const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
 
     const createGameViaExternalProviderHandler = new CreateGameViaExternalProviderRouteHandler(apiHelperService, sofascoreGameProvider, gameService);
     const getGameByIdHandler = new GetGameByIdRouteHandler(apiHelperService, gameService, permissionService);
     const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(gameService, permissionService);
+    const starGameHandler = new StarGameHandler(gameStarService);
+    const unstarGameHandler = new UnstarGameHandler(gameStarService);
+    const attendGameHandler = new AttendGameHandler(gameAttendService);
+    const unattendGameHandler = new UnattendGameHandler(gameAttendService);
 
     return [
         new CreateGameViaExternalProviderRouteProvider(createGameViaExternalProviderHandler),
         new GetGameByIdRouteProvider(getGameByIdHandler),
         new DeleteGameByIdRouteProvider(deleteGameByIdHandler),
+        new StarGameRouteProvider(starGameHandler),
+        new UnstarGameRouteProvider(unstarGameHandler),
+        new AttendGameRouteProvider(attendGameHandler),
+        new UnattendGameRouteProvider(unattendGameHandler),
     ];
 }

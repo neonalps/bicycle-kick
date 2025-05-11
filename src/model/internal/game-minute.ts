@@ -77,6 +77,10 @@ export class GameMinute {
         return this.getBase() - (this.getStoppage() > 0 ? 0 : 1);
     }
 
+    public isInExtraTime(): boolean {
+        return this.isAfter(GameMinute.FULL_TIME) && this.isBefore(GameMinute.AFTER_EXTRA_TIME);
+    }
+
     private parseGameMinute(minute: string): MinuteTuple {
         if (minute === GameMinute.KEY_HALF_TIME) {
             return [45, 999];

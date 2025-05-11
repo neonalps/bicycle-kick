@@ -1,6 +1,6 @@
 import { Tendency } from "@src/model/type/tendency";
 
-type ScoreTuple = [number, number];
+export type ScoreTuple = [number, number];
 
 export class Score {
 

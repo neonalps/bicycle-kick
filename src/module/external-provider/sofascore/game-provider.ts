@@ -23,6 +23,10 @@ import { PersonInputDto } from "@src/model/external/dto/person-input";
 import { CreateVarDecisionGameEventDto } from "@src/model/external/dto/create-game-event-var-decision";
 import { VarDecision } from "@src/model/type/var-decision";
 import { GameMinute } from "@src/model/internal/game-minute";
+import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
+import { PsoResult } from "@src/model/type/pso-result";
+import { CreatePenaltyMissedGameEventDto } from "@src/model/external/dto/create-game-event-penalty-missed";
+import { PenaltyMissedReason } from "@src/model/type/penalty-missed-reason";
 
 type PersonName = {
     firstName: string;
@@ -146,7 +150,7 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
     private getLineup(lineup: TeamLineup, forMain: boolean): CreateGamePlayerDto[] {
         return lineup.players.map((item, idx) => {
             return {
-                sortOrder: idx,
+                sortOrder: idx + (forMain ? 0 : 100),
                 shirt: item.shirtNumber,
                 isCaptain: item.captain === true,
                 isStarting: !item.substitute,
@@ -160,8 +164,11 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
         return incidents
             .filter(item => !["period"].includes(item.incidentType))
             .sort((a, b) => {
-                const first = new GameMinute(this.getMinute(a.time, a.addedTime));
-                const second = new GameMinute(this.getMinute(b.time, b.addedTime));
+                const firstMinute = a.incidentType === 'penaltyShootout' ? this.getMinute(121, a.sequence) : this.getMinute(a.time, a.addedTime);
+                const secondMinute = b.incidentType === 'penaltyShootout' ? this.getMinute(121, b.sequence) : this.getMinute(b.time, b.addedTime);
+
+                const first = new GameMinute(firstMinute);
+                const second = new GameMinute(secondMinute);
                 return first.compareTo(second);
             })
             .map((item, idx) => {
@@ -176,6 +183,10 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                     return this.getInjuryTimeEvent(item, idx);
                 case 'varDecision':
                     return this.getVarDecisionEvent(item, idx);
+                case 'penaltyShootout':
+                    return this.getPenaltyShootOutEvent(item, idx);
+                case 'inGamePenalty':
+                    return this.getPenaltyMissedEvent(item, idx);
                 default:
                     throw new Error(`Unhandled incident type ${item.incidentType}`);
             }
@@ -239,14 +250,22 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
 
     private parseBookableOffence(reason?: string): BookableOffence {
         if (reason === undefined) {
-            return 'other';
+            return BookableOffence.Other;
         }
 
         switch (reason) {
             case 'foul':
-                return 'foul';
+                return BookableOffence.Foul;
+            case 'argument':
+                return BookableOffence.Dissent;
+            case 'handball':
+                return BookableOffence.Handball;
+            case 'dangerous play':
+                return BookableOffence.DangerousPlay;
+            case 'professional foul last man':
+                return BookableOffence.DenialOfGoalScoringOpportunity;
             default:
-                return reason as BookableOffence;
+                throw new Error(`Failed to parse bookable offence ${reason}`);
         }
     }
 
@@ -313,12 +332,51 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
         }
     }
 
+    private getPenaltyMissedEvent(incident: Incident, sortOrder: number): CreatePenaltyMissedGameEventDto {
+        return {
+            type: GameEventType.PenaltyMissed,
+            sortOrder,
+            minute: this.getMinute(incident.time, incident.addedTime),
+            takenBy: this.getPersonInput(incident.player as GamePlayer),
+            reason: this.parsePenaltyMissedReason(incident.description as string),
+        }
+    }
+
+    private getPenaltyShootOutEvent(incident: Incident, sortOrder: number): CreatePenaltyShootOutGameEventDto {
+        return {
+            type: GameEventType.PenaltyShootOut,
+            sortOrder,
+            minute: GameMinute.PSO.toString(),
+            takenBy: this.getPersonInput(incident.player as GamePlayer),
+            result: this.parsePsoResult(incident.incidentClass as string),
+        }
+    }
+
+    private parsePenaltyMissedReason(reason: string): PenaltyMissedReason {
+        if (reason === 'Goalkeeper save') {
+            return 'saved';
+        } else {
+            return 'saved';
+        }
+    }
+
+    private parsePsoResult(result: string): PsoResult {
+        if (result === "scored") {
+            return PsoResult.Goal;
+        } else {
+            // there is only "missed" in Sofascore
+            return PsoResult.Saved;
+        }
+    }
+
     private parseVarDecision(decision?: string): VarDecision {
         if (decision === undefined) {
             throw new Error(`No VAR decision passed`);
         }
 
         switch (decision) {
+            case 'penaltyAwarded':
+                return 'penaltyCancelled';
             case 'penaltyNotAwarded':
                 return 'penalty';
             default:

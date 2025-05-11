@@ -35,7 +35,9 @@ import { CreateYellowCardGameEventDto } from "@src/model/external/dto/create-gam
 import { GameMinute } from "@src/model/internal/game-minute";
 import { CreateVarDecisionGameEventDto } from "@src/model/external/dto/create-game-event-var-decision";
 import { determineResultTendency, getGameMinutes } from "@src/util/game";
-import { CreateGameEventDaoInterface, GameEventDaoInterface } from "@src/model/internal/interface/game-event.interface";
+import { CreateGameEventDaoInterface } from "@src/model/internal/interface/game-event.interface";
+import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
+import { PsoResult } from "@src/model/type/pso-result";
 
 export class GameMapper {
 
@@ -122,6 +124,9 @@ export class GameMapper {
             const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'venueId', 'status', 'attendance', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
             const gameId = temporaryGameResult[0].id;
 
+            let goalkeeperMainPersonId: number | null = null;
+            let goalkeeperOpponentPersonId: number | null = null;
+
             const resolvedGamePlayers = await this.resolveGamePlayers(tx, gameId, [...dto.lineupMain, ...dto.lineupOpponent]);
             const lineup: CreateGamePlayer[] = resolvedGamePlayers.map(item => {
                 return {
@@ -129,25 +134,71 @@ export class GameMapper {
                     gameId,
                 }
             });
-            const lineupResult = await tx`insert into game_players ${ tx(lineup, 'gameId', 'personId', 'sortOrder', 'forMain', 'shirt', 'isCaptain', 'isStarting', 'positionGrid', 'positionKey', 'minutesPlayed', 'goalsScored', 'assists', 'ownGoals', 'yellowCard', 'yellowRedCard', 'redCard', 'regulationPenaltiesTaken', 'regulationPenaltiesScored', 'regulationPenaltiesFaced', 'regulationPenaltiesSaved', 'psoPenaltiesTaken', 'psoPenaltiesScored', 'psoPenaltiesFaced', 'psoPenaltiesSaved') } returning id, person_id, for_main, is_starting`;            
-            const personGamePlayerIdMap = new Map<number, { id: number, forMain: boolean, isStarting: boolean, minutesPlayed: number | null, goalsScored: number, assists: number, goalsConceded: number | null, ownGoals: number, yellow: boolean, yellowRed: boolean, red: boolean }>();
+            const lineupResult = await tx`insert into game_players ${ tx(lineup, 'gameId', 'personId', 'sortOrder', 'forMain', 'shirt', 'isCaptain', 'isStarting', 'positionGrid', 'positionKey', 'minutesPlayed', 'goalsScored', 'assists', 'ownGoals', 'yellowCard', 'yellowRedCard', 'redCard', 'regulationPenaltiesTaken', 'regulationPenaltiesScored', 'regulationPenaltiesFaced', 'regulationPenaltiesSaved', 'psoPenaltiesTaken', 'psoPenaltiesScored', 'psoPenaltiesFaced', 'psoPenaltiesSaved') } returning id, person_id, for_main, sort_order, is_starting`;            
+            const personGamePlayerIdMap = new Map<number, { 
+                id: number, 
+                forMain: boolean, 
+                sortOrder: number, 
+                isStarting: boolean, 
+                minutesPlayed: number | null, 
+                goalsScored: number, 
+                assists: number, 
+                goalsConceded: number | null, 
+                ownGoals: number, 
+                yellow: boolean, 
+                yellowRed: boolean, 
+                red: boolean,
+                regulationPenaltiesTaken: number,
+                regulationPenaltiesScored: number,
+                regulationPenaltiesFaced: number,
+                regulationPenaltiesSaved: number,
+                psoPenaltiesTaken: number,
+                psoPenaltiesScored: number,
+                psoPenaltiesFaced: number,
+                psoPenaltiesSaved: number,
+             }>();
             const gamePlayerPersonIdMap = new Map<number, number>();
             lineupResult.forEach(item => {
+                if (item.sortOrder % 100 === 0) {
+                    if (item.forMain) {
+                        goalkeeperMainPersonId = item.personId;
+                    } else {
+                        goalkeeperOpponentPersonId = item.personId;
+                    }
+                }
+
                 personGamePlayerIdMap.set(item.personId, { 
                     id: item.id, 
                     forMain: item.forMain, 
                     isStarting: item.isStarting, 
                     minutesPlayed: null,
+                    sortOrder: item.sortOrder,
                     goalsScored: 0,
                     assists: 0,
                     ownGoals: 0,
                     yellow: false,
                     yellowRed: false,
                     red: false,
-                    goalsConceded: null,
+                    goalsConceded: item.sortOrder === 0 ? 0 : null,
+                    regulationPenaltiesScored: 0,
+                    regulationPenaltiesTaken: 0,
+                    regulationPenaltiesFaced: 0,
+                    regulationPenaltiesSaved: 0,
+                    psoPenaltiesScored: 0,
+                    psoPenaltiesTaken: 0,
+                    psoPenaltiesFaced: 0,
+                    psoPenaltiesSaved: 0,
                 });
                 gamePlayerPersonIdMap.set(item.id, item.personId);
             });
+
+            if (goalkeeperMainPersonId === null) {
+                throw new Error(`Failed to identify main goalkeeper person ID`);
+            }
+
+            if (goalkeeperOpponentPersonId === null) {
+                throw new Error(`Failed to identify opponent goalkeeper person ID`);
+            }
 
             const managers = await this.resolveGameManagers(tx, gameId, [...dto.managersMain, ...dto.managersOpponent]);
             const managersResult = await tx`insert into game_managers ${ tx(managers, 'gameId', 'personId', 'forMain', 'sortOrder', 'role')} returning id, person_id, for_main`;
@@ -192,29 +243,21 @@ export class GameMapper {
             let wasOpponentLeading = false;
             let hasExtraTime = false;
             let hasPenaltyShootOut = false;
+            let hasMainGoalkeeperBeenSentOff = false;
+            let hasOpponentGoalkeeperBeenSentOff = false;
 
             const gameEvents: CreateGameEventDaoInterface[] = [];
             for (const event of dto.events) {
+                // as a fallback, try to detect extra time ourselves
+                const eventMinute = new GameMinute(event.minute);
+                if (!hasExtraTime && eventMinute.isInExtraTime()) {
+                    hasExtraTime = true;
+                    aetGoalsMain = fullTimeGoalsMain;
+                    aetGoalsOpponent = fullTimeGoalsOpponent;
+                }
+
                 switch (event.type) {
                     case GameEventType.ExtraTime:
-                        hasExtraTime = true;
-                        aetGoalsMain = fullTimeGoalsMain;
-                        aetGoalsOpponent = fullTimeGoalsOpponent;
-
-                        gameEvents.push({
-                            gameId,
-                            type: event.type,
-                            sortOrder: event.sortOrder,
-                            minute: event.minute,
-                        });
-
-                        break;
-
-                    case GameEventType.PenaltyShootOut:
-                        hasPenaltyShootOut = true;
-                        psoGoalsMain = 0;
-                        psoGoalsOpponent = 0;
-
                         gameEvents.push({
                             gameId,
                             type: event.type,
@@ -232,7 +275,7 @@ export class GameMapper {
                         const assistByGamePlayerEntry = assistBy !== null ? getOrThrow(personGamePlayerIdMap, assistBy, `failed to find assist by in game player map (person ID ${assistBy})`) : null;
 
                         const gameMinute = new GameMinute(event.minute);
-                        const wasGoalForMain = scoredByGamePlayerEntry.forMain && !goalGameEvent.ownGoal;
+                        const wasGoalForMain = (scoredByGamePlayerEntry.forMain && !goalGameEvent.ownGoal) || (!scoredByGamePlayerEntry.forMain && goalGameEvent.ownGoal);
 
                         if (gameMinute.isAfter(GameMinute.FULL_TIME) && gameMinute.isBefore(GameMinute.AFTER_EXTRA_TIME)) {
                             if (!hasExtraTime || aetGoalsMain === undefined || aetGoalsOpponent === undefined) {
@@ -256,69 +299,77 @@ export class GameMapper {
                         const scoreMain = Math.max(...[fullTimeGoalsMain, aetGoalsMain].filter(item => item !== undefined && item !== null));
                         const scoreOpponent = Math.max(...[fullTimeGoalsOpponent, aetGoalsOpponent].filter(item => item !== undefined && item !== null));
 
-                        if (!hasPenaltyShootOut) {
-                            if (scoreMain > scoreOpponent) {
-                                if (wasOpponentLeading) {
-                                    turnaroundsMain += 1;
-                                    wasOpponentLeading = false;
-                                }
-    
-                                wasMainLeading = true;
-                            } else if (scoreOpponent > scoreMain) {
-                                if (wasMainLeading) {
-                                    turnaroundsOpponent += 1;
-                                    wasMainLeading = false;
-                                }
-    
-                                wasOpponentLeading = true;
+                        if (scoreMain > scoreOpponent) {
+                            if (wasOpponentLeading) {
+                                turnaroundsMain += 1;
+                                wasOpponentLeading = false;
                             }
-                            
-                            if (goalGameEvent.penalty) {
-                                if (scoredByGamePlayerEntry.forMain) {
-                                    penaltiesScoredMain += 1;
-                                    penaltiesTakenMain += 1;
-                                } else {
-                                    penaltiesScoredOpponent += 1;
-                                    penaltiesTakenOpponent += 1;
-                                }
-                            } else if (goalGameEvent.directFreeKick) {
-                                if (scoredByGamePlayerEntry.forMain) {
-                                    directFreeKickGoalsMain += 1;
-                                } else {
-                                    directFreeKickGoalsOpponent += 1;
-                                }
-                            } else if (goalGameEvent.ownGoal) {
-                                if (scoredByGamePlayerEntry.forMain) {
-                                    ownGoalsMain += 1;
-                                } else {
-                                    ownGoalsOpponent += 1;
-                                }
-                            } else if (goalGameEvent.bicycleKick) {
-                                if (scoredByGamePlayerEntry.forMain) {
-                                    bicycleKickGoalsMain += 1;
-                                } else {
-                                    bicycleKickGoalsOpponent += 1;
-                                }
+
+                            wasMainLeading = true;
+                        } else if (scoreOpponent > scoreMain) {
+                            if (wasMainLeading) {
+                                turnaroundsOpponent += 1;
+                                wasMainLeading = false;
                             }
-                        } else if (gameMinute.equals(GameMinute.PSO)) {
-                            if (psoGoalsMain !== undefined && psoGoalsOpponent !== undefined) {
-                                psoGoalsMain += wasGoalForMain ? 1 : 0;
-                                psoGoalsOpponent += wasGoalForMain ? 0 : 1;
-                            } else {
-                                throw new Error(`Game event in PSO but no penalty shoot out has been added`)
-                            }
+
+                            wasOpponentLeading = true;
                         }
 
                         if (goalGameEvent.ownGoal) {
                             scoredByGamePlayerEntry.ownGoals += 1;
-                            // TODO add goal conceded to opposition keeper
                         } else {
                             scoredByGamePlayerEntry.goalsScored += 1;
-                            // TODO add goal conceded to opposition keeper
                         }
 
                         if (assistByGamePlayerEntry !== null) {
                             assistByGamePlayerEntry.assists += 1;
+                        }
+
+                        if (wasGoalForMain) {
+                            const opponentGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperOpponentPersonId, `failed to find goalkeeper opponent`);
+                            opponentGoalkeeper.goalsConceded = (opponentGoalkeeper.goalsConceded || 0) + 1;
+
+                            if (goalGameEvent.penalty) {
+                                opponentGoalkeeper.regulationPenaltiesFaced += 1;
+                            }
+                        } else {
+                            const mainGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperMainPersonId, `failed to find goalkeeper main`);
+                            mainGoalkeeper.goalsConceded = (mainGoalkeeper.goalsConceded || 0) + 1;
+
+                            if (goalGameEvent.penalty) {
+                                mainGoalkeeper.regulationPenaltiesFaced += 1;
+                            }
+                        }
+                        
+                        if (goalGameEvent.penalty) {
+                            if (scoredByGamePlayerEntry.forMain) {
+                                penaltiesScoredMain += 1;
+                                penaltiesTakenMain += 1;
+                            } else {
+                                penaltiesScoredOpponent += 1;
+                                penaltiesTakenOpponent += 1;
+                            }
+
+                            scoredByGamePlayerEntry.regulationPenaltiesScored += 1;
+                            scoredByGamePlayerEntry.regulationPenaltiesTaken += 1;
+                        } else if (goalGameEvent.directFreeKick) {
+                            if (scoredByGamePlayerEntry.forMain) {
+                                directFreeKickGoalsMain += 1;
+                            } else {
+                                directFreeKickGoalsOpponent += 1;
+                            }
+                        } else if (goalGameEvent.ownGoal) {
+                            if (scoredByGamePlayerEntry.forMain) {
+                                ownGoalsMain += 1;
+                            } else {
+                                ownGoalsOpponent += 1;
+                            }
+                        } else if (goalGameEvent.bicycleKick) {
+                            if (scoredByGamePlayerEntry.forMain) {
+                                bicycleKickGoalsMain += 1;
+                            } else {
+                                bicycleKickGoalsOpponent += 1;
+                            }
                         }
 
                         gameEvents.push({
@@ -330,6 +381,7 @@ export class GameMapper {
                             scoreOpponent: hasPenaltyShootOut ? psoGoalsOpponent : scoreOpponent,
                             scoredBy: scoredByGamePlayerEntry.id,
                             assistBy: assistByGamePlayerEntry?.id,
+                            goalType: goalGameEvent.goalType,
                             penalty: goalGameEvent.penalty,
                             directFreeKick: goalGameEvent.directFreeKick,
                             ownGoal: goalGameEvent.ownGoal,
@@ -344,6 +396,20 @@ export class GameMapper {
                         const playerOff = await this.resolvePersonId(tx, substitutionGameEvent.playerOff);
                         const playerOnGamePlayerEntry = getOrThrow(personGamePlayerIdMap, playerOn, `failed to find player on during event processing in game player map (person ID ${playerOn})`);
                         const playerOffGamePlayerEntry = getOrThrow(personGamePlayerIdMap, playerOff, `failed to find player off during event processing in game player map (person ID ${playerOff})`);
+
+                        if (playerOnGamePlayerEntry.forMain && (goalkeeperMainPersonId === playerOff || hasMainGoalkeeperBeenSentOff)) {
+                            console.log(`detected main goalkeeper switch to person ID ${playerOn}`);
+                            goalkeeperMainPersonId = playerOn;
+
+                            hasMainGoalkeeperBeenSentOff = false;
+                        }
+
+                        if (playerOnGamePlayerEntry.forMain === false && (goalkeeperOpponentPersonId === playerOff || hasOpponentGoalkeeperBeenSentOff)) {
+                            console.log(`detected opponent goalkeeper switch to person ID ${playerOn}`);
+                            goalkeeperOpponentPersonId === playerOn;
+
+                            hasOpponentGoalkeeperBeenSentOff = false;
+                        }
 
                         const substitionGameEvent = {
                             gameId,
@@ -389,15 +455,23 @@ export class GameMapper {
                     case GameEventType.PenaltyMissed:
                         const penaltyMissedGameEvent = event as CreatePenaltyMissedGameEventDto;
                         const takenBy = await this.resolvePersonId(tx, penaltyMissedGameEvent.takenBy);
-                        const goalkeeper = await this.resolvePersonId(tx, penaltyMissedGameEvent.goalkeeper);
                         const takenByGamePlayerEntry = getOrThrow(personGamePlayerIdMap, takenBy, `failed to find taken by in game player map (person ID ${takenBy})`);
-                        const goalkeeperGamePlayerEntry = getOrThrow(personGamePlayerIdMap, goalkeeper, `failed to find goalkeeper in game player map (person ID ${goalkeeper})`);
 
                         if (takenByGamePlayerEntry.forMain) {
                             penaltiesTakenMain += 1;
+
+                            const penaltyOpponentGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperOpponentPersonId, `failed to find penalty opponent goalkeeper in game player map (person ID ${goalkeeperOpponentPersonId})`);
+                            penaltyOpponentGoalkeeper.regulationPenaltiesFaced += 1;
+                            penaltyOpponentGoalkeeper.regulationPenaltiesSaved += 1;
                         } else {
                             penaltiesTakenOpponent += 1;
+
+                            const penaltyMainGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperMainPersonId, `failed to find penalty opponent goalkeeper in game player map (person ID ${goalkeeperMainPersonId})`);
+                            penaltyMainGoalkeeper.regulationPenaltiesFaced += 1;
+                            penaltyMainGoalkeeper.regulationPenaltiesSaved += 1;
                         }
+
+                        takenByGamePlayerEntry.regulationPenaltiesTaken += 1;
 
                         gameEvents.push({
                             gameId,
@@ -405,8 +479,59 @@ export class GameMapper {
                             sortOrder: event.sortOrder,
                             minute: event.minute,
                             takenBy: takenByGamePlayerEntry.id,
-                            goalkeeper: goalkeeperGamePlayerEntry.id,
                             reason: penaltyMissedGameEvent.reason,
+                        });
+
+                        break;
+
+                    case GameEventType.PenaltyShootOut:
+                        const psoGameEvent = event as CreatePenaltyShootOutGameEventDto;
+                        const psoTakenBy = await this.resolvePersonId(tx, psoGameEvent.takenBy);
+                        const psoTakenByGamePlayerEntry = getOrThrow(personGamePlayerIdMap, psoTakenBy, `failed to find PSO taken by in game player map (person ID ${psoTakenBy})`);
+
+                        if (!hasPenaltyShootOut) {
+                            hasPenaltyShootOut = true;
+                            psoGoalsMain = 0;
+                            psoGoalsOpponent = 0;
+                        }
+
+                        const psoMainGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperMainPersonId, `failed to find PSO goalkeeper main`);
+                        const psoOpponentGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperOpponentPersonId, `failed to find PSO goalkeeper opponent`);
+
+                        psoTakenByGamePlayerEntry.psoPenaltiesTaken += 1;
+
+                        if (psoTakenByGamePlayerEntry.forMain) {
+                            psoOpponentGoalkeeper.psoPenaltiesFaced += 1;
+
+                            if (psoGameEvent.result === PsoResult.Goal) {
+                                psoGoalsMain = (psoGoalsMain as number) + 1;
+                                psoTakenByGamePlayerEntry.psoPenaltiesScored += 1;
+                            } else {
+                                psoOpponentGoalkeeper.psoPenaltiesSaved += 1;
+                            }
+                        } else if (!psoTakenByGamePlayerEntry.forMain) {
+                            psoMainGoalkeeper.psoPenaltiesFaced += 1;
+
+                            if (psoGameEvent.result === PsoResult.Goal) {
+                                psoGoalsOpponent = (psoGoalsOpponent as number) + 1;
+                                psoTakenByGamePlayerEntry.psoPenaltiesScored += 1;
+                            } else {
+                                psoMainGoalkeeper.psoPenaltiesSaved += 1;
+                            }
+                        }
+
+                        const psoScoreMain = psoGoalsMain;
+                        const psoScoreOpponent = psoGoalsOpponent;
+                        
+                        gameEvents.push({
+                            gameId,
+                            type: event.type,
+                            sortOrder: event.sortOrder,
+                            minute: event.minute,
+                            takenBy: psoTakenByGamePlayerEntry.id,
+                            decision: psoGameEvent.result,
+                            scoreMain: psoScoreMain,
+                            scoreOpponent: psoScoreOpponent,
                         });
 
                         break;
@@ -441,9 +566,17 @@ export class GameMapper {
                                 if (wasForMain) {
                                     yellowRedCardsMain += 1;
                                     yellowCardsMain -= 1;
+
+                                    if (affectedPlayer === goalkeeperMainPersonId) {
+                                        hasMainGoalkeeperBeenSentOff = true;
+                                    }
                                 } else {
                                     yellowRedCardsOpponent += 1;
                                     yellowCardsOpponent -= 1;
+
+                                    if (affectedPlayer === goalkeeperOpponentPersonId) {
+                                        hasOpponentGoalkeeperBeenSentOff = true;
+                                    }
                                 }
                             }
                         } else if (event.type === GameEventType.RedCard) {
@@ -452,8 +585,16 @@ export class GameMapper {
 
                                 if (wasForMain) {
                                     redCardsMain += 1;
+
+                                    if (affectedPlayer === goalkeeperMainPersonId) {
+                                        hasMainGoalkeeperBeenSentOff = true;
+                                    }
                                 } else {
                                     redCardsOpponent += 1;
+
+                                    if (affectedPlayer === goalkeeperOpponentPersonId) {
+                                        hasOpponentGoalkeeperBeenSentOff = true;
+                                    }
                                 }
                             }
                         }
@@ -508,11 +649,8 @@ export class GameMapper {
                 expelledPlayer.minutesPlayed = (expelledPlayer.minutesPlayed as number) - remainingTimeInGame;
             }
 
-            const playerUpdate: any[][] = [];
             for (const value of personGamePlayerIdMap.values()) {
-                await tx`update game_players set minutes_played = ${value.minutesPlayed}, goals_scored = ${value.goalsScored}, assists = ${value.assists}, own_goals = ${value.ownGoals}, yellow_card = ${value.yellow}, yellow_red_card = ${value.yellowRed}, red_card = ${value.red} where id = ${value.id}`;
-
-                playerUpdate.push([value.id, value.minutesPlayed, value.goalsScored, value.assists, value.ownGoals, value.yellow, value.yellowRed, value.red]);
+                await tx`update game_players set minutes_played = ${value.minutesPlayed}, goals_scored = ${value.goalsScored}, assists = ${value.assists}, own_goals = ${value.ownGoals}, yellow_card = ${value.yellow}, yellow_red_card = ${value.yellowRed}, red_card = ${value.red}, goals_conceded = ${value.goalsConceded}, regulation_penalties_taken = ${value.regulationPenaltiesTaken}, regulation_penalties_scored = ${value.regulationPenaltiesScored}, regulation_penalties_faced = ${value.regulationPenaltiesFaced}, regulation_penalties_saved = ${value.regulationPenaltiesSaved}, pso_penalties_taken = ${value.psoPenaltiesTaken}, pso_penalties_scored = ${value.psoPenaltiesScored}, pso_penalties_faced = ${value.psoPenaltiesFaced}, pso_penalties_saved = ${value.psoPenaltiesSaved} where id = ${value.id}`;
             }
 
             const resultTendency = determineResultTendency({
@@ -552,7 +690,7 @@ export class GameMapper {
                 turnaroundsMain,
                 turnaroundsOpponent,
             };
-            await tx`update game set ${ tx(gameUpdate, 'fullTimeGoalsMain', 'fullTimeGoalsOpponent', 'halfTimeGoalsMain', 'halfTimeGoalsOpponent', 'aetGoalsMain', 'aetGoalsOpponent', 'psoGoalsMain', 'psoGoalsOpponent', 'yellowCardsMain', 'yellowCardsOpponent', 'yellowRedCardsMain', 'yellowRedCardsOpponent', 'redCardsMain', 'redCardsOpponent', 'penaltiesScoredMain', 'penaltiesScoredOpponent', 'penaltiesMissedMain', 'penaltiesMissedOpponent', 'directFreeKickGoalsMain', 'directFreeKickGoalsOpponent', 'bicycleKickGoalsMain', 'bicycleKickGoalsOpponent', 'ownGoalsMain', 'ownGoalsOpponent', 'turnaroundsMain', 'turnaroundsOpponent') } where id = ${gameId}`;
+            await tx`update game set ${ tx(gameUpdate, 'resultTendency', 'fullTimeGoalsMain', 'fullTimeGoalsOpponent', 'halfTimeGoalsMain', 'halfTimeGoalsOpponent', 'aetGoalsMain', 'aetGoalsOpponent', 'psoGoalsMain', 'psoGoalsOpponent', 'yellowCardsMain', 'yellowCardsOpponent', 'yellowRedCardsMain', 'yellowRedCardsOpponent', 'redCardsMain', 'redCardsOpponent', 'penaltiesScoredMain', 'penaltiesScoredOpponent', 'penaltiesMissedMain', 'penaltiesMissedOpponent', 'directFreeKickGoalsMain', 'directFreeKickGoalsOpponent', 'bicycleKickGoalsMain', 'bicycleKickGoalsOpponent', 'ownGoalsMain', 'ownGoalsOpponent', 'turnaroundsMain', 'turnaroundsOpponent') } where id = ${gameId}`;
 
             return gameId;
         });

@@ -3,6 +3,6 @@ export interface CompetitionDto {
     name: string;
     shortName: string;
     isDomestic: boolean;
-    parentCompetition?: CompetitionDto;
+    parent?: CompetitionDto;
     combineStatisticsWithParent?: boolean;
 }

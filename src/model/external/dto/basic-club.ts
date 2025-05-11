@@ -4,5 +4,4 @@ export interface BasicClubDto {
     shortName: string;
     iconSmall?: string;
     iconLarge?: string;
-    href: string;
 }

@@ -4,4 +4,5 @@ export interface CompetitionDaoInterface {
     shortName: string;
     isDomestic: boolean;
     parentId?: number;
+    combineStatisticsWithParent?: boolean;
 }

@@ -1,10 +1,10 @@
 import { CreateGameEventDto } from "./create-game-event";
 import { GameEventType } from "./game-event-type";
-import { VarDecision } from "@src/model/type/var-decision";
 import { PersonInputDto } from "./person-input";
+import { PsoResult } from "@src/model/type/pso-result";
 
-export interface CreateVarDecisionGameEventDto extends CreateGameEventDto {
-    type: GameEventType.VarDecision;
-    decision: VarDecision;
-    affectedPlayer: PersonInputDto;
+export interface CreatePenaltyShootOutGameEventDto extends CreateGameEventDto {
+    type: GameEventType.PenaltyShootOut;
+    takenBy: PersonInputDto;
+    result: PsoResult;
 }

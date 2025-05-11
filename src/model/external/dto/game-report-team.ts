@@ -1,8 +1,7 @@
-import { BasicPersonDto } from "./basic-person";
+import { GameManagerDto } from "./game-manager";
 import { GamePlayerDto } from "./game-player";
 
 export interface TeamGameReportDto {
-    starting: GamePlayerDto[];
-    substitutes: GamePlayerDto[];
-    managers: BasicPersonDto[];
+    lineup: GamePlayerDto[];
+    managers: GameManagerDto[];
 }

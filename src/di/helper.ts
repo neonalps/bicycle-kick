@@ -69,6 +69,10 @@ import { GameRefereeMapper } from "@src/module/game-referee/mapper";
 import { GameRefereeService } from "@src/module/game-referee/service";
 import { GameManagerMapper } from "@src/module/game-manager/mapper";
 import { GameManagerService } from "@src/module/game-manager/service";
+import { GameStarMapper } from "@src/module/game-star/mapper";
+import { GameStarService } from "@src/module/game-star/service";
+import { GameAttendedMapper } from "@src/module/game-attended/mapper";
+import { GameAttendedService } from "@src/module/game-attended/service";
 
 export class DependencyHelper {
 
@@ -106,6 +110,8 @@ export class DependencyHelper {
         const clubService = new ClubService(clubMapper);
         const competitionMapper = new CompetitionMapper(sqlInstance);
         const competitionService = new CompetitionService(competitionMapper);
+        const gameAttendedMapper = new GameAttendedMapper(sqlInstance);
+        const gameAttendedService = new GameAttendedService(gameAttendedMapper);
         const gameEventMapper = new GameEventMapper(sqlInstance);
         const gameEventService = new GameEventService(gameEventMapper);
         const gameManagerMapper = new GameManagerMapper(sqlInstance);
@@ -114,6 +120,8 @@ export class DependencyHelper {
         const gamePlayerService = new GamePlayerService(gamePlayerMapper);
         const gameRefereeMapper = new GameRefereeMapper(sqlInstance);
         const gameRefereeService = new GameRefereeService(gameRefereeMapper);
+        const gameStarMapper = new GameStarMapper(sqlInstance);
+        const gameStarService = new GameStarService(gameStarMapper);
         const oAuthService = new OAuthService(accountService, authService, googleOAuthClient);
         const personMapper = new PersonMapper(sqlInstance);
         const personService = new PersonService(personMapper);
@@ -208,10 +216,12 @@ export class DependencyHelper {
         dependencies.set(Dependencies.CryptoService, cryptoService);
         dependencies.set(Dependencies.DateSource, dateSource);
         dependencies.set(Dependencies.GameService, gameService);
+        dependencies.set(Dependencies.GameAttendedService, gameAttendedService);
         dependencies.set(Dependencies.GameEventService, gameEventService);
         dependencies.set(Dependencies.GameManagerService, gameManagerService);
         dependencies.set(Dependencies.GamePlayerService, gamePlayerService);
         dependencies.set(Dependencies.GameRefereeService, gameRefereeService);
+        dependencies.set(Dependencies.GameStarService, gameStarService);
         dependencies.set(Dependencies.OAuthService, oAuthService);
         dependencies.set(Dependencies.PaginationService, paginationService);
         dependencies.set(Dependencies.PermissionService, permissionService);

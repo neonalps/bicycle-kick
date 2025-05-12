@@ -53,7 +53,8 @@ import { ExtraTimeGameEventDto } from "@src/model/external/dto/game-event-extra-
 import { GameRefereeService } from "@src/module/game-referee/service";
 import { GameRefereeDto } from "@src/model/external/dto/game-referee";
 import { GameManagerService } from "@src/module/game-manager/service";
-import { GameManagerDto } from "@src/model/external/dto/game-manager";
+import { GameAttendedService } from "@src/module/game-attended/service";
+import { GameStarService } from "@src/module/game-star/service";
 
 export class ApiHelperService {
 
@@ -62,10 +63,12 @@ export class ApiHelperService {
         private readonly clubService: ClubService,
         private readonly competitionService: CompetitionService,
         private readonly gameService: GameService,
+        private readonly gameAttendedService: GameAttendedService,
         private readonly gameEventService: GameEventService,
         private readonly gameManagerService: GameManagerService,
         private readonly gamePlayerService: GamePlayerService,
         private readonly gameRefereeService: GameRefereeService,
+        private readonly gameStarService: GameStarService,
         private readonly personService: PersonService,
         private readonly seasonService: SeasonService,
         private readonly venueService: VenueService,
@@ -118,7 +121,7 @@ export class ApiHelperService {
         });
     }
 
-    async getOrderedDetailedGameDtos(gameIds: number[]): Promise<DetailedGameDto[]> {
+    async getOrderedDetailedGameDtos(gameIds: number[], accountId?: number): Promise<DetailedGameDto[]> {
         const [basicGameInformation, gameEventsMap, gameManagersMap, gamePlayersMap, gameRefereesMap] = await Promise.all([
             this.gameService.getMultipleByIds(gameIds),
             this.gameEventService.getOrderedEventsForGamesMap(gameIds),
@@ -126,6 +129,15 @@ export class ApiHelperService {
             this.gamePlayerService.getPlayersForGamesMap(gameIds),
             this.gameRefereeService.getRefereesForGamesMap(gameIds),
         ]);
+
+        let gameAttended: number[] = [];
+        let gameStars: number[] = [];
+        if (accountId !== undefined) {
+            [gameAttended, gameStars] = await Promise.all([
+                this.gameAttendedService.getGameAttended(accountId, gameIds),
+                this.gameStarService.getGameStars(accountId, gameIds),
+            ]);
+        }
 
         const clubIds = uniqueArrayElements(basicGameInformation.map(game => game.opponentId));
         const competitionIds = uniqueArrayElements(basicGameInformation.map(game => game.competitionId));
@@ -460,6 +472,15 @@ export class ApiHelperService {
 
             if (game.isNeutralGround === true) {
                 detailedGameDto.isNeutralGround = game.isNeutralGround;
+            }
+
+            // account-specific additional information
+            if (gameStars.includes(game.id)) {
+                detailedGameDto.accountStarred = true;
+            }
+
+            if (gameAttended.includes(game.id)) {
+                detailedGameDto.accountAttended = true;
             }
 
             result.set(game.id, detailedGameDto);

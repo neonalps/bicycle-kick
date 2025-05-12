@@ -1,6 +1,6 @@
 import { GetAllSeasonsRequestDto } from "@src/model/external/dto/get-all-seasons-request";
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
-import { SeasonDto } from "@src/model/external/dto/season";
+import { SmallSeasonDto } from "@src/model/external/dto/small-season";
 import { Season } from "@src/model/internal/season";
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { MAX_DATE, MIN_DATE, SortOrder } from "@src/module/pagination/constants";
@@ -8,7 +8,7 @@ import { PaginationService } from "@src/module/pagination/service";
 import { GetAllSeasonsPaginationParams, SeasonService } from "@src/module/season/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
 
-export class GetAllSeasonsRouteHandler implements RouteHandler<GetAllSeasonsRequestDto, PaginatedResponseDto<SeasonDto>> {
+export class GetAllSeasonsRouteHandler implements RouteHandler<GetAllSeasonsRequestDto, PaginatedResponseDto<SmallSeasonDto>> {
 
     constructor(
         private readonly apiHelper: ApiHelperService,
@@ -16,14 +16,14 @@ export class GetAllSeasonsRouteHandler implements RouteHandler<GetAllSeasonsRequ
         private readonly seasonService: SeasonService,
     ) {}
 
-    public async handle(_: AuthenticationContext, dto: GetAllSeasonsRequestDto): Promise<PaginatedResponseDto<SeasonDto>> {
+    public async handle(_: AuthenticationContext, dto: GetAllSeasonsRequestDto): Promise<PaginatedResponseDto<SmallSeasonDto>> {
         this.paginationService.validateQueryParams(dto);
         const paginationParams = this.getPaginationParams(dto);
         const seasons = await this.seasonService.getAllPaginated(paginationParams);
 
         return {
             nextPageKey: this.buildNextPageKey(seasons, paginationParams),
-            items: seasons.map(item => this.apiHelper.convertSeasonToDto(item)),
+            items: seasons.map(item => this.apiHelper.convertSeasonToSmallDto(item)),
         }
     }
 

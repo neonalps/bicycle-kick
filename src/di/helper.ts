@@ -143,10 +143,12 @@ export class DependencyHelper {
             clubService, 
             competitionService, 
             gameService, 
+            gameAttendedService,
             gameEventService, 
             gameManagerService,
             gamePlayerService, 
             gameRefereeService,
+            gameStarService,
             personService, 
             seasonService, 
             venueService

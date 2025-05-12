@@ -26,7 +26,7 @@ export class GameService {
         return await this.mapper.getMultipleByIds(ids);
     }
 
-    async getForSeasonPaginated(seasonId: number, params: GetSeasonGamesPaginationParams): Promise<Game[]> {
+    async getOrderedIdsForSeasonPaginated(seasonId: number, params: GetSeasonGamesPaginationParams): Promise<number[]> {
         validateNotNull(seasonId, "seasonId");
         validateNotNull(params, "params");
         validateNotNull(params.lastSeen, "params.lastSeenDate");
@@ -38,7 +38,7 @@ export class GameService {
             throw new Error(`No sesaon with ID ${seasonId} exists`);
         }
 
-        return await this.mapper.getOrderedSeasonGamesPaginated(season.id, params.lastSeen, params.limit, params.order);
+        return await this.mapper.getOrderedSeasonGameIdsPaginated(season.id, params.lastSeen, params.limit, params.order);
     }
 
     async create(dto: CreateGameRequestDto): Promise<Game> {

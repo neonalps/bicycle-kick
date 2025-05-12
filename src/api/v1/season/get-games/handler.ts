@@ -1,7 +1,6 @@
-import { BasicGameDto } from "@src/model/external/dto/basic-game";
+import { DetailedGameDto } from "@src/model/external/dto/detailed-game";
 import { GetSeasonGamesRequestDto } from "@src/model/external/dto/get-season-games.request";
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
-import { Game } from "@src/model/internal/game";
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { GameService } from "@src/module/game/service";
 import { MAX_DATE, MIN_DATE, SortOrder } from "@src/module/pagination/constants";
@@ -9,7 +8,7 @@ import { PaginationService } from "@src/module/pagination/service";
 import { GetSeasonGamesPaginationParams } from "@src/module/season/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
 
-export class GetSeasonGamesRouteHandler implements RouteHandler<GetSeasonGamesRequestDto, PaginatedResponseDto<BasicGameDto>> {
+export class GetSeasonGamesRouteHandler implements RouteHandler<GetSeasonGamesRequestDto, PaginatedResponseDto<DetailedGameDto>> {
 
     constructor(
         private readonly apiHelper: ApiHelperService,
@@ -17,16 +16,16 @@ export class GetSeasonGamesRouteHandler implements RouteHandler<GetSeasonGamesRe
         private readonly paginationService: PaginationService,
     ) {}
 
-    public async handle(_: AuthenticationContext, dto: GetSeasonGamesRequestDto): Promise<PaginatedResponseDto<BasicGameDto>> {
+    public async handle(_: AuthenticationContext, dto: GetSeasonGamesRequestDto): Promise<PaginatedResponseDto<DetailedGameDto>> {
         this.paginationService.validateQueryParams(dto);
         const paginationParams = this.getPaginationParams(dto);
 
-        const orderedSeasonGames = await this.gameService.getForSeasonPaginated(dto.seasonId, paginationParams);
-        const basicGameDtos = await this.apiHelper.getOrderedBasicGameDtos(orderedSeasonGames);
+        const orderedGameIds = await this.gameService.getOrderedIdsForSeasonPaginated(dto.seasonId, paginationParams);
+        const detailedGameDtos = await this.apiHelper.getOrderedDetailedGameDtos(orderedGameIds);
 
         return {
-            nextPageKey: this.buildNextPageKey(orderedSeasonGames, paginationParams),
-            items: basicGameDtos,
+            nextPageKey: this.buildNextPageKey(detailedGameDtos, paginationParams),
+            items: detailedGameDtos,
         }
     }
 
@@ -46,7 +45,7 @@ export class GetSeasonGamesRouteHandler implements RouteHandler<GetSeasonGamesRe
         return this.paginationService.decode<GetSeasonGamesPaginationParams>(dto.nextPageKey);
     }
 
-    private buildNextPageKey(items: Game[], oldParams: GetSeasonGamesPaginationParams): string | undefined {
+    private buildNextPageKey(items: DetailedGameDto[], oldParams: GetSeasonGamesPaginationParams): string | undefined {
         if (items.length < oldParams.limit) {
             return;
         }

@@ -13,7 +13,7 @@ export class GameAttendedService {
         return await this.mapper.setGameAttendedStatus(accountId, gameId, attended);
     }
 
-    async getGameStars(accountId: number, gameIds: number[]): Promise<number[]> {
+    async getGameAttended(accountId: number, gameIds: number[]): Promise<number[]> {
         validateNotNull(accountId, "accountId");
         validateNotNull(gameIds, "gameIds");
 

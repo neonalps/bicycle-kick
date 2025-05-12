@@ -78,16 +78,13 @@ export class GameMapper {
         return resultMap;
     }
 
-    async getOrderedSeasonGamesPaginated(seasonId: number, lastSeenDate: Date, limit: number, order: SortOrder): Promise<Game[]> {
-        const result = await this.sql<IdInterface[]>`select id from game where season_id = ${ seasonId } and kickoff ${ order === SortOrder.Ascending ? this.sql`>` : this.sql`<` } ${ lastSeenDate } order by kickoff ${ this.sql(getSortOrderString(order)) } limit ${ limit }`;
+    async getOrderedSeasonGameIdsPaginated(seasonId: number, lastSeenDate: Date, limit: number, order: SortOrder): Promise<number[]> {
+        const result = await this.sql<IdInterface[]>`select id from game where season_id = ${ seasonId } and kickoff ${ order === SortOrder.Ascending ? this.sql`>` : this.sql`<` } ${ lastSeenDate } order by kickoff ${ order === SortOrder.Ascending ? this.sql`asc` : this.sql`desc` } limit ${ limit }`;
         if (result.length === 0) {
             return [];
         }
 
-        const orderedIds = result.map(item => item.id);
-        const gamesMap = await this.getMapByIds(orderedIds);
-
-        return orderedIds.map(gameId => getOrThrow(gamesMap, gameId, "game not found in map"));
+        return result.map(item => item.id);
     }
 
     async deleteById(gameId: number): Promise<void> {

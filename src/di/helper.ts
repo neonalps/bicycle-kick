@@ -73,6 +73,7 @@ import { GameStarMapper } from "@src/module/game-star/mapper";
 import { GameStarService } from "@src/module/game-star/service";
 import { GameAttendedMapper } from "@src/module/game-attended/mapper";
 import { GameAttendedService } from "@src/module/game-attended/service";
+import { CacheService } from "@src/module/cache/service";
 
 export class DependencyHelper {
 
@@ -106,6 +107,7 @@ export class DependencyHelper {
 
         const accountMapper = new AccountMapper(sqlInstance);
         const accountService = new AccountService(accountMapper, cryptoService, uuidSource);
+        const cacheService = new CacheService();
         const clubMapper = new ClubMapper(sqlInstance);
         const clubService = new ClubService(clubMapper);
         const competitionMapper = new CompetitionMapper(sqlInstance);
@@ -213,6 +215,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.AdvancedQueryService, advancedQueryService);
         dependencies.set(Dependencies.ApiHelperService, apiHelperService);
         dependencies.set(Dependencies.AuthService, authService);
+        dependencies.set(Dependencies.CacheService, cacheService);
         dependencies.set(Dependencies.ClubService, clubService);
         dependencies.set(Dependencies.CompetitionService, competitionService);
         dependencies.set(Dependencies.CryptoService, cryptoService);

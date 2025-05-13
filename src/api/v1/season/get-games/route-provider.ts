@@ -2,11 +2,11 @@ import { BasicGameDto } from "@src/model/external/dto/basic-game";
 import { GetSeasonGamesRequestDto } from "@src/model/external/dto/get-season-games.request";
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
 import { PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES } from "@src/module/pagination/constants";
-import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
+import { CacheableResponse, RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { requireNonNull } from "@src/util/common";
 import { GetSeasonGamesRouteHandler } from "./handler";
 
-export class GetSeasonGamesRouteProvider implements RouteProvider<GetSeasonGamesRequestDto, PaginatedResponseDto<BasicGameDto>> {
+export class GetSeasonGamesRouteProvider implements RouteProvider<GetSeasonGamesRequestDto, CacheableResponse<PaginatedResponseDto<BasicGameDto>>> {
 
     private readonly handler: GetSeasonGamesRouteHandler;
     
@@ -14,7 +14,7 @@ export class GetSeasonGamesRouteProvider implements RouteProvider<GetSeasonGames
         this.handler = requireNonNull(handler);
     }
 
-    provide(): RouteDefinition<GetSeasonGamesRequestDto, PaginatedResponseDto<BasicGameDto>> {
+    provide(): RouteDefinition<GetSeasonGamesRequestDto, CacheableResponse<PaginatedResponseDto<BasicGameDto>>> {
         const schema: RequestSchema = {
             params: {
                 type: 'object',

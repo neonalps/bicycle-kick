@@ -34,6 +34,14 @@ export function isNotDefined(toCheck: unknown) {
     return !isDefined(toCheck);
 }
 
+export function isBlank(toCheck: string | undefined | null): boolean {
+    return isNotDefined(toCheck) || (toCheck as string).trim().length === 0;
+}
+
+export function isNotBlank(toCheck: string | undefined | null): boolean {
+    return !isBlank(toCheck);
+}
+
 export function checkValidHttpMethod(method: string): boolean {
     return allowedHttpMethods.includes(method);
 }

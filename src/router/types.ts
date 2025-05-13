@@ -1,11 +1,14 @@
 import { HttpMethod } from "@src/http/constants";
 import { ObjectType } from "@src/model/external/validation/types";
 import { Account } from "@src/model/internal/account";
-import { FastifySchema } from "fastify";
 
 export type AuthenticationContext = {
     authenticated: boolean,
     account: Account | null,
+}
+
+export enum ApplicationHeader {
+    ContentHash = 'x-content-hash',
 }
 
 export type RouteDefinition<S, T> = {
@@ -18,7 +21,7 @@ export type RouteDefinition<S, T> = {
     response?: ResponseSchema,
 }
 
-export type HandlerFunction<S, T> = (principal: AuthenticationContext, _: S) => Promise<T>;
+export type HandlerFunction<S, T> = (principal: AuthenticationContext, _: S, headers: Record<string, string>) => Promise<T>;
 
 export interface RouteProvider<S, T> {
     provide: () => RouteDefinition<S, T>;
@@ -37,3 +40,8 @@ export type RequestSchema = {
 export type ResponseSchema = {
     statusCode: number,
 }
+
+type ContentHash = {
+    contentHash: string;
+}
+export type CacheableResponse<T> = (T & ContentHash) | null;

@@ -1,4 +1,4 @@
-import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
+import { CacheableResponse, RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { requireNonNull } from "@src/util/common";
 import { GetAllSeasonsRouteHandler } from "@src/api/v1/season/get-all/handler";
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
@@ -6,7 +6,7 @@ import { GetAllSeasonsRequestDto } from "@src/model/external/dto/get-all-seasons
 import { PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES } from "@src/module/pagination/constants";
 import { SmallSeasonDto } from "@src/model/external/dto/small-season";
 
-export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRequestDto, PaginatedResponseDto<SmallSeasonDto>> {
+export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRequestDto, CacheableResponse<PaginatedResponseDto<SmallSeasonDto>>> {
 
     private readonly handler: GetAllSeasonsRouteHandler;
 
@@ -14,7 +14,7 @@ export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRe
         this.handler = requireNonNull(handler);
     }
 
-    provide(): RouteDefinition<GetAllSeasonsRequestDto, PaginatedResponseDto<SmallSeasonDto>> {
+    provide(): RouteDefinition<GetAllSeasonsRequestDto, CacheableResponse<PaginatedResponseDto<SmallSeasonDto>>> {
         const schema: RequestSchema = {
             querystring: {
                 type: 'object',

@@ -3,6 +3,7 @@ export enum Dependencies {
     AdvancedQueryService,
     ApiHelperService,
     AuthService,
+    CacheService,
     ClubService,
     CompetitionService,
     CryptoService,

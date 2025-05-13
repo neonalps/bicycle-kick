@@ -1,6 +1,6 @@
 import { FastifyError, FastifyInstance, FastifyReply, FastifyRequest, FastifySchema } from "fastify";
 import fastifyJwt from "@fastify/jwt";
-import { AuthenticationContext, RequestSchema, ResponseSchema, RouteDefinition, RouteProvider } from "./types";
+import { ApplicationHeader, AuthenticationContext, RequestSchema, ResponseSchema, RouteDefinition, RouteProvider } from "./types";
 import { HttpMethod } from "@src/http/constants";
 import logger from "@src/log";
 import dependencyManager from "@src/di/manager";
@@ -68,8 +68,14 @@ export class RouteManager {
 
                 const body = RouteManager.mergeRequestContext(request) as unknown;
 
+                const applicationHeaders: Record<string, string> = {};
+                const responseHashHeader = request.headers[ApplicationHeader.ContentHash];
+                if (isDefined(responseHashHeader) && !Array.isArray(responseHashHeader)) {
+                    applicationHeaders[ApplicationHeader.ContentHash] = responseHashHeader;
+                }
+
                 try {
-                    const response = await route.handler.handle(principal, body);
+                    const response = await route.handler.handle(principal, body, applicationHeaders);
                     this.sendSuccessResponse(reply, route, response);
                 } catch (ex) {
                     if (ex instanceof AuthenticationError) {

@@ -5,7 +5,7 @@ import { GameStatus } from "@src/model/type/game-status";
 import { Tendency } from "@src/model/type/tendency";
 import { SortOrder } from "@src/module/pagination/constants";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
-import { getOrThrow, getSortOrderString } from "@src/util/common";
+import { getOrThrow } from "@src/util/common";
 import { CreateGameDto } from "@src/model/internal/create-game";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { ClubInputDto } from "@src/model/external/dto/club-input";
@@ -38,6 +38,7 @@ import { determineResultTendency, getGameMinutes } from "@src/util/game";
 import { CreateGameEventDaoInterface } from "@src/model/internal/interface/game-event.interface";
 import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
 import { PsoResult } from "@src/model/type/pso-result";
+import { normalizeForSearch } from "@src/util/search";
 
 export class GameMapper {
 
@@ -93,11 +94,12 @@ export class GameMapper {
 
     async create(dto: CreateGameDto): Promise<number> {
         return await this.sql.begin(async tx => {
-            const [opponentId, competitionId, venueId] = await Promise.all([
+            const [opponentId, competitionId] = await Promise.all([
                 this.resolveClubId(tx, dto.opponent),
                 this.resolveCompetitionId(tx, dto.competition),
-                this.resolveVenueId(tx, dto.venue),
             ]);
+
+            const venueId = await this.resolveVenueId(tx, dto.venue);
             
             const temporaryGame = {
                 seasonId: dto.seasonId,
@@ -715,7 +717,12 @@ export class GameMapper {
             return clubId;
         }
 
-        return await this.createClubViaExternalProvider(tx, club.externalClub as ExternalClubDto);
+        let homeVenueId: number | undefined;
+        if (club.externalClub?.homeVenue) {
+            homeVenueId = await this.resolveVenueId(tx, club.externalClub.homeVenue);
+        }
+
+        return await this.createClubViaExternalProvider(tx, club.externalClub as ExternalClubDto, homeVenueId);
     }
 
     private async getClubIdViaExternalProvider(tx: postgres.TransactionSql, externalClub: ExternalClubDto): Promise<number | null> {
@@ -727,7 +734,7 @@ export class GameMapper {
         return result[0].clubId;
     }
 
-    private async createClubViaExternalProvider(tx: postgres.TransactionSql, externalClub: ExternalClubDto): Promise<number> {
+    private async createClubViaExternalProvider(tx: postgres.TransactionSql, externalClub: ExternalClubDto, homeVenueId?: number): Promise<number> {
         const createdClubId = await this.clubMapper.create({
             name: externalClub.name,
             shortName: externalClub.shortName,
@@ -738,7 +745,8 @@ export class GameMapper {
             primaryColour: externalClub.primaryColour,
             secondaryColour: externalClub.secondaryColour,
             district: externalClub.district,
-            homeVenueId: undefined,
+            normalizedSearch: normalizeForSearch(externalClub.name),
+            homeVenueId,
         }, tx);
 
         await tx`insert into external_provider_club (external_provider, external_id, club_id) values (${externalClub.provider}, ${externalClub.id}, ${createdClubId});`;
@@ -774,6 +782,7 @@ export class GameMapper {
             lastName: externalPerson.lastName,
             avatar: externalPerson.avatarUrl,
             birthday: externalPerson.birthday,
+            normalizedSearch: normalizeForSearch([externalPerson.firstName, externalPerson.lastName].join(" ")),
         }, tx);
 
         await tx`insert into external_provider_person (external_provider, external_id, person_id) values (${externalPerson.provider}, ${externalPerson.id}, ${createdPersonId});`;
@@ -808,6 +817,7 @@ export class GameMapper {
             name: externalCompetition.name,
             shortName: externalCompetition.shortName,
             isDomestic: true,
+            normalizedSearch: normalizeForSearch(externalCompetition.name),
         }, tx);
 
         await tx`insert into external_provider_competition (external_provider, external_id, competition_id) values (${externalCompetition.provider}, ${externalCompetition.id}, ${createdCompetitionId});`;
@@ -847,6 +857,7 @@ export class GameMapper {
             latitude: externalVenue.latitude,
             longitude: externalVenue.longitude,
             district: externalVenue.district,
+            normalizedSearch: normalizeForSearch(externalVenue.name),
         }, tx);
 
         await tx`insert into external_provider_venue (external_provider, external_id, venue_id) values (${externalVenue.provider}, ${externalVenue.id}, ${createdVenueId});`;

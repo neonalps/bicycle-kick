@@ -3,6 +3,7 @@ import { CreatePerson } from "@src/model/internal/create-person";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { PersonDaoInterface } from "@src/model/internal/interface/person.interface";
 import { Person } from "@src/model/internal/person";
+import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
 
 export class PersonMapper {
@@ -11,7 +12,7 @@ export class PersonMapper {
 
     async create(createPerson: CreatePerson, tx?: postgres.TransactionSql): Promise<number> {
         const query = tx || this.sql;
-        const result = await query`insert into person ${ query(createPerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday') } returning id`;
+        const result = await query`insert into person ${ query(createPerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'normalizedSearch') } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to insert person`);
         }
@@ -43,30 +44,15 @@ export class PersonMapper {
         return resultMap;
     }
 
-    async findByName(parts: string[]): Promise<Person[]> {
-        const potentialIdsFromFirstName: number[] = [];
-        const potentialIdsFromLastName: number[] = [];
-
-        for (const part of parts) {
-            const [firsNameResult, lastNameResult] = await Promise.all([
-                this.findByFirstName(part),
-                this.findByLastName(part),
-            ]);
-            
-            potentialIdsFromFirstName.push(...firsNameResult.map(result => result.id));
-            potentialIdsFromLastName.push(...lastNameResult.map(result => result.id));
-        }
-
-        const potentialIds = new Set([...potentialIdsFromFirstName, ...potentialIdsFromLastName]);
-        return await this.getMultipleByIds(Array.from(potentialIds));
+    async search(parts: string[]): Promise<Person[]> {
+        const results = await Promise.all(parts.map(part => this.findByNormalizedSearchValue(part)));
+        const matchedIds = results.flat().map(item => item.id);    
+        return await this.getMultipleByIds(groupByOccurrenceAndGetLargest(matchedIds));
     }
 
-    private async findByFirstName(firstName: string): Promise<IdInterface[]> {
-        return await this.sql<PersonDaoInterface[]>`select id from person where first_name ilike ${ firstName } limit 50`;
-    }
-
-    private async findByLastName(firstName: string): Promise<IdInterface[]> {
-        return await this.sql<PersonDaoInterface[]>`select id from person where last_name ilike ${ firstName } limit 50`;
+    private async findByNormalizedSearchValue(search: string): Promise<IdInterface[]> {
+        const wildCard = `%${search}%`;
+        return await this.sql<IdInterface[]>`select id from person where normalized_search like ${ wildCard } limit 50`;
     }
 
     private async getMultipleByIdsResult(ids: number[]): Promise<PersonDaoInterface[]> {

@@ -4,4 +4,5 @@ export interface SeasonDaoInterface {
     shortName: string;
     start: Date;
     end: Date;
+    normalizedSearch: string;
 }

@@ -46,6 +46,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: false,
             references: `"venue"`,
         },
+        normalized_search: {
+            type: 'text',
+            notNull: true
+        }
     });
 }
 

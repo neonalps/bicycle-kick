@@ -20,6 +20,7 @@ export enum Dependencies {
     PermissionService,
     PersonService,
     ProfileService,
+    SearchService,
     SeasonService,
     SofascoreGameProvider,
     SquadService,

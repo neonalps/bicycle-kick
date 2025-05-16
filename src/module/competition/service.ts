@@ -21,4 +21,10 @@ export class CompetitionService {
         return await this.mapper.getMapByIds(ids);
     }
 
+    async search(parts: string[]): Promise<Competition[]> {
+        validateNotNull(parts, "parts");
+
+        return await this.mapper.search(parts);
+    }
+
 }

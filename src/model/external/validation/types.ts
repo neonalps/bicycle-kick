@@ -23,6 +23,6 @@ export type ObjectType = {
 
 export type ArrayType = {
     type: 'array',
-    items: ObjectType,
+    items: ObjectType | PrimitiveType | StringEnumType | NumberEnumType,
     maxItems?: number;
 };

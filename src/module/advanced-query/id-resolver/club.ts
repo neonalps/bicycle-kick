@@ -9,7 +9,7 @@ export class ClubIdResolver extends IdResolver {
     }
 
     async fetchPossibilities(parameter: FilterParameter): Promise<ResolvePossibility[]> {
-        const result = await this.clubService.searchByName(parameter.value);
+        const result = await this.clubService.search(parameter.value);
 
         return result.map(item => {
             return {

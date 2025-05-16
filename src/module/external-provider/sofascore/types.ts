@@ -49,11 +49,7 @@ export interface Team {
         secondary: string;
         text: string;
     },
-    venue: {
-        city: {
-            name: string;
-        }
-    }
+    venue: Venue;
     country: {
         alpha2: string;
     }

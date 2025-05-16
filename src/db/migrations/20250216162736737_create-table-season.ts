@@ -23,6 +23,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'date',
             notNull: true
         },
+        normalized_search: {
+            type: 'text',
+            notNull: true,
+        },
     });
 }
 

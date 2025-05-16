@@ -143,6 +143,19 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                 countryCode: team.country.alpha2.toLocaleLowerCase(),
                 primaryColour: team.teamColors.primary,
                 secondaryColour: team.teamColors.secondary,
+                homeVenue: {
+                    externalVenue: {
+                        provider: this.type,
+                        id: team.venue.id.toString(),
+                        name: team.venue.name,
+                        shortName: team.venue.name,
+                        city: team.venue.city.name,
+                        countryCode: team.venue.country.alpha2.toLocaleLowerCase(),
+                        capacity: team.venue.capacity,
+                        latitude: team.venue.venueCoordinates.latitude,
+                        longitude: team.venue.venueCoordinates.longitude,
+                    }
+                }
             }
         }
     }

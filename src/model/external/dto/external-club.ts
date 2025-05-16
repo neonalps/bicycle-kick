@@ -1,4 +1,5 @@
 import { ExternalProvider } from "@src/model/type/external-provider";
+import { VenueInputDto } from "./venue-input";
 
 export interface ExternalClubDto {
     provider: ExternalProvider;
@@ -12,4 +13,5 @@ export interface ExternalClubDto {
     countryCode: string;
     primaryColour?: string;
     secondaryColour?: string;
+    homeVenue?: VenueInputDto;
 }

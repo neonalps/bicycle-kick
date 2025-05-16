@@ -1,10 +1,10 @@
-export interface Competition {
-    id: number;
+export interface CreateCompetition {
     name: string;
     shortName: string;
     isDomestic: boolean;
     parentId?: number;
     combineStatisticsWithParent?: boolean;
-    iconSmall?: string;
     iconLarge?: string;
-}
+    iconSmall?: string;
+    normalizedSearch: string;
+} 

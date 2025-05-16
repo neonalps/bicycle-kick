@@ -1,12 +1,11 @@
-export interface ClubDaoInterface {
-    id: number;
+export interface CreateClub {
     name: string;
     shortName: string;
+    iconLarge?: string;
+    iconSmall?: string;
     city: string;
     district?: string;
     countryCode: string;
-    iconLarge?: string;
-    iconSmall?: string;
     primaryColour?: string;
     secondaryColour?: string;
     homeVenueId?: number;

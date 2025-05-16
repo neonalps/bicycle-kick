@@ -41,12 +41,10 @@ export class SeasonService {
         return await this.mapper.getAllPaginated(paginationParams.lastSeen, paginationParams.limit, paginationParams.order);
     }
 
-    searchByName(parts: string[]): Promise<Season[]> {
-        return new Promise((resolve) => {
-            setTimeout(() => resolve([
-                
-            ]), 89);
-        });
+    async search(parts: string[]): Promise<Season[]> {
+        validateNotNull(parts, "parts");
+
+        return await this.mapper.search(parts);
     }
 
     async getCurrent(): Promise<Season | null> {

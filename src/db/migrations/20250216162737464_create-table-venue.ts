@@ -37,6 +37,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'numeric',
             notNull: false,
         },
+        normalized_search: {
+            type: 'text',
+            notNull: true,
+        },
     });
 }
 

@@ -17,7 +17,7 @@ export class SeasonIdResolver extends IdResolver {
             return [this.convertToPossibility(await this.seasonService.getLast() as Season)];
         }
 
-        const result = await this.seasonService.searchByName(parameter.value);
+        const result = await this.seasonService.search(parameter.value);
         return result.map(item => this.convertToPossibility(item));
     }
 

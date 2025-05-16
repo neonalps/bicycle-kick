@@ -5,4 +5,5 @@ export interface PersonDaoInterface {
     avatar: string;
     birthday: Date;
     deathday: Date;
+    normalizedSearch: string;
 }

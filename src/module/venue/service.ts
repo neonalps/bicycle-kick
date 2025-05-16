@@ -18,7 +18,13 @@ export class VenueService {
             return new Map();
         }
 
-        return await this.mapper.getMultipleByIds(ids);
+        return await this.mapper.getMapByIds(ids);
+    }
+
+    async search(parts: string[]): Promise<Venue[]> {
+        validateNotNull(parts, "parts");
+
+        return await this.mapper.search(parts);
     }
 
 }

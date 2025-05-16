@@ -55,6 +55,8 @@ import { GameRefereeDto } from "@src/model/external/dto/game-referee";
 import { GameManagerService } from "@src/module/game-manager/service";
 import { GameAttendedService } from "@src/module/game-attended/service";
 import { GameStarService } from "@src/module/game-star/service";
+import { VenueDto } from "@src/model/external/dto/venue";
+import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 
 export class ApiHelperService {
 
@@ -518,25 +520,44 @@ export class ApiHelperService {
         };
 
         if (isDefined(person.avatar)) {
-            smallPerson.avatar = person.avatar;
+            smallPerson.avatar = this.getMediaUrl(person.avatar);
         }
 
         return smallPerson;
     }
 
-    convertClubToBasicDto(club: Club): BasicClubDto {
+    async convertClubToBasicDto(club: Club): Promise<BasicClubDto> {
         const basicClub: BasicClubDto = {
             id: club.id,
             name: club.name,
             shortName: club.shortName,
+            city: club.city,
+            countryCode: club.countryCode,
         };
 
         if (isDefined(club.iconSmall)) {
-            basicClub.iconSmall = club.iconSmall;
+            basicClub.iconSmall = this.getMediaUrl(club.iconSmall);
         }
 
         if (isDefined(club.iconLarge)) {
-            basicClub.iconLarge = club.iconLarge;
+            basicClub.iconLarge = this.getMediaUrl(club.iconLarge);
+        }
+
+        if (isDefined(club.primaryColour)) {
+            basicClub.primaryColour = club.primaryColour;
+        }
+
+        if (isDefined(club.secondaryColour)) {
+            basicClub.secondaryColour = club.secondaryColour;
+        }
+
+        if (isDefined(club.district)) {
+            basicClub.district = club.district;
+        }
+
+        if (isDefined(club.homeVenueId)) {
+            const venue = await this.venueService.getById(club.homeVenueId);
+            basicClub.homeVenue = this.convertVenueToBasicDto(venue as Venue);
         }
 
         return basicClub;
@@ -550,11 +571,11 @@ export class ApiHelperService {
         };
 
         if (isDefined(club.iconSmall)) {
-            smallClub.iconSmall = club.iconSmall;
+            smallClub.iconSmall = this.getMediaUrl(club.iconSmall);
         }
 
         if (isDefined(club.iconLarge)) {
-            smallClub.iconLarge = club.iconLarge;
+            smallClub.iconLarge = this.getMediaUrl(club.iconLarge);
         }
 
         return smallClub;
@@ -602,8 +623,44 @@ export class ApiHelperService {
             shortName: competition.shortName,
         };
 
+        if (isDefined(competition.iconLarge)) {
+            dto.iconLarge = this.getMediaUrl(competition.iconLarge);
+        }
+
+        if (isDefined(competition.iconSmall)) {
+            dto.iconSmall = this.getMediaUrl(competition.iconSmall);
+        }
+
         if (parent) {
             dto.parent = this.convertCompetitionToSmallDto(parent);
+        }
+
+        return dto;
+    }
+
+    private convertVenueToBasicDto(venue: Venue): BasicVenueDto {
+        const dto: BasicVenueDto = {
+            id: venue.id,
+            name: venue.name,
+            shortName: venue.shortName,
+            city: venue.city,
+            countryCode: venue.countryCode,
+        }
+
+        if (isDefined(venue.district)) {
+            dto.district = venue.district;
+        }
+
+        if (isDefined(venue.capacity)) {
+            dto.capacity = venue.capacity;
+        }
+
+        if (isDefined(venue.latitude)) {
+            dto.latitude = venue.latitude;
+        }
+
+        if (isDefined(venue.longitude)) {
+            dto.longitued = venue.longitude;
         }
 
         return dto;
@@ -712,6 +769,9 @@ export class ApiHelperService {
         return `${this.apiConfig.baseUrl}/${pluralisedResourceName}/${resourcePath}`
     }
 
+    private getMediaUrl(urlPart: string): string {
+        return `${this.apiConfig.cdnBaseUrl}/${urlPart}`;
+    }
 
 
 }

@@ -21,11 +21,10 @@ export class ClubService {
         return await this.mapper.getMapByIds(ids);
     }
 
-    searchByName(parts: string[]): Promise<Club[]> {
-        return new Promise((resolve) => {
-            setTimeout(() => resolve([
-            ]), 89);
-        });
+    async search(parts: string[]): Promise<Club[]> {
+        validateNotNull(parts, "parts");
+
+        return await this.mapper.search(parts);
     }
 
 }

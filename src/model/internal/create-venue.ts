@@ -1,12 +1,11 @@
-export interface VenueDaoInterface {
-    id: number;
+export interface CreateVenue {
     name: string;
     shortName: string;
     city: string;
-    countryCode: string;
-    district?: string;
     capacity: number;
+    countryCode: string;
     latitude?: number;
     longitude?: number;
+    district?: string;
     normalizedSearch: string;
 }

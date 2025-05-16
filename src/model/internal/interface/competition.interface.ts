@@ -3,6 +3,9 @@ export interface CompetitionDaoInterface {
     name: string;
     shortName: string;
     isDomestic: boolean;
+    iconSmall?: string;
+    iconLarge?: string;
     parentId?: number;
     combineStatisticsWithParent?: boolean;
+    normalizedSearch: string;
 }

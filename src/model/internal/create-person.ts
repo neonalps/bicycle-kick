@@ -4,4 +4,5 @@ export interface CreatePerson {
     avatar?: string;
     birthday?: Date;
     deathday?: Date;
+    normalizedSearch: string;
 }

@@ -50,7 +50,7 @@ import { PersonMapper } from "@src/module/person/mapper";
 import { SeasonMapper } from "@src/module/season/mapper";
 import { DateSource } from "@src/util/date";
 import { ApiConfig } from "@src/api/v1/config";
-import { getAuthTokenConfig, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig } from "@src/config";
+import { getAuthTokenConfig, getCdnBaseUrl, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig } from "@src/config";
 import { CryptoService } from "@src/module/crypto/service";
 import { AccountService } from "@src/module/account/service";
 import { AccountMapper } from "@src/module/account/mapper";
@@ -74,6 +74,7 @@ import { GameStarService } from "@src/module/game-star/service";
 import { GameAttendedMapper } from "@src/module/game-attended/mapper";
 import { GameAttendedService } from "@src/module/game-attended/service";
 import { CacheService } from "@src/module/cache/service";
+import { SearchService } from "@src/module/search/service";
 
 export class DependencyHelper {
 
@@ -137,6 +138,7 @@ export class DependencyHelper {
         const gameService = new GameService(gameMapper, seasonService);
 
         const apiConfig: ApiConfig = {
+            cdnBaseUrl: getCdnBaseUrl(),
             baseUrl: getFrontendBaseUrl(),
         };
 
@@ -155,6 +157,8 @@ export class DependencyHelper {
             seasonService, 
             venueService
         );
+
+        const searchService = new SearchService(apiConfig, clubService, competitionService, personService, seasonService, venueService);
 
         const paginationService = new PaginationService(base64Utils);
         const permissionService = new PermissionService();
@@ -231,6 +235,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.PaginationService, paginationService);
         dependencies.set(Dependencies.PermissionService, permissionService);
         dependencies.set(Dependencies.PersonService, personService);
+        dependencies.set(Dependencies.SearchService, searchService);
         dependencies.set(Dependencies.SeasonService, seasonService);
         dependencies.set(Dependencies.SofascoreGameProvider, sofascoreGameProvider);
         dependencies.set(Dependencies.SquadService, squadService);

@@ -1,7 +1,9 @@
 import { Sql } from "@src/db";
+import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { SeasonDaoInterface } from "@src/model/internal/interface/season.interface";
 import { Season } from "@src/model/internal/season";
 import { SortOrder } from "@src/module/pagination/constants";
+import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 
 export class SeasonMapper {
 
@@ -46,6 +48,25 @@ export class SeasonMapper {
         }
 
         return result.map(item => this.convertToEntity(item));
+    }
+
+    async getMultipleByIds(ids: number[]): Promise<Season[]> {
+        return (await this.getMultipleByIdsResult(ids)).map(item => this.convertToEntity(item));
+    }
+
+    async search(parts: string[]): Promise<Season[]> {
+        const results = await Promise.all(parts.map(part => this.findByNormalizedSearchValue(part)));
+        const matchedIds = results.flat().map(item => item.id);    
+        return await this.getMultipleByIds(groupByOccurrenceAndGetLargest(matchedIds));
+    }
+
+    private async findByNormalizedSearchValue(search: string): Promise<IdInterface[]> {
+        const wildCard = `%${search}%`;
+        return await this.sql<IdInterface[]>`select id from season where normalized_search like ${ wildCard } limit 50`;
+    }
+
+    private async getMultipleByIdsResult(ids: number[]): Promise<SeasonDaoInterface[]> {
+        return await this.sql<SeasonDaoInterface[]>`select * from season where id in ${ this.sql(ids) }`;
     }
 
     private determineSortOrder(order: SortOrder) {

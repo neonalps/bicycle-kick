@@ -55,7 +55,6 @@ import { GameRefereeDto } from "@src/model/external/dto/game-referee";
 import { GameManagerService } from "@src/module/game-manager/service";
 import { GameAttendedService } from "@src/module/game-attended/service";
 import { GameStarService } from "@src/module/game-star/service";
-import { VenueDto } from "@src/model/external/dto/venue";
 import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 
 export class ApiHelperService {
@@ -216,13 +215,11 @@ export class ApiHelperService {
                                 sortOrder: gameEvent.sortOrder,
                                 score: [goalEvent.scoreMain, goalEvent.scoreOpponent],
                                 scoredBy: goalEvent.scoredBy,
-                                scoredByPerson: getOrThrow(gamePlayerPersonDtoMap, goalEvent.scoredBy, `failed to find game player in person dto map with ID ${goalEvent.scoredBy}`),
                                 goalType: goalEvent.goalType,
                             }
 
                             if (isDefined(goalEvent.assistBy)) {
                                 goalGameEvent.assistBy = goalEvent.assistBy;
-                                goalGameEvent.assistByPerson = getOrThrow(gamePlayerPersonDtoMap, goalEvent.assistBy, `failed to find game player in person dto map with ID ${goalEvent.assistBy}`);
                             }
 
                             if (goalEvent.penalty === true) {
@@ -252,8 +249,8 @@ export class ApiHelperService {
                                 type: gameEvent.eventType,
                                 minute: gameEvent.minute.toString(),
                                 sortOrder: gameEvent.sortOrder,
-                                playerOn: getOrThrow(gamePlayerPersonDtoMap, substitionEvent.playerOn, `failed to find player on in person dto map with id ${substitionEvent.playerOn}`),
-                                playerOff: getOrThrow(gamePlayerPersonDtoMap, substitionEvent.playerOff, `failed to find player off in person dto map with id ${substitionEvent.playerOff}`),
+                                playerOn: substitionEvent.playerOn,
+                                playerOff: substitionEvent.playerOff,
                             }
 
                             if (substitionEvent.injured === true) {
@@ -281,7 +278,7 @@ export class ApiHelperService {
                             };
 
                             if (isDefined(cardEvent.affectedPlayer)) {
-                                cardGameEvent.affectedPlayer = getOrThrow(gamePlayerPersonDtoMap, cardEvent.affectedPlayer, `failed to find affected game player in person dto map with ID ${cardEvent.affectedPlayer}`);
+                                cardGameEvent.affectedPlayer = cardEvent.affectedPlayer;
 
                                 if (gameEvent.eventType === GameEventType.YellowCard) {
                                     yellowCardPlayerMinuteMap.set(cardEvent.affectedPlayer, gameEvent.minute.toString());
@@ -292,7 +289,7 @@ export class ApiHelperService {
                                     redCardPlayerMinuteMap.set(cardEvent.affectedPlayer, gameEvent.minute.toString());
                                 }
                             } else if (isDefined(cardEvent.affectedManager)) {
-                                // TODO handle manager
+                                cardGameEvent.affectedManager = cardEvent.affectedManager;
                             }
 
                             gameEventDtos.push(cardGameEvent);
@@ -334,7 +331,7 @@ export class ApiHelperService {
                                 minute: gameEvent.minute.toString(),
                                 sortOrder: gameEvent.sortOrder,
                                 decision: varDecisionEvent.decision as VarDecision,
-                                affectedPlayer: getOrThrow(gamePlayerPersonDtoMap, varDecisionEvent.affectedPlayer, `failed to find affected player in person dto map with ID ${varDecisionEvent.affectedPlayer}`),
+                                affectedPlayer: varDecisionEvent.affectedPlayer,
                             }
 
                             gameEventDtos.push(varDecisionGameEvent);
@@ -351,7 +348,6 @@ export class ApiHelperService {
                                 sortOrder: gameEvent.sortOrder,
                                 score: [psoEvent.scoreMain, psoEvent.scoreOpponent],
                                 takenBy: psoEvent.takenBy,
-                                takenByPerson: getOrThrow(gamePlayerPersonDtoMap, psoEvent.takenBy, `failed to find taken by player in person dto map with ID ${psoEvent.takenBy}`),
                                 result: psoEvent.result as PsoResult,
                             }
 
@@ -368,7 +364,6 @@ export class ApiHelperService {
                                 minute: gameEvent.minute.toString(),
                                 sortOrder: gameEvent.sortOrder,
                                 takenBy: missedEvent.takenBy,
-                                takenByPerson: getOrThrow(gamePlayerPersonDtoMap, missedEvent.takenBy, `failed to find taken by player in person dto map with ID ${missedEvent.takenBy}`),
                                 reason: missedEvent.reason,
                             }
 
@@ -440,7 +435,7 @@ export class ApiHelperService {
                 kickoff: game.kickoff,
                 season: this.convertSeasonToSmallDto(season),
                 opponent: this.convertClubToSmallDto(opponent),
-                competition: this.convertCompetitionToSmallDto(competition),
+                competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
                 venue: this.convertVenueToGameVenueDto(venue),
                 round: game.competitionRound,
                 resultTendency: game.resultTendency,
@@ -464,25 +459,12 @@ export class ApiHelperService {
                 detailedGameDto.penaltyShootOut = [game.psoGoalsMain, game.psoGoalsOpponent];
             }
 
-            if (isDefined(parentCompetition)) {
-                detailedGameDto.competition.parent = this.convertCompetitionToSmallDto(parentCompetition);
-            }
-
             if (isDefined(game.attendance)) {
                 detailedGameDto.attendance = game.attendance;
             }
 
             if (game.isNeutralGround === true) {
                 detailedGameDto.isNeutralGround = game.isNeutralGround;
-            }
-
-            // account-specific additional information
-            if (gameStars.includes(game.id)) {
-                detailedGameDto.accountStarred = true;
-            }
-
-            if (gameAttended.includes(game.id)) {
-                detailedGameDto.accountAttended = true;
             }
 
             result.set(game.id, detailedGameDto);

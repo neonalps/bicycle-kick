@@ -70,6 +70,7 @@ export class CompetitionMapper {
             iconLarge: item.iconLarge,
             isDomestic: item.isDomestic,
             combineStatisticsWithParent: item.combineStatisticsWithParent,
+            parentId: item.parentId,
         };
     }
 

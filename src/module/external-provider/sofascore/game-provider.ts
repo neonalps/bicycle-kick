@@ -77,9 +77,9 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                     shortName: input.event.venue.name,
                     city: input.event.venue.city.name,
                     countryCode: input.event.venue.country.alpha2.toLocaleLowerCase(),
-                    capacity: input.event.venue.capacity,
-                    latitude: input.event.venue.venueCoordinates.latitude,
-                    longitude: input.event.venue.venueCoordinates.longitude,
+                    capacity: input.event.venue.capacity ?? 0,
+                    latitude: input.event.venue?.venueCoordinates?.latitude,
+                    longitude: input.event.venue?.venueCoordinates?.longitude,
                 }
             },
             referees: [
@@ -151,9 +151,9 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                         shortName: team.venue.name,
                         city: team.venue.city.name,
                         countryCode: team.venue.country.alpha2.toLocaleLowerCase(),
-                        capacity: team.venue.capacity,
-                        latitude: team.venue.venueCoordinates.latitude,
-                        longitude: team.venue.venueCoordinates.longitude,
+                        capacity: team.venue.capacity ?? 0,
+                        latitude: team.venue?.venueCoordinates?.latitude,
+                        longitude: team.venue?.venueCoordinates?.longitude,
                     }
                 }
             }
@@ -185,29 +185,29 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                 return first.compareTo(second);
             })
             .map((item, idx) => {
-            switch (item.incidentType) {
-                case 'goal':
-                    return this.getGoalEvent(item, idx);
-                case 'substitution':
-                    return this.getSubstitutionEvent(item, idx);
-                case 'card':
-                    return this.getCardEvent(item, idx);
-                case 'injuryTime':
-                    return this.getInjuryTimeEvent(item, idx);
-                case 'varDecision':
-                    return this.getVarDecisionEvent(item, idx);
-                case 'penaltyShootout':
-                    return this.getPenaltyShootOutEvent(item, idx);
-                case 'inGamePenalty':
-                    return this.getPenaltyMissedEvent(item, idx);
-                default:
-                    throw new Error(`Unhandled incident type ${item.incidentType}`);
-            }
+                switch (item.incidentType) {
+                    case 'goal':
+                        return this.getGoalEvent(item, idx);
+                    case 'substitution':
+                        return this.getSubstitutionEvent(item, idx);
+                    case 'card':
+                        return this.getCardEvent(item, idx);
+                    case 'injuryTime':
+                        return this.getInjuryTimeEvent(item, idx);
+                    case 'varDecision':
+                        return this.getVarDecisionEvent(item, idx);
+                    case 'penaltyShootout':
+                        return this.getPenaltyShootOutEvent(item, idx);
+                    case 'inGamePenalty':
+                        return this.getPenaltyMissedEvent(item, idx);
+                    default:
+                        throw new Error(`Unhandled incident type ${item.incidentType}`);
+                }
         })
     }
 
     private getGoalEvent(incident: Incident, sortOrder: number): CreateGoalGameEventDto {
-        const goalInformation = incident.footballPassingNetworkAction.find(item => item.eventType === 'goal');
+        const goalInformation = incident.footballPassingNetworkAction?.find(item => item.eventType === 'goal');
 
         return {
             type: GameEventType.Goal,
@@ -273,8 +273,12 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                 return BookableOffence.Dissent;
             case 'handball':
                 return BookableOffence.Handball;
+            case 'simulation':
+                return BookableOffence.Simulation;
             case 'dangerous play':
                 return BookableOffence.DangerousPlay;
+            case 'time wasting':
+                return BookableOffence.UnsportingBehavious;
             case 'professional foul last man':
                 return BookableOffence.DenialOfGoalScoringOpportunity;
             default:

@@ -1,8 +1,7 @@
 import { GameEventDto } from "./game-event";
-import { SmallPersonDto } from "./small-person";
 
 export interface SubstitutionGameEventDto extends GameEventDto {
-    playerOn: SmallPersonDto;
-    playerOff: SmallPersonDto;
+    playerOn: number;
+    playerOff: number;
     injured?: boolean;
 }

@@ -26,7 +26,4 @@ export interface BasicGameDto {
     previousLeg?: BasicGameDto;
     isNeutralGround?: boolean;
     scheduled?: Date;
-    accountAttended?: boolean;
-    accountStarred?: boolean;
-    accountNotes?: string;
 }

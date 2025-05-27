@@ -1,9 +1,10 @@
 export enum BookableOffence {
     DangerousPlay = 'dangerousPlay',
     DenialOfGoalScoringOpportunity = 'denialOfGoalScoringOpportunity',
-    Dissent = "disstent",
+    Dissent = "dissent",
     Foul = "foul",
     Handball = "handball",
     Other = "other",
+    Simulation = "simulation",
     UnsportingBehavious = "unsportingBehaviour",
 };

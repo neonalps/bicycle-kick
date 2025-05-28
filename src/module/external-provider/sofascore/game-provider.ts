@@ -396,6 +396,10 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                 return 'penaltyCancelled';
             case 'penaltyNotAwarded':
                 return 'penalty';
+            case 'goalAwarded':
+                return 'noGoal';
+            case 'goalNotAwarded':
+                return 'goal';
             default:
                 throw new Error(`Unhandled VAR decision ${decision}`);
         }

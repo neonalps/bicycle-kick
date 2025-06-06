@@ -4,4 +4,5 @@ export interface SeasonDto {
     shortName: string;
     start: Date;
     end: Date;
+    href: string;
 }

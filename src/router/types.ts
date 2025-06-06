@@ -1,23 +1,27 @@
 import { HttpMethod } from "@src/http/constants";
-import { ProfileDao } from "@src/models/internal/dao/profile";
-import { FastifySchema } from "fastify";
+import { ObjectType } from "@src/model/external/validation/types";
+import { Account } from "@src/model/internal/account";
 
 export type AuthenticationContext = {
     authenticated: boolean,
-    profile: ProfileDao | null,
+    account: Account | null,
+}
+
+export enum ApplicationHeader {
+    ContentHash = 'x-content-hash',
 }
 
 export type RouteDefinition<S, T> = {
     name?: string,
     path: string,
     method: HttpMethod,
-    schema: FastifySchema,
+    schema: RequestSchema,
     handler: RouteHandler<S, T>,
     authenticated: boolean,
     response?: ResponseSchema,
 }
 
-export type HandlerFunction<S, T> = (principal: AuthenticationContext, _: S) => Promise<T>;
+export type HandlerFunction<S, T> = (principal: AuthenticationContext, _: S, headers: Record<string, string>) => Promise<T>;
 
 export interface RouteProvider<S, T> {
     provide: () => RouteDefinition<S, T>;
@@ -28,11 +32,16 @@ export interface RouteHandler<S, T> {
 }
 
 export type RequestSchema = {
-    body?: unknown
-    params?: unknown,
-    querystring?: unknown,
+    body?: ObjectType,
+    params?: ObjectType,
+    querystring?: ObjectType,
 }
 
 export type ResponseSchema = {
     statusCode: number,
 }
+
+type ContentHash = {
+    contentHash: string;
+}
+export type CacheableResponse<T> = (T & ContentHash) | null;

@@ -1,3 +1,5 @@
+import { SortOrder } from "@src/module/pagination/constants";
+
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const charactersLength = characters.length;
 const allowedHttpMethods = ["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS", "TRACE", "PATCH"];
@@ -24,12 +26,20 @@ export const requireNonNull = <T> (arg: T): T => {
     return arg;
 }
 
-export function isDefined(toCheck: unknown) {
+export function isDefined<T>(toCheck: T): toCheck is NonNullable<T> {
     return toCheck !== null && toCheck !== undefined;
 }
 
 export function isNotDefined(toCheck: unknown) {
     return !isDefined(toCheck);
+}
+
+export function isBlank(toCheck: string | undefined | null): boolean {
+    return isNotDefined(toCheck) || (toCheck as string).trim().length === 0;
+}
+
+export function isNotBlank(toCheck: string | undefined | null): boolean {
+    return !isBlank(toCheck);
 }
 
 export function checkValidHttpMethod(method: string): boolean {
@@ -38,4 +48,33 @@ export function checkValidHttpMethod(method: string): boolean {
 
 export function getAllowedHttpMethods(): string[] {
     return [...allowedHttpMethods];
+}
+
+export function getOrThrow<T>(map: Map<unknown, T>, key: unknown, errorMessage: string): T {
+    const value = map.get(key);
+    if (value === undefined) {
+        throw new Error(errorMessage);
+    }
+
+    return value;
+}
+
+export function uniqueArrayElements<T>(array: T[]): T[] {
+    return Array.from(new Set(array));
+}
+
+export function getUrlSlug(id: number, name: string): string {
+    return [id, ...name.split(" ").map(item => item.toLowerCase())].join("-").replace(/[^a-zA-Z0-9-_]/g, '');
+}
+
+export function getSortOrderString(sortOrder: SortOrder): string {
+    return sortOrder === SortOrder.Ascending ? "asc" : "desc";
+}
+
+export function requireSingleArrayElement<T>(array: T[], errorMessage?: string): T {
+    if (array === undefined || array === null || array.length !== 1) {
+        throw new Error(errorMessage || "Expected single array element");
+    }
+
+    return array[0];
 }

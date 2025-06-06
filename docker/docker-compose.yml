@@ -1,0 +1,17 @@
+services:
+  postgres-bicycle-kick:
+    image: postgres:17.4
+    container_name: postgres_bicycle_kick
+    restart: unless-stopped
+    volumes:
+      - './postgres/init.sql:/docker-entrypoint-initdb.d/init.sql'
+      - 'postgres-bicycle-kick:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_DB: bicycle_kick
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - '5532:5432'
+volumes:
+  postgres-bicycle-kick:

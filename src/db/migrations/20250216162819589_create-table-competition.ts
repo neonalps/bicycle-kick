@@ -19,8 +19,12 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
         parent_id: {
             type: 'integer',
-            notNull: true,
+            notNull: false,
             references: `"competition"`,
+        },
+        combine_statistics_with_parent: {
+            type: 'boolean',
+            notNull: false,
         }
     });
 }

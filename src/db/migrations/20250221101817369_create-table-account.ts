@@ -5,13 +5,32 @@ export const shorthands: ColumnDefinitions | undefined = undefined;
 export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createTable("account", {
         id: 'id',
+        public_id: {
+            type: 'text',
+            notNull: true,
+            unique: true,
+        },
+        display_name: {
+            type: 'text',
+            notNull: true,
+        },
         hashed_email: {
+            type: 'text',
+            notNull: true,
+            unique: true,
+        },
+        enabled: {
+            type: 'boolean',
+            notNull: true,
+        },
+        roles: {
             type: 'text',
             notNull: false,
         },
-        hashed_phone_no: {
-            type: 'text',
-            notNull: false,
+        created_at: {
+            type: 'timestamptz',
+            notNull: true,
+            default: pgm.func('current_timestamp'),
         },
     });
 }

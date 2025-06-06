@@ -1,7 +1,8 @@
-import { BasicPersonDto } from "./basic-person";
+import { PenaltyMissedReason } from "@src/model/type/penalty-missed-reason";
 import { GameEventDto } from "./game-event";
 
-export interface PenaltyMissedGameEvent extends GameEventDto {
-    penaltyTaker: BasicPersonDto;
-    reason: 'post' | 'crossbar' | 'wide' | 'high';
+export interface PenaltyMissedGameEventDto extends GameEventDto {
+    takenBy: number;
+    goalkeeper: number;
+    reason: PenaltyMissedReason;
 }

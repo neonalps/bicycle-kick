@@ -8,6 +8,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         kickoff: {
             type: 'timestamptz',
             notNull: true,
+            unique: true,
         },
         opponent_id: {
             type: 'integer',
@@ -40,23 +41,28 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'boolean',
             notNull: true,
         },
+        venue_id: {
+            type: 'integer',
+            notNull: true,
+            references: `"venue"`,
+        },
         attendance: {
             type: 'integer',
             notNull: false,
         },
-        ft_goals_main: {
+        full_time_goals_main: {
             type: 'smallint',
             notNull: false,
         },
-        ft_goals_opponent: {
+        full_time_goals_opponent: {
             type: 'smallint',
             notNull: false,
         },
-        ht_goals_main: {
+        half_time_goals_main: {
             type: 'smallint',
             notNull: false,
         },
-        ht_goals_opponent: {
+        half_time_goals_opponent: {
             type: 'smallint',
             notNull: false,
         },
@@ -100,15 +106,35 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'smallint',
             notNull: false,
         },
-        penalties_saved_main: {
+        penalties_missed_main: {
             type: 'smallint',
             notNull: false,
         },
-        turn_arounds_main: {
+        penalties_missed_opponent: {
             type: 'smallint',
             notNull: false,
         },
-        turn_arounds_opponent: {
+        turnarounds_main: {
+            type: 'smallint',
+            notNull: false,
+        },
+        turnarounds_opponent: {
+            type: 'smallint',
+            notNull: false,
+        },
+        own_goals_main: {
+            type: 'smallint',
+            notNull: false,
+        },
+        own_goals_opponent: {
+            type: 'smallint',
+            notNull: false,
+        },
+        direct_free_kick_goals_main: {
+            type: 'smallint',
+            notNull: false,
+        },
+        direct_free_kick_goals_opponent: {
             type: 'smallint',
             notNull: false,
         },
@@ -120,15 +146,19 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'smallint',
             notNull: false,
         },
-        penalties_saved_opponent: {
-            type: 'smallint',
-            notNull: false,
-        },
-        table_position_before: {
+        table_position_main_before: {
             type: 'integer',
             notNull: false,
         },
-        table_position_after: {
+        table_position_main_after: {
+            type: 'integer',
+            notNull: false,
+        },
+        table_position_opponent_before: {
+            type: 'integer',
+            notNull: false,
+        },
+        table_position_opponent_after: {
             type: 'integer',
             notNull: false,
         },
@@ -166,6 +196,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'smallint',
             notNull: false,
         },
+        is_neutral_ground: {
+            type: 'boolean',
+            notNull: true,
+            default: false,
+        },
         is_practice: {
             type: 'boolean',
             notNull: true,
@@ -174,16 +209,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         scheduled: {
             type: 'timestamptz',
             notNull: false,
-        },
-        is_neutral_ground: {
-            type: 'boolean',
-            notNull: true,
-            default: false,
-        },
-        was_abandoned: {
-            type: 'boolean',
-            notNull: true,
-            default: false,
         },
     });
 

@@ -1,20 +1,20 @@
 import { FastifyError, FastifyInstance, FastifyReply, FastifyRequest, FastifySchema } from "fastify";
 import fastifyJwt from "@fastify/jwt";
-import { AuthenticationContext, RequestSchema, ResponseSchema, RouteDefinition, RouteProvider } from "./types";
+import { ApplicationHeader, AuthenticationContext, RequestSchema, ResponseSchema, RouteDefinition, RouteProvider } from "./types";
 import { HttpMethod } from "@src/http/constants";
 import logger from "@src/log";
 import dependencyManager from "@src/di/manager";
-import { Dependencies } from "@src/di/dependencies";
-import { IllegalStateError } from "@src/api/error/illegal-state-error";
+import { IllegalStateError } from "@src/api/error/illegal-state";
 import { isDefined } from "@src/util/common";
-import { AuthenticationError } from "@src/api/error/authentication-error";
-import { ProfileService } from "@src/modules/profile/service";
+import { AuthenticationError } from "@src/api/error/authentication";
+import { Dependencies } from "@src/di/dependencies";
+import { AccountService } from "@src/module/account/service";
 
 export class RouteManager {
 
     private static readonly EMPTY_AUTHENTICATION: AuthenticationContext = {
         authenticated: false,
-        profile: null,
+        account: null,
     }
 
     private constructor() {}
@@ -68,8 +68,14 @@ export class RouteManager {
 
                 const body = RouteManager.mergeRequestContext(request) as unknown;
 
+                const applicationHeaders: Record<string, string> = {};
+                const responseHashHeader = request.headers[ApplicationHeader.ContentHash];
+                if (isDefined(responseHashHeader) && !Array.isArray(responseHashHeader)) {
+                    applicationHeaders[ApplicationHeader.ContentHash] = responseHashHeader;
+                }
+
                 try {
-                    const response = await route.handler.handle(principal, body);
+                    const response = await route.handler.handle(principal, body, applicationHeaders);
                     this.sendSuccessResponse(reply, route, response);
                 } catch (ex) {
                     if (ex instanceof AuthenticationError) {
@@ -97,19 +103,23 @@ export class RouteManager {
             throw new Error("No user ID for authenticated route while building authentication context");
         }
 
-        const profile = await dependencyManager.get<ProfileService>(Dependencies.ProfileService).getByPublicId(publicUserId);
-        if (profile === null) {
-            throw new Error("No profile with this user ID was found");
+        const account = await dependencyManager.get<AccountService>(Dependencies.AccountService).getByPublicId(publicUserId);
+        if (account === null) {
+            throw new Error("No account with this user ID was found");
+        }
+
+        if (account.enabled === false) {
+            throw new Error("Account is disabled");
         }
 
         return {
             authenticated: true,
-            profile,
+            account,
         };
     }
 
     private static hasValidAuthenthicationContextForAuthenticatedRequest(context: AuthenticationContext): boolean {
-        return !!context && context.authenticated === true && context.profile !== null;
+        return !!context && context.authenticated === true && context.account !== null;
     }
 
     private static sendSuccessResponse(reply: FastifyReply, route: RouteDefinition<unknown, unknown>, responseBody: unknown): void {

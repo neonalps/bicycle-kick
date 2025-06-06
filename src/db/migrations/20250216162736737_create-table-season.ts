@@ -16,12 +16,16 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: true
         },
         start: {
-            type: 'timestamptz',
+            type: 'date',
             notNull: true
         },
         end: {
-            type: 'timestamptz',
+            type: 'date',
             notNull: true
+        },
+        normalized_search: {
+            type: 'text',
+            notNull: true,
         },
     });
 }

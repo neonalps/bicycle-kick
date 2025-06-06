@@ -9,18 +9,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'integer',
             notNull: true,
             references: `"game"`,
-        },
-        player_id: {
-            type: 'integer',
-            notNull: true,
-            references: `"person"`,
-        },
-        event_type: {
-            type: 'text',
-            notNull: true,
+            onDelete: 'CASCADE'
         },
         sort_order: {
             type: 'smallint',
+            notNull: true,
+        },
+        type: {
+            type: 'text',
             notNull: true,
         },
         score_main: {
@@ -35,15 +31,34 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'text',
             notNull: true,
         },
-        substituted_player: {
+        affected_player: {
             type: 'integer',
             notNull: false,
-            references: `"person"`,
+            references: `"game_players"`,
+        },
+        scored_by: {
+            type: 'integer',
+            notNull: false,
+            references: `"game_players"`,
         },
         assist_by: {
             type: 'integer',
             notNull: false,
-            references: `"person"`,
+            references: `"game_players"`,
+        },
+        player_on: {
+            type: 'integer',
+            notNull: false,
+            references: `"game_players"`,
+        },
+        player_off: {
+            type: 'integer',
+            notNull: false,
+            references: `"game_players"`,
+        },
+        goal_type: {
+            type: 'text',
+            notNull: false,
         },
         penalty: {
             type: 'boolean',
@@ -53,10 +68,15 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'boolean',
             notNull: false,
         },
-        penalty_saved_by: {
+        taken_by: {
             type: 'integer',
             notNull: false,
-            references: `"person"`,
+            references: `"game_players"`,
+        },
+        goalkeeper: {
+            type: 'integer',
+            notNull: false,
+            references: `"game_players"`,
         },
         direct_free_kick: {
             type: 'boolean',
@@ -66,11 +86,34 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'boolean',
             notNull: false,
         },
-        red_card_reason: {
-            type: 'varchar(100)',
+        reason: {
+            type: 'text',
             notNull: false,
-        }
+        },
+        decision: {
+            type: 'text',
+            notNull: false,
+        },
+        injured: {
+            type: 'boolean',
+            notNull: false,
+        },
+        not_on_pitch: {
+            type: 'boolean',
+            notNull: false,
+        },
+        additional_minutes: {
+            type: 'integer',
+            notNull: false,
+        },
+        affected_manager: {
+            type: 'integer',
+            notNull: false,
+            references: `"game_managers"`,
+        },
     });
+
+    pgm.addIndex("game_events", ['game_id', 'sort_order'], { name: 'idx_game_events_sort_order' })
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {}

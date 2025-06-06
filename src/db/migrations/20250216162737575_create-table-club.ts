@@ -17,6 +17,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'text',
             notNull: true
         },
+        city: {
+            type: 'text',
+            notNull: true
+        },
+        district: {
+            type: 'text',
+            notNull: false
+        },
         icon_large: {
             type: 'text',
             notNull: false
@@ -33,11 +41,15 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'text',
             notNull: false
         },
-        home_venue: {
+        home_venue_id: {
             type: 'integer',
             notNull: false,
             references: `"venue"`,
         },
+        normalized_search: {
+            type: 'text',
+            notNull: true
+        }
     });
 }
 

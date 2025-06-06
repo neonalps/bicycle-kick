@@ -1,12 +1,12 @@
-import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
+import { CacheableResponse, RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { requireNonNull } from "@src/util/common";
 import { GetAllSeasonsRouteHandler } from "@src/api/v1/season/get-all/handler";
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
-import { SeasonDto } from "@src/model/external/dto/season";
 import { GetAllSeasonsRequestDto } from "@src/model/external/dto/get-all-seasons-request";
 import { PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES } from "@src/module/pagination/constants";
+import { SmallSeasonDto } from "@src/model/external/dto/small-season";
 
-export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRequestDto, PaginatedResponseDto<SeasonDto>> {
+export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRequestDto, CacheableResponse<PaginatedResponseDto<SmallSeasonDto>>> {
 
     private readonly handler: GetAllSeasonsRouteHandler;
 
@@ -14,7 +14,7 @@ export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRe
         this.handler = requireNonNull(handler);
     }
 
-    provide(): RouteDefinition<GetAllSeasonsRequestDto, PaginatedResponseDto<SeasonDto>> {
+    provide(): RouteDefinition<GetAllSeasonsRequestDto, CacheableResponse<PaginatedResponseDto<SmallSeasonDto>>> {
         const schema: RequestSchema = {
             querystring: {
                 type: 'object',
@@ -22,6 +22,7 @@ export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRe
                 properties: {
                     ...PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES,
                 },
+                additionalProperties: false,
             },
         };
 
@@ -31,7 +32,7 @@ export class GetAllSeasonsRouteProvider implements RouteProvider<GetAllSeasonsRe
             path: '/api/v1/seasons',
             schema,
             handler: this.handler,
-            authenticated: true,
+            authenticated: false,
         }
     }
 

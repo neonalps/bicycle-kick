@@ -9,13 +9,22 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'integer',
             notNull: true,
             references: `"game"`,
+            onDelete: 'CASCADE'
         },
-        player_id: {
+        sort_order: {
+            type: 'smallint',
+            notNull: true,
+        },
+        person_id: {
             type: 'integer',
             notNull: true,
             references: `"person"`,
         },
-        shirt_no: {
+        for_main: {
+            type: 'boolean',
+            notNull: true,
+        },
+        shirt: {
             type: 'smallint',
             notNull: false,
         },
@@ -23,8 +32,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             type: 'text',
             notNull: false,
         },
-        plays_for_main: {
-            type: 'boolean',
+        position_grid: {
+            type: 'text',
             notNull: false,
         },
         is_starting: {
@@ -33,7 +42,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
         minutes_played: {
             type: 'smallint',
-            notNull: true,
+            notNull: false,
         },
         goals_scored: {
             type: 'smallint',
@@ -101,9 +110,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
     });
 
-    pgm.addConstraint("game_players", "uq_games_players_game_player", {
-        unique: ['game_id', 'player_id']
+    pgm.addConstraint("game_players", "uq_games_players_game_person", {
+        unique: ['game_id', 'person_id']
     });
+
+    pgm.addIndex("game_players", ['game_id', 'sort_order'], { name: 'idx_game_players_sort_order' })
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {}

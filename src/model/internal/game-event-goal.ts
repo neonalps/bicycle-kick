@@ -1,19 +1,14 @@
-import { GameEventType } from "@src/model/external/dto/game-event-type";
+import { GoalType } from "@src/model/type/goal-type";
 import { GameEvent } from "./game-event";
-import { Person } from "./person";
 
 export interface GoalGameEvent extends GameEvent {
-    id: number;
-    eventType: GameEventType;
-    sortOrder: number;
-    minute: string;
-    scorer: Person;
-    assistBy?: Person;
-    penalty: boolean;
-    directFreeKick: boolean;
-    bicylceKick: boolean;
-    ownGoal: boolean;
+    scoredBy: number;
+    assistBy?: number;
     scoreMain: number;
     scoreOpponent: number;
-    forMain: boolean;
+    goalType: GoalType;
+    penalty: boolean;
+    ownGoal: boolean;
+    directFreeKick: boolean;
+    bicycleKick: boolean;
 }

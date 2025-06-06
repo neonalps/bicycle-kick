@@ -5,6 +5,7 @@ export interface GameDaoInterface {
     opponentId: number;
     competitionId: number;
     competitionRound: string;
+    competitionStage: string;
     seasonId: number;
     status: string;
     venueId: number;

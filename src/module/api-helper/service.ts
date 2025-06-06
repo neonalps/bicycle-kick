@@ -103,6 +103,7 @@ export class ApiHelperService {
                 competition: this.convertCompetitionToSmallDto(competition),
                 venue: this.convertVenueToGameVenueDto(venue),
                 round: game.competitionRound,
+                stage: game.competitionStage,
                 attendance: game.attendance,
                 resultTendency: game.resultTendency,
                 status: game.status,
@@ -364,6 +365,7 @@ export class ApiHelperService {
                                 minute: gameEvent.minute.toString(),
                                 sortOrder: gameEvent.sortOrder,
                                 takenBy: missedEvent.takenBy,
+                                goalkeeper: missedEvent.goalkeeper,
                                 reason: missedEvent.reason,
                             }
 
@@ -449,6 +451,10 @@ export class ApiHelperService {
                     events: gameEventDtos,
                     referees: refereeDtos,
                 },
+            }
+
+            if (isDefined(game.competitionStage)) {
+                detailedGameDto.stage = game.competitionStage;
             }
 
             if (isDefined(game.aetGoalsMain) && isDefined(game.aetGoalsOpponent)) {

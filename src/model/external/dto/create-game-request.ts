@@ -13,6 +13,7 @@ export interface CreateGameRequestDto {
     opponent: ClubInputDto;
     competition: CompetitionInputDto;
     competitionRound: string;
+    competitionStage?: string;
     isHomeGame: boolean;
     status: GameStatus;
     venue: VenueInputDto;

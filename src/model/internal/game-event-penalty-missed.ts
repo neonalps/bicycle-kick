@@ -3,5 +3,6 @@ import { GameEvent } from "./game-event";
 
 export interface PenaltyMissedGameEvent extends GameEvent {
     takenBy: number;
+    goalkeeper: number;
     reason: PenaltyMissedReason;
 }

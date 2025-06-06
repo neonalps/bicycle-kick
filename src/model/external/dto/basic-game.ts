@@ -13,6 +13,7 @@ export interface BasicGameDto {
     season: SmallSeasonDto;
     competition: SmallCompetitionDto;
     round: string;
+    stage?: string;
     isHomeGame: boolean;
     status: GameStatus;
     resultTendency: Tendency;

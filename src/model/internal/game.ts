@@ -8,6 +8,7 @@ export interface Game {
     opponentId: number;
     competitionId: number;
     competitionRound: string;
+    competitionStage: string;
     seasonId: number;
     status: GameStatus;
     venueId: number;

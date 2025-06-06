@@ -173,6 +173,7 @@ export class GameEventMapper {
         return {
             ...this.convertBaseEvent(item),
             takenBy: item.takenBy as number,
+            goalkeeper: item.goalkeeper as number,
             reason: item.reason as PenaltyMissedReason,
         }
     }

@@ -278,6 +278,7 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
             case 'dangerous play':
                 return BookableOffence.DangerousPlay;
             case 'time wasting':
+            case 'off the ball foul':
                 return BookableOffence.UnsportingBehavious;
             case 'professional foul last man':
                 return BookableOffence.DenialOfGoalScoringOpportunity;
@@ -314,6 +315,13 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                 return 'denialOfGoalScoringOpportunity';
             case 'argument':
                 return 'argument';
+            case 'foul':
+                return 'seriousFoulPlay';
+            case 'violent conduct':
+                return 'violentConduct';
+            case '':
+                console.info(`got empty expulsion reason - defaulted to violentConduct`);
+                return 'violentConduct';
             default:
                 throw new Error(`Unhandled expulsion reason: ${reason}`);
         }

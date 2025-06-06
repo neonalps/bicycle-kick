@@ -12,6 +12,7 @@ export interface GameDetailsDto {
     scheduled: Date;
     competition: CompetitionDto;
     round: string;
+    stage: string;
     isHomeGame: boolean;
     status: string;
     resultTendency: string;

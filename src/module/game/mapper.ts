@@ -107,6 +107,7 @@ export class GameMapper {
                 opponentId,
                 competitionId,
                 competitionRound: dto.competitionRound,
+                competitionStage: dto.competitionStage,
                 venueId,
                 status: dto.status,
                 attendance: dto.attendance,
@@ -120,7 +121,7 @@ export class GameMapper {
                 tablePositionOffset: dto.tablePositionOffset,
             };
 
-            const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'venueId', 'status', 'attendance', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
+            const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'competitionStage', 'venueId', 'status', 'attendance', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
             const gameId = temporaryGameResult[0].id;
 
             let goalkeeperMainPersonId: number | null = null;
@@ -455,6 +456,7 @@ export class GameMapper {
                         const penaltyMissedGameEvent = event as CreatePenaltyMissedGameEventDto;
                         const takenBy = await this.resolvePersonId(tx, penaltyMissedGameEvent.takenBy);
                         const takenByGamePlayerEntry = getOrThrow(personGamePlayerIdMap, takenBy, `failed to find taken by in game player map (person ID ${takenBy})`);
+                        let goalkeeperGamePlayerId;
 
                         if (takenByGamePlayerEntry.forMain) {
                             penaltiesTakenMain += 1;
@@ -462,12 +464,14 @@ export class GameMapper {
                             const penaltyOpponentGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperOpponentPersonId, `failed to find penalty opponent goalkeeper in game player map (person ID ${goalkeeperOpponentPersonId})`);
                             penaltyOpponentGoalkeeper.regulationPenaltiesFaced += 1;
                             penaltyOpponentGoalkeeper.regulationPenaltiesSaved += 1;
+                            goalkeeperGamePlayerId = penaltyOpponentGoalkeeper.id;
                         } else {
                             penaltiesTakenOpponent += 1;
 
                             const penaltyMainGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperMainPersonId, `failed to find penalty opponent goalkeeper in game player map (person ID ${goalkeeperMainPersonId})`);
                             penaltyMainGoalkeeper.regulationPenaltiesFaced += 1;
                             penaltyMainGoalkeeper.regulationPenaltiesSaved += 1;
+                            goalkeeperGamePlayerId = penaltyMainGoalkeeper.id;
                         }
 
                         takenByGamePlayerEntry.regulationPenaltiesTaken += 1;
@@ -478,6 +482,7 @@ export class GameMapper {
                             sortOrder: event.sortOrder,
                             minute: event.minute,
                             takenBy: takenByGamePlayerEntry.id,
+                            goalkeeper: goalkeeperGamePlayerId,
                             reason: penaltyMissedGameEvent.reason,
                         });
 

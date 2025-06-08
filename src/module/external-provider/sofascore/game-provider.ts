@@ -408,6 +408,8 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                 return 'noGoal';
             case 'goalNotAwarded':
                 return 'goal';
+            case 'cardUpgrade':
+                return 'yellowCardOverturned';
             default:
                 throw new Error(`Unhandled VAR decision ${decision}`);
         }

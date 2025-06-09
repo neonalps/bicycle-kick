@@ -25,6 +25,7 @@ export interface BasicGameDto {
     venue: GameVenueDto;
     leg?: number;
     previousLeg?: BasicGameDto;
+    isSoldOut?: boolean;
     isNeutralGround?: boolean;
     scheduled?: Date;
 }

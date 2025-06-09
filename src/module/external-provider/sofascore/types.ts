@@ -80,6 +80,7 @@ interface Event {
     roundInfo: Round;
     customId: string;
     winnerCode: number;
+    attendance: number;
     venue: Venue;
     referee: Referee;
     homeTeam: Team;

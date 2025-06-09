@@ -117,6 +117,7 @@ export class ApiHelperService {
                 psoGoalsOpponent: game.psoGoalsOpponent,
                 isHomeGame: game.isHomeTeam,
                 isNeutralGround: game.isNeutralGround,
+                isSoldOut: game.isSoldOut,
                 // TODO use config
                 href: this.getFrontendResourceHref('game', getUrlSlug(game.id, `Sturm Graz vs ${opponent.shortName}`)),
             }
@@ -471,6 +472,10 @@ export class ApiHelperService {
 
             if (game.isNeutralGround === true) {
                 detailedGameDto.isNeutralGround = game.isNeutralGround;
+            }
+
+            if (game.isSoldOut === true) {
+                detailedGameDto.isSoldOut = game.isSoldOut;
             }
 
             result.set(game.id, detailedGameDto);

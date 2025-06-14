@@ -78,3 +78,23 @@ export function requireSingleArrayElement<T>(array: T[], errorMessage?: string):
 
     return array[0];
 }
+
+export type ArrayNonEmpty<T> = [T, ...T[]];
+
+export async function promiseAllObject<T extends Record<string, Promise<any>>>(obj: T): Promise<{ [K in keyof T]: Awaited<T[K]> }> {
+  const entries = Object.entries(obj);
+  const results = await Promise.all(entries.map(([key, promise]) => promise.then((value) => [key, value])));
+  return Object.fromEntries(results) as { [K in keyof T]: Awaited<T[K]> };
+}
+
+export function ensureNotNullish<T>(input: T | null | undefined, errorMessage?: string): T {
+    if (input === undefined || input === null) {
+        throw new Error(errorMessage ?? `Expected not nullish value but got nullish`);
+    }
+
+    return input;
+}
+
+export function convertNumberString(input: string): number {
+    return Number(input);
+}

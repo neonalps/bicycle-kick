@@ -32,6 +32,20 @@ export class CompetitionMapper {
         return (await this.getMultipleByIdsResult(ids)).map(item => this.convertToEntity(item));
     }
 
+    async getAllInMap(): Promise<Map<number, Competition>> {
+        const result = await this.sql<CompetitionDaoInterface[]>`select * from competition`;
+        if (result.length === 0) {
+            return new Map();
+        }
+
+        const resultMap = new Map<number, Competition>();
+        for (const resultItem of result) {
+            const entityItem = this.convertToEntity(resultItem);
+            resultMap.set(entityItem.id, entityItem);
+        }
+        return resultMap;
+    }
+
     async getMapByIds(ids: number[]): Promise<Map<number, Competition>> {
         const result = await this.sql<CompetitionDaoInterface[]>`select * from competition where id in ${ this.sql(ids) }`;
         if (result.length === 0) {

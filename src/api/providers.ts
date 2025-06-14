@@ -5,6 +5,7 @@ import { getGameRouteProviders } from "./v1/game/providers";
 import { getSeasonRouteProviders } from "./v1/season/providers";
 import { getOpsRouteProviders } from "./v1/ops/providers";
 import { getClubRouteProviders } from "./v1/club/providers";
+import { getPersonRouteProviders } from "./v1/person/providers";
 
 export function getRouteProviders(): RouteProvider<any, any>[] {
 
@@ -13,6 +14,7 @@ export function getRouteProviders(): RouteProvider<any, any>[] {
         ...getClubRouteProviders(),
         ...getGameRouteProviders(),
         ...getOpsRouteProviders(),
+        ...getPersonRouteProviders(),
         ...getSeasonRouteProviders(),
         ...getSearchRouteProviders(),
     ];

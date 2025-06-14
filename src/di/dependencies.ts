@@ -23,6 +23,7 @@ export enum Dependencies {
     SearchService,
     SeasonService,
     SofascoreGameProvider,
+    StatsService,
     SquadService,
     TimeSource,
     UuidSource,

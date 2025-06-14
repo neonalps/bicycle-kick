@@ -210,7 +210,9 @@ export class GameMapper {
             })
 
             const referees = await this.resolveGameReferees(tx, gameId, dto.referees);
-            await tx`insert into game_referees ${ tx(referees, 'gameId', 'personId', 'sortOrder', 'role') }`;
+            if (referees.length > 0) {
+                await tx`insert into game_referees ${ tx(referees, 'gameId', 'personId', 'sortOrder', 'role') }`;
+            }
 
             let fullTimeGoalsMain = 0;
             let fullTimeGoalsOpponent = 0;

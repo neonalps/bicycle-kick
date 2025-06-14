@@ -27,4 +27,8 @@ export class CompetitionService {
         return await this.mapper.search(parts);
     }
 
+    async getAllInMap(): Promise<Map<number, Competition>> {
+        return await this.mapper.getAllInMap();
+    }
+
 }

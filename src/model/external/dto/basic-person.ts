@@ -4,5 +4,5 @@ export interface BasicPersonDto {
     firstName: string;
     avatar: string;
     birthday: Date;
-    href: string;
+    deathday?: Date;
 }

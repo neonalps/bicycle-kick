@@ -1,0 +1,1 @@
+export type TacticalFormation = '442-diamond';

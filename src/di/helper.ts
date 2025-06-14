@@ -75,6 +75,8 @@ import { GameAttendedMapper } from "@src/module/game-attended/mapper";
 import { GameAttendedService } from "@src/module/game-attended/service";
 import { CacheService } from "@src/module/cache/service";
 import { SearchService } from "@src/module/search/service";
+import { StatsService } from "@src/module/stats/service";
+import { StatsMapper } from "@src/module/stats/mapper";
 
 export class DependencyHelper {
 
@@ -165,6 +167,9 @@ export class DependencyHelper {
 
         const sofascoreGameProvider = new SofascoreGameProvider({ mainTeamName: ["Sturm Graz"] }, timeSource);
 
+        const statsMapper = new StatsMapper(sqlInstance);
+        const statsService = new StatsService(statsMapper, competitionService, seasonService);
+
         const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,
             mainClubCity: "Graz",
@@ -238,6 +243,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.SearchService, searchService);
         dependencies.set(Dependencies.SeasonService, seasonService);
         dependencies.set(Dependencies.SofascoreGameProvider, sofascoreGameProvider);
+        dependencies.set(Dependencies.StatsService, statsService);
         dependencies.set(Dependencies.SquadService, squadService);
         dependencies.set(Dependencies.TimeSource, timeSource);
         dependencies.set(Dependencies.UuidSource, uuidSource);

@@ -155,6 +155,7 @@ export class GameEventMapper {
         return {
             ...this.convertBaseEvent(item),
             decision: item.decision as string,
+            reason: item.reason as string,
             affectedPlayer: item.affectedPlayer as number,
         }
     }

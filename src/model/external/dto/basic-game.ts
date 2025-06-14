@@ -24,7 +24,7 @@ export interface BasicGameDto {
     attendance?: number;
     venue: GameVenueDto;
     leg?: number;
-    previousLeg?: BasicGameDto;
+    previousLeg?: number;
     isSoldOut?: boolean;
     isNeutralGround?: boolean;
     scheduled?: Date;

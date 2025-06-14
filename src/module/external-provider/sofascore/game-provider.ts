@@ -55,6 +55,15 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
             throw new Error(`It seems like both the home and away team are the main team`);
         }
 
+        const referees = [];
+        if (input.event.referee) {
+            referees.push({ 
+                person: this.getPersonInput(input.event.referee),
+                sortOrder: 0,
+                role: RefereeRole.Referee,
+            });
+        }
+
         return {
             kickoff: this.timeSource.unixTimestampToDate(input.event.startTimestamp),
             status: GameStatus.Finished,
@@ -83,13 +92,7 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                     longitude: input.event.venue?.venueCoordinates?.longitude,
                 }
             },
-            referees: [
-                { 
-                    person: this.getPersonInput(input.event.referee),
-                    sortOrder: 0,
-                    role: RefereeRole.Referee,
-                 }
-            ],
+            referees,
             managersMain: [
                 {
                     person: this.getPersonInput(isHomeGame ? input.homeManager : input.awayManager),
@@ -270,16 +273,14 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
         switch (reason) {
             case 'foul':
                 return BookableOffence.Foul;
-            case 'argument':
-                return BookableOffence.Dissent;
             case 'handball':
                 return BookableOffence.Handball;
-            case 'simulation':
-                return BookableOffence.Simulation;
             case 'dangerous play':
                 return BookableOffence.DangerousPlay;
+            case 'simulation':
             case 'time wasting':
             case 'off the ball foul':
+            case 'argument':
                 return BookableOffence.UnsportingBehavious;
             case 'professional foul last man':
                 return BookableOffence.DenialOfGoalScoringOpportunity;
@@ -295,7 +296,7 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
             minute: this.getMinute(incident.time, incident.addedTime),
             affectedPlayer: incident.player !== undefined ? this.getPersonInput(incident.player as GamePlayer) : undefined,
             affectedManager: incident.manager !== undefined ? this.getPersonInput(incident.manager) : undefined,
-            reason: incident.reason?.toLocaleLowerCase() as BookableOffence,     // TODO transform?
+            reason: this.parseBookableOffence(incident.reason?.toLocaleLowerCase()),
         }
     }
 
@@ -354,6 +355,7 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
             sortOrder,
             minute: this.getMinute(incident.time, incident.addedTime),
             decision: this.parseVarDecision(incident.incidentClass),
+            reason: 'offside',   // we cannot know what it is, so we simply use offside
             affectedPlayer: this.getPersonInput(incident.player as GamePlayer),
         }
     }

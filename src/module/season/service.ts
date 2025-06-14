@@ -26,6 +26,10 @@ export class SeasonService {
         return await this.mapper.getMapByIds(ids);
     }
 
+    async getAllOrderedInMap(): Promise<Map<number, Season>> {
+        return await this.mapper.getAllOrderedInMap();
+    }
+
     async getForDate(date: Date): Promise<Season | null> {
         validateNotNull(date, "date");
         

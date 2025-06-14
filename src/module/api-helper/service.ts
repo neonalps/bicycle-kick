@@ -5,7 +5,7 @@ import {GameService} from "@src/module/game/service";
 import {CompetitionService} from "@src/module/competition/service";
 import {VenueService} from "@src/module/venue/service";
 import {PersonService} from "@src/module/person/service";
-import {getOrThrow, getUrlSlug, isDefined, uniqueArrayElements} from "@src/util/common";
+import {ensureNotNullish, getOrThrow, getUrlSlug, isDefined, isNotDefined, uniqueArrayElements} from "@src/util/common";
 import {ClubService} from "@src/module/club/service";
 import {GamePlayer} from "@src/model/internal/game-player";
 import {SeasonService} from "@src/module/season/service";
@@ -39,7 +39,7 @@ import { InjuryTimeGameEvent } from "@src/model/internal/game-event-injury-time"
 import { InjuryTimeGameEventDto } from "@src/model/external/dto/game-event-injury-time";
 import { VarDecisionGameEvent } from "@src/model/internal/game-event-var-decision";
 import { VarDecisionGameEventDto } from "@src/model/external/dto/game-event-var-decision";
-import { VarDecision } from "@src/model/type/var-decision";
+import { VarDecision, VarDecisionReason } from "@src/model/type/var-decision";
 import { SmallPersonDto } from "@src/model/external/dto/small-person";
 import { SmallSeasonDto } from "@src/model/external/dto/small-season";
 import { SmallCompetitionDto } from "@src/model/external/dto/small-competition";
@@ -56,6 +56,11 @@ import { GameManagerService } from "@src/module/game-manager/service";
 import { GameAttendedService } from "@src/module/game-attended/service";
 import { GameStarService } from "@src/module/game-star/service";
 import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
+import { TacticalFormation } from "@src/model/external/dto/tactical-formation";
+import { PlayerCompetitionStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
+import { PlayerBaseStats, PlayerStatsMapContext } from "@src/model/internal/stats-player";
+import { CompetitionId, SeasonId } from "@src/util/domain-types";
+import { P } from "pino";
 
 export class ApiHelperService {
 
@@ -182,6 +187,14 @@ export class ApiHelperService {
                 lineup: [],
                 managers: [],
             };
+
+            if (isDefined(game.tacticalFormationMain)) {
+                mainTeamGameReport.tacticalFormation = game.tacticalFormationMain as TacticalFormation;
+            }
+
+            if (isDefined(game.tacticalFormationOpponent)) {
+                opponentTeamGameReport.tacticalFormation = game.tacticalFormationOpponent as TacticalFormation;
+            }
             
             const gamePlayerPersonDtoMap = new Map<number, SmallPersonDto>();
             for (const gamePlayer of gamePlayers) {
@@ -333,6 +346,7 @@ export class ApiHelperService {
                                 minute: gameEvent.minute.toString(),
                                 sortOrder: gameEvent.sortOrder,
                                 decision: varDecisionEvent.decision as VarDecision,
+                                reason: varDecisionEvent.reason as VarDecisionReason,
                                 affectedPlayer: varDecisionEvent.affectedPlayer,
                             }
 
@@ -423,7 +437,7 @@ export class ApiHelperService {
             }
 
             const refereeDtos: GameRefereeDto[] = [];
-            const gameReferees = getOrThrow(gameRefereesMap, game.id, "game referees not found in map");
+            const gameReferees = gameRefereesMap.get(game.id) ?? [];
             for (const gameReferee of gameReferees) {
                 const person = getOrThrow(personMap, gameReferee.personId, "referee person not found in map");
                 refereeDtos.push({
@@ -470,6 +484,14 @@ export class ApiHelperService {
                 detailedGameDto.attendance = game.attendance;
             }
 
+            if (isDefined(game.leg)) {
+                detailedGameDto.leg = game.leg;
+            }
+
+            if (isDefined(game.previousLeg)) {
+                detailedGameDto.previousLeg = game.previousLeg;
+            }
+
             if (game.isNeutralGround === true) {
                 detailedGameDto.isNeutralGround = game.isNeutralGround;
             }
@@ -498,11 +520,20 @@ export class ApiHelperService {
         });
     }
 
-    private convertPersonToBasicDto(person: Person): BasicPersonDto {
-        return {
-            ...person,
-            href: this.getFrontendResourceHref('person', getUrlSlug(person.id, `${person.firstName} ${person.lastName}`)),
+    convertPersonToBasicDto(item: Person): BasicPersonDto {
+        const person: BasicPersonDto = {
+            id: item.id,
+            firstName: item.firstName,
+            lastName: item.lastName,
+            avatar: item.avatar,
+            birthday: item.birthday,
+        };
+
+        if (isDefined(item.deathday)) {
+            person.deathday = item.deathday
         }
+
+        return person;
     }
 
     private convertPersonToSmallDto(person: Person): SmallPersonDto {
@@ -629,6 +660,109 @@ export class ApiHelperService {
         }
 
         return dto;
+    }
+
+    convertStatsDetailsMapToDto(playerStats: Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>, seasonMap: Map<SeasonId, Season>, competitionMap: Map<CompetitionId, Competition>): PlayerSeasonStatsItemDto[] {
+        const result: PlayerSeasonStatsItemDto[] = [];
+        for (const [seasonId, competitionStatsMap] of playerStats.entries()) {
+            const season = getOrThrow(seasonMap, seasonId, `failed to find season with ID ${seasonId} in season map`);
+
+            const competitions: PlayerCompetitionStatsItemDto[] = [];
+            for (const [competitionId, competitionStats] of competitionStatsMap.entries()) {
+                const competition = getOrThrow(competitionMap, competitionId, `failed to find competition with ID ${competitionId} in competition map`);
+
+                const competitionDto = this.convertCompetitionToSmallDto(competition);
+
+                if (isNotDefined(competition.parentId)) {
+                    competitions.push({
+                        competition: competitionDto,
+                        items: [{
+                            isParent: true,
+                            stats: this.convertToPlayerStatsItemDto(competitionStats),
+                        }],
+                    })
+                } else {
+                    // the parent competition must have a sort order lower than this one, so it must already be present in the array
+                    const parentCompetition = ensureNotNullish(competitions.find(item => item.competition.id === competition.parentId));
+                    parentCompetition.items.push({
+                        competition: competitionDto,
+                        stats: this.convertToPlayerStatsItemDto(competitionStats),
+                    });
+                }
+            }
+            
+            result.push({
+                season: this.convertSeasonToSmallDto(season),
+                competitions,
+            });
+        }
+        return result;
+    }
+    
+    convertToPlayerStatsItemDto(stats: PlayerBaseStats): PlayerStatsItemDto {
+        const result: PlayerStatsItemDto = {};
+
+        if (stats.gamesPlayed > 0) {
+            result.gamesPlayed = stats.gamesPlayed;
+        }
+
+        if (stats.gamesStarted > 0) {
+            result.gamesStarted = stats.gamesStarted;
+        }
+
+        if (stats.goalsScored > 0) {
+            result.goalsScored = stats.goalsScored;
+        }
+
+        if (stats.assists > 0) {
+            result.assists = stats.assists;
+        }
+
+        if (stats.minutesPlayed > 0) {
+            result.minutesPlayed = stats.minutesPlayed;
+        }
+
+        if (stats.ownGoals > 0) {
+            result.ownGoals = stats.ownGoals;
+        }
+
+        if (stats.goalsConceded > 0) {
+            result.goalsConceded = stats.goalsConceded;
+        }
+
+        if (stats.cleanSheets > 0) {
+            result.cleanSheets = stats.cleanSheets;
+        }
+
+        if (stats.yellowCards > 0) {
+            result.yellowCards = stats.yellowCards;
+        }
+
+        if (stats.yellowRedCards > 0) {
+            result.yellowRedCards = stats.yellowRedCards;
+        }
+
+        if (stats.redCards > 0) {
+            result.redCards = stats.redCards;
+        }
+
+        if (stats.regulationPenaltiesTaken > 0) {
+            result.penaltiesTaken = [stats.regulationPenaltiesTaken, stats.regulationPenaltiesScored];
+        }
+
+        if (stats.regulationPenaltiesFaced > 0) {
+            result.penaltiesFaced = [stats.regulationPenaltiesFaced, stats.regulationPenaltiesSaved];
+        }
+
+        if (stats.psoPenaltiesTaken > 0) {
+            result.psoPenaltiesTaken = [stats.psoPenaltiesTaken, stats.psoPenaltiesScored];
+        }
+
+        if (stats.psoPenaltiesFaced > 0) {
+            result.psoPenaltiesFaced = [stats.psoPenaltiesFaced, stats.psoPenaltiesSaved];
+        }
+
+        return result;
     }
 
     private convertVenueToBasicDto(venue: Venue): BasicVenueDto {

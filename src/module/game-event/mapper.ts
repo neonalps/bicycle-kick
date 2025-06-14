@@ -164,9 +164,10 @@ export class GameEventMapper {
         return {
             ...this.convertBaseEvent(item),
             result: item.decision as PsoResult,
-            takenBy: item.takenBy as number,
             scoreMain: item.scoreMain as number,
             scoreOpponent: item.scoreOpponent as number,
+            takenBy: item.takenBy as number,
+            goalkeeper: item.goalkeeper as number,
         }
     }
 

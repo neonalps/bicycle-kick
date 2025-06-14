@@ -364,6 +364,7 @@ export class ApiHelperService {
                                 sortOrder: gameEvent.sortOrder,
                                 score: [psoEvent.scoreMain, psoEvent.scoreOpponent],
                                 takenBy: psoEvent.takenBy,
+                                goalkeeper: psoEvent.goalkeeper,
                                 result: psoEvent.result as PsoResult,
                             }
 

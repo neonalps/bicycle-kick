@@ -5,5 +5,6 @@ import { ScoreTuple } from "@src/model/internal/score";
 export interface PenaltyShootOutGameEventDto extends GameEventDto {
     score: ScoreTuple;
     takenBy: number;
+    goalkeeper: number;
     result: PsoResult;
 }

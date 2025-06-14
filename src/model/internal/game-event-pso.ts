@@ -5,4 +5,5 @@ export interface PenaltyShootOutGameEvent extends GameEvent {
     scoreOpponent: number;
     result: string;
     takenBy: number;
+    goalkeeper: number;
 }

@@ -504,9 +504,12 @@ export class GameMapper {
                         const psoMainGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperMainPersonId, `failed to find PSO goalkeeper main`);
                         const psoOpponentGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperOpponentPersonId, `failed to find PSO goalkeeper opponent`);
 
+                        let psoGoalkeeperId;
+
                         psoTakenByGamePlayerEntry.psoPenaltiesTaken += 1;
 
                         if (psoTakenByGamePlayerEntry.forMain) {
+                            psoGoalkeeperId = psoOpponentGoalkeeper.id;
                             psoOpponentGoalkeeper.psoPenaltiesFaced += 1;
 
                             if (psoGameEvent.result === PsoResult.Goal) {
@@ -516,6 +519,7 @@ export class GameMapper {
                                 psoOpponentGoalkeeper.psoPenaltiesSaved += 1;
                             }
                         } else if (!psoTakenByGamePlayerEntry.forMain) {
+                            psoGoalkeeperId = psoMainGoalkeeper.id;
                             psoMainGoalkeeper.psoPenaltiesFaced += 1;
 
                             if (psoGameEvent.result === PsoResult.Goal) {
@@ -535,6 +539,7 @@ export class GameMapper {
                             sortOrder: event.sortOrder,
                             minute: event.minute,
                             takenBy: psoTakenByGamePlayerEntry.id,
+                            goalkeeper: psoGoalkeeperId,
                             decision: psoGameEvent.result,
                             scoreMain: psoScoreMain,
                             scoreOpponent: psoScoreOpponent,

@@ -272,6 +272,7 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
 
         switch (reason) {
             case 'foul':
+            case 'persistent fouling':
                 return BookableOffence.Foul;
             case 'handball':
                 return BookableOffence.Handball;

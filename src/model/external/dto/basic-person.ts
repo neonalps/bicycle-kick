@@ -5,4 +5,5 @@ export interface BasicPersonDto {
     avatar: string;
     birthday: Date;
     deathday?: Date;
+    nationalities?: string[];
 }

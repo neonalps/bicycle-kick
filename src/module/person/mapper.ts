@@ -12,7 +12,7 @@ export class PersonMapper {
 
     async create(createPerson: CreatePerson, tx?: postgres.TransactionSql): Promise<number> {
         const query = tx || this.sql;
-        const result = await query`insert into person ${ query(createPerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'normalizedSearch') } returning id`;
+        const result = await query`insert into person ${ query(createPerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'nationalities', 'normalizedSearch') } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to insert person`);
         }
@@ -61,7 +61,13 @@ export class PersonMapper {
 
     private convertToEntity(item: PersonDaoInterface): Person {
         return {
-            ...item,
+            id: item.id,
+            firstName: item.firstName,
+            lastName: item.lastName,
+            avatar: item.avatar,
+            birthday: item.birthday,
+            deathday: item.deathday,
+            nationalities: item.nationalities,
         }
     }
 

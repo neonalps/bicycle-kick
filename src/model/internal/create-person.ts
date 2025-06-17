@@ -5,4 +5,5 @@ export interface CreatePerson {
     birthday?: Date;
     deathday?: Date;
     normalizedSearch: string;
+    nationalities?: string[];
 }

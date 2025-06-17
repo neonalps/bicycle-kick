@@ -534,6 +534,10 @@ export class ApiHelperService {
             person.deathday = item.deathday
         }
 
+        if (isDefined(item.nationalities) && item.nationalities.length > 0) {
+            person.nationalities = item.nationalities;
+        }
+
         return person;
     }
 

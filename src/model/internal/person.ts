@@ -5,4 +5,5 @@ export interface Person {
     avatar: string;
     birthday: Date;
     deathday: Date;
+    nationalities?: string[];
 }

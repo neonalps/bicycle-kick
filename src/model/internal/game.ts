@@ -53,4 +53,5 @@ export interface Game {
     isPractice: boolean;
     scheduled?: Date;
     isNeutralGround: boolean;
+    titleWinningGame: boolean;
 }

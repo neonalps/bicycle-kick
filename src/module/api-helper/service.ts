@@ -178,7 +178,7 @@ export class ApiHelperService {
             const opponent = getOrThrow(clubMap, game.opponentId, "opponent not found in map");
             const venue = getOrThrow(venueMap, game.venueId, "venue was not found in map");
 
-            const gamePlayers = getOrThrow(gamePlayersMap, game.id, "game players not found in map");
+            const gamePlayers = gamePlayersMap.get(game.id) ?? [];
             const mainTeamGameReport: TeamGameReportDto = {
                 lineup: [],
                 managers: [],
@@ -216,7 +216,7 @@ export class ApiHelperService {
             const subOffPlayerMinuteMap = new Map<number, string>();
 
             const gameEventDtos: GameEventDto[] = [];
-            const gameEvents = gameEventsMap.get(game.id);
+            const gameEvents = gameEventsMap.get(game.id) ?? [];
             if (gameEvents !== undefined && gameEvents.length > 0) {
                 for (const gameEvent of gameEvents) {
                     switch (gameEvent.eventType) {
@@ -421,7 +421,7 @@ export class ApiHelperService {
                 }
             }
 
-            const gameManagers = getOrThrow(gameManagersMap, game.id, "game manager not found in map");
+            const gameManagers = gameManagersMap.get(game.id) ?? [];
             for (const gameManager of gameManagers) {
                 const person = getOrThrow(personMap, gameManager.personId, "manager person not found in map");
                 const managerDto = {
@@ -501,6 +501,10 @@ export class ApiHelperService {
                 detailedGameDto.isSoldOut = game.isSoldOut;
             }
 
+            if (game.titleWinningGame === true) {
+                detailedGameDto.titleWinningGame = game.titleWinningGame;
+            }
+
             result.set(game.id, detailedGameDto);
         }
 
@@ -526,9 +530,12 @@ export class ApiHelperService {
             id: item.id,
             firstName: item.firstName,
             lastName: item.lastName,
-            avatar: item.avatar,
             birthday: item.birthday,
         };
+
+        if (isDefined(item.avatar)) {
+            person.avatar = this.getMediaUrl(item.avatar);
+        }
 
         if (isDefined(item.deathday)) {
             person.deathday = item.deathday

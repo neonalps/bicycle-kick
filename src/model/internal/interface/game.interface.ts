@@ -50,4 +50,5 @@ export interface GameDaoInterface {
     isPractice: boolean;
     scheduled?: Date;
     isNeutralGround: boolean;
+    titleWinningGame: boolean;
 }

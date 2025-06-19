@@ -19,10 +19,17 @@ export class GetPersonByIdRouteProvider implements RouteProvider<GetPersonByIdRe
                 required: [ 'personId' ],
                 properties: {
                     personId: { type: 'string' },
+                },
+                additionalProperties: false,
+            },
+            querystring: {
+                type: 'object',
+                required: [],
+                properties: {
                     includeStatistics: { type: 'boolean' },
                 },
                 additionalProperties: false,
-            }            
+            },
         };
 
         return {

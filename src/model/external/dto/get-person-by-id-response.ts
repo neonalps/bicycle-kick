@@ -1,7 +1,7 @@
-import { SmallPersonDto } from "./small-person";
+import { BasicPersonDto } from "./basic-person";
 import { PlayerSeasonStatsItemDto } from "./stats-player";
 
 export interface GetPersonByIdResponseDto {
-    person: SmallPersonDto;
+    person: BasicPersonDto;
     stats?: Array<PlayerSeasonStatsItemDto>;
 }

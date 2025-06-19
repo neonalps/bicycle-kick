@@ -28,4 +28,5 @@ export interface BasicGameDto {
     isSoldOut?: boolean;
     isNeutralGround?: boolean;
     scheduled?: Date;
+    titleWinningGame?: boolean;
 }

@@ -5,7 +5,7 @@ import { GameStatus } from "@src/model/type/game-status";
 import { Tendency } from "@src/model/type/tendency";
 import { SortOrder } from "@src/module/pagination/constants";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
-import { getOrThrow } from "@src/util/common";
+import { getOrThrow, requireSingleArrayElement } from "@src/util/common";
 import { CreateGameDto } from "@src/model/internal/create-game";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { ClubInputDto } from "@src/model/external/dto/club-input";
@@ -51,16 +51,15 @@ export class GameMapper {
     ) {}
 
     async getById(id: number): Promise<Game | null> {
-        const result = await this.sql<GameDaoInterface[]>`select * from game where id = ${ id }`;
-        if (result.length !== 1) {
+        const result = await this.getMultipleByIds([id]);
+        if (result.length === 0) {
             return null;
         }
-
-        return this.convertToEntity(result[0]);
+        return requireSingleArrayElement(result);
     }
 
     async getMultipleByIds(ids: number[]): Promise<Game[]> {
-        const result = await this.sql<GameDaoInterface[]>`select * from game where id in ${ this.sql(ids) }`;
+        const result = await this.sql<GameDaoInterface[]>`select g.*, st.id is not null as title_winning_game from game g left join season_titles st on st.victory_game = g.id where g.id in ${ this.sql(ids) }`;
         if (result.length === 0) {
             return [];
         }

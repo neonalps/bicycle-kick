@@ -19,14 +19,19 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
         if (person === null) {
             throw new Error(`No person with ID ${dto.personId} exists`);
         }
-        
-        const statsDetailsContext = await this.statsService.getPlayerStats([person.id]);
-        const playerStatsDetails = ensureNotNullish(statsDetailsContext.playerStats.get(person.id));
 
-        return {
+        const response: GetPersonByIdResponseDto = {
             person: this.apiHelper.convertPersonToBasicDto(person),
-            stats: this.apiHelper.convertStatsDetailsMapToDto(playerStatsDetails, statsDetailsContext.seasons, statsDetailsContext.competitions),
         }
+
+        if (dto.includeStatistics === true) {
+            const statsDetailsContext = await this.statsService.getPlayerStats([person.id]);
+            const playerStatsDetails = ensureNotNullish(statsDetailsContext.playerStats.get(person.id));
+
+            response.stats = this.apiHelper.convertStatsDetailsMapToDto(playerStatsDetails, statsDetailsContext.seasons, statsDetailsContext.competitions);
+        }
+        
+        return response;
     }
 
 }

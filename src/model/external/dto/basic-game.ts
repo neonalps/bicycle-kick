@@ -29,4 +29,6 @@ export interface BasicGameDto {
     isNeutralGround?: boolean;
     scheduled?: Date;
     titleWinningGame?: boolean;
+    titleCount?: number;
+    victoryGameText?: string;
 }

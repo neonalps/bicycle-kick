@@ -51,4 +51,5 @@ export interface GameDaoInterface {
     scheduled?: Date;
     isNeutralGround: boolean;
     titleWinningGame: boolean;
+    titleCount?: number;
 }

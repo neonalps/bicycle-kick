@@ -12,7 +12,7 @@ export class CompetitionMapper {
 
     async create(create: CreateCompetition, tx?: postgres.TransactionSql): Promise<number> {
         const query = tx || this.sql;
-        const result = await query`insert into competition ${ query(create, 'name', 'shortName', 'isDomestic', 'parentId', 'combineStatisticsWithParent', 'iconLarge', 'iconSmall', 'normalizedSearch') } returning id`;
+        const result = await query`insert into competition ${ query(create, 'name', 'shortName', 'isDomestic', 'parentId', 'combineStatisticsWithParent', 'iconLarge', 'iconSmall', 'normalizedSearch', 'victoryGameText') } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to create competition`);
         }
@@ -85,6 +85,7 @@ export class CompetitionMapper {
             isDomestic: item.isDomestic,
             combineStatisticsWithParent: item.combineStatisticsWithParent,
             parentId: item.parentId,
+            victoryGameText: item.victoryGameText,
         };
     }
 

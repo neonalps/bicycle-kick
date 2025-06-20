@@ -8,4 +8,5 @@ export interface CompetitionDaoInterface {
     parentId?: number;
     combineStatisticsWithParent?: boolean;
     normalizedSearch: string;
+    victoryGameText?: string;
 }

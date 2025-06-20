@@ -54,4 +54,5 @@ export interface Game {
     scheduled?: Date;
     isNeutralGround: boolean;
     titleWinningGame: boolean;
+    titleCount?: number;
 }

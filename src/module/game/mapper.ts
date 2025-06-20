@@ -55,11 +55,12 @@ export class GameMapper {
         if (result.length === 0) {
             return null;
         }
+        
         return requireSingleArrayElement(result);
     }
 
     async getMultipleByIds(ids: number[]): Promise<Game[]> {
-        const result = await this.sql<GameDaoInterface[]>`select g.*, st.id is not null as title_winning_game from game g left join season_titles st on st.victory_game = g.id where g.id in ${ this.sql(ids) }`;
+        const result = await this.sql<GameDaoInterface[]>`select g.*, st.id is not null as title_winning_game, st.title_count as title_count from game g left join season_titles st on st.victory_game = g.id where g.id in ${ this.sql(ids) }`;
         if (result.length === 0) {
             return [];
         }

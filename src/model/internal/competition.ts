@@ -7,4 +7,5 @@ export interface Competition {
     combineStatisticsWithParent?: boolean;
     iconSmall?: string;
     iconLarge?: string;
+    victoryGameText?: string;
 }

@@ -7,4 +7,5 @@ export interface CreateCompetition {
     iconLarge?: string;
     iconSmall?: string;
     normalizedSearch: string;
+    victoryGameText?: string;
 } 

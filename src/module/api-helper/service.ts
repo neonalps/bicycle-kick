@@ -58,9 +58,8 @@ import { GameStarService } from "@src/module/game-star/service";
 import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 import { TacticalFormation } from "@src/model/external/dto/tactical-formation";
 import { PlayerCompetitionStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
-import { PlayerBaseStats, PlayerStatsMapContext } from "@src/model/internal/stats-player";
+import { PlayerBaseStats } from "@src/model/internal/stats-player";
 import { CompetitionId, SeasonId } from "@src/util/domain-types";
-import { P } from "pino";
 
 export class ApiHelperService {
 
@@ -503,6 +502,10 @@ export class ApiHelperService {
 
             if (game.titleWinningGame === true) {
                 detailedGameDto.titleWinningGame = game.titleWinningGame;
+                detailedGameDto.titleCount = game.titleCount;                
+
+                const victoryGameText = isDefined(competition.parentId) ? parentCompetition?.victoryGameText : competition.victoryGameText;
+                detailedGameDto.victoryGameText = victoryGameText;
             }
 
             result.set(game.id, detailedGameDto);

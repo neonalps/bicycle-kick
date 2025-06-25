@@ -33,7 +33,7 @@ export class PersonService {
 
     async requireById(id: number): Promise<Person> {
         const person = await this.getById(id);
-        if (isNotDefined(person)) {
+        if (person === null) {
             throw new Error(`No person with ID ${id} exists`);
         }
         return person;

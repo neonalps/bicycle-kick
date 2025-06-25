@@ -5,6 +5,6 @@ export interface GetPersonByIdResponseDto {
     person: BasicPersonDto;
     stats?: {
         performance: Array<PlayerSeasonStatsItemDto>;
-        goalsAgainstClubs: Array<GoalsAgainstClubStatsItem>;
+        //goalsAgainstClubs: Array<GoalsAgainstClubStatsItem>;
     }
 }

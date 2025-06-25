@@ -92,39 +92,58 @@ export class ApiHelperService {
             this.venueService.getMultipleByIds(venueIds),
         ]);
 
+        const parentCompetitionIds = uniqueArrayElements(Array.from(competitionMap.values())
+            .filter(competition => competition.parentId !== null)
+            .map(competition => competition.parentId as number));
+        const parentCompetitionMap = await this.competitionService.getMapByIds(parentCompetitionIds);
+
         return games.map(game => {
             const competition = getOrThrow(competitionMap, game.competitionId, "competition not found in map");
-            // TODO handle parent competition?
+            const parentCompetition = competition.parentId !== undefined ? parentCompetitionMap.get(competition.parentId) : null;
             const season = getOrThrow(seasonMap, game.seasonId, "season not found in map");
             const opponent = getOrThrow(clubMap, game.opponentId, "opponent not found in map");
             const venue = getOrThrow(venueMap, game.venueId, "venue was not found in map");
 
-            return {
+            const basicGame: BasicGameDto = {
                 id: game.id,
                 kickoff: game.kickoff,
                 season: this.convertSeasonToSmallDto(season),
                 opponent: this.convertClubToSmallDto(opponent),
-                competition: this.convertCompetitionToSmallDto(competition),
+                competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
                 venue: this.convertVenueToGameVenueDto(venue),
                 round: game.competitionRound,
                 stage: game.competitionStage,
                 attendance: game.attendance,
                 resultTendency: game.resultTendency,
                 status: game.status,
-                fullTimeGoalsMain: game.fullTimeGoalsMain,
-                fullTimeGoalsOpponent: game.fullTimeGoalsOpponent,
-                halfTimeGoalsMain: game.halfTimeGoalsMain,
-                halfTimeGoalsOpponent: game.halfTimeGoalsOpponent,
-                aetGoalsMain: game.aetGoalsMain,
-                aetGoalsOpponent: game.aetGoalsOpponent,
-                psoGoalsMain: game.psoGoalsMain,
-                psoGoalsOpponent: game.psoGoalsOpponent,
                 isHomeGame: game.isHomeTeam,
-                isNeutralGround: game.isNeutralGround,
-                isSoldOut: game.isSoldOut,
-                // TODO use config
-                href: this.getFrontendResourceHref('game', getUrlSlug(game.id, `Sturm Graz vs ${opponent.shortName}`)),
+            };
+
+            if (isDefined(game.fullTimeGoalsMain) && isDefined(game.fullTimeGoalsOpponent)) {
+                basicGame.fullTime = [game.fullTimeGoalsMain, game.fullTimeGoalsOpponent];
             }
+
+            if (isDefined(game.halfTimeGoalsMain) && isDefined(game.halfTimeGoalsOpponent)) {
+                basicGame.halfTime = [game.halfTimeGoalsMain, game.halfTimeGoalsOpponent];
+            }
+
+            if (isDefined(game.aetGoalsMain) && isDefined(game.aetGoalsOpponent)) {
+                basicGame.afterExtraTime = [game.aetGoalsMain, game.aetGoalsOpponent];
+            }
+
+            if (isDefined(game.psoGoalsMain) && isDefined(game.psoGoalsOpponent)) {
+                basicGame.penaltyShootOut = [game.psoGoalsMain, game.psoGoalsOpponent];
+            }
+
+            if (game.isNeutralGround === true) {
+                basicGame.isNeutralGround = game.isNeutralGround;
+            }
+
+            if (game.isSoldOut === true) {
+                basicGame.isSoldOut = game.isSoldOut;
+            }
+
+            return basicGame;
         });
     }
 
@@ -677,7 +696,7 @@ export class ApiHelperService {
         return dto;
     }
 
-    convertStatsDetailsMapToDto(playerStats: Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>, seasonMap: Map<SeasonId, Season>, competitionMap: Map<CompetitionId, Competition>): PlayerSeasonStatsItemDto[] {
+    convertPerformanceStatsDetailsMapToDto(playerStats: Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>, seasonMap: Map<SeasonId, Season>, competitionMap: Map<CompetitionId, Competition>): PlayerSeasonStatsItemDto[] {
         const result: PlayerSeasonStatsItemDto[] = [];
         for (const [seasonId, competitionStatsMap] of playerStats.entries()) {
             const season = getOrThrow(seasonMap, seasonId, `failed to find season with ID ${seasonId} in season map`);

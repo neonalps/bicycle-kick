@@ -3,6 +3,7 @@ import { GameMapper } from "./mapper";
 import { validateNotNull } from "@src/util/validation";
 import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
 import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
+import { ClubId, CompetitionId } from "@src/util/domain-types";
 
 export class GameService {
 
@@ -73,6 +74,25 @@ export class GameService {
         }
 
         return await this.mapper.deleteById(gameId);
+    }
+
+    async getNextGames(from: Date, take: number = 1): Promise<Game[]> {
+        validateNotNull(from, "from");
+
+        return await this.mapper.getNextGames(from, take);
+    }
+
+    async getPreviousGames(from: Date, take: number = 1): Promise<Game[]> {
+        validateNotNull(from, "from");
+
+        return await this.mapper.getPreviousGames(from, take);
+    }
+
+    async getLastFinishedGames(opponentId: ClubId, take: number, onlyOpponentIds?: ReadonlyArray<ClubId>, onlyCompetitions?: ReadonlyArray<CompetitionId>, onlyHome?: boolean, onlyAway?: boolean, excludeNeutralGround?: boolean): Promise<Array<Game>> {
+        validateNotNull(opponentId, "opponentId");
+        validateNotNull(take, "take");
+
+        return await this.mapper.getLastFinishedGames(opponentId, take, onlyOpponentIds, onlyCompetitions, onlyHome, onlyAway, excludeNeutralGround);
     }
 
 }

@@ -1,3 +1,4 @@
+import { SmallClubDto } from "./small-club";
 import { SmallCompetitionDto } from "./small-competition";
 import { SmallSeasonDto } from "./small-season";
 
@@ -33,4 +34,9 @@ export type PlayerStatsItemDto = {
     penaltiesFaced?: [number, number],
     psoPenaltiesTaken?: [number, number],
     psoPenaltiesFaced?: [number, number],
+}
+
+export type PlayerGoalsAgainstClubStatsItemDto = {
+    club: SmallClubDto;
+    goalsScored: number;
 }

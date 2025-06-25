@@ -1,4 +1,4 @@
-export interface PlayerStatsDaoInterface {
+export interface PlayerPerformanceStatsDaoInterface {
     seasonId: number;
     competitionId: number;
     personId: number;
@@ -21,4 +21,10 @@ export interface PlayerStatsDaoInterface {
     psoPenaltiesScored: string;
     psoPenaltiesFaced: string;
     psoPenaltiesSaved: string;
+}
+
+export interface PlayerGoalsAgainstClubStatsDaoInterface {
+    personId: number;
+    clubId: number;
+    goalsScored: string;
 }

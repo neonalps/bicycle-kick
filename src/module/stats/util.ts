@@ -1,4 +1,6 @@
 import { PlayerBaseStats } from "@src/model/internal/stats-player";
+import { Tendency } from "@src/model/type/tendency";
+import { assertUnreachable, isNotDefined } from "@src/util/common";
 
 export function getEmptyPlayerBaseStats(): PlayerBaseStats {
     return {
@@ -46,4 +48,22 @@ export function combinePlayerBaseStats(first: PlayerBaseStats, second: PlayerBas
         psoPenaltiesFaced: first.psoPenaltiesFaced + second.psoPenaltiesFaced,
         psoPenaltiesSaved: first.psoPenaltiesSaved + second.psoPenaltiesSaved,
     };
+}
+
+/**
+ * Returns the performance trend number for a collection of result tendencies. The number is the percentage of the maximum points possible.
+ * If no result tendencies are passed -1 will be returned.
+ * @param resultTendencies 
+ * @returns 
+ */
+export function calculatePerformanceTrend(resultTendencies: ReadonlyArray<Tendency>): number {
+    if (isNotDefined(resultTendencies) || resultTendencies.length === 0) {
+        return -1;
+    }
+
+    const resultPoints = resultTendencies
+        .map(tendency => tendency === 'w' ? 3 : tendency === 'd' ? 1 : 0)
+        .reduce((acc: number, current: number) => acc + current, 0);
+
+    return Math.floor(100 * resultPoints / (resultTendencies.length * 3));
 }

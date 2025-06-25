@@ -5,7 +5,7 @@ import { GameStatus } from "@src/model/type/game-status";
 import { Tendency } from "@src/model/type/tendency";
 import { SortOrder } from "@src/module/pagination/constants";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
-import { getOrThrow, requireSingleArrayElement } from "@src/util/common";
+import { getOrThrow, isDefined, requireSingleArrayElement } from "@src/util/common";
 import { CreateGameDto } from "@src/model/internal/create-game";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { ClubInputDto } from "@src/model/external/dto/club-input";
@@ -39,6 +39,7 @@ import { CreateGameEventDaoInterface } from "@src/model/internal/interface/game-
 import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
 import { PsoResult } from "@src/model/type/pso-result";
 import { normalizeForSearch } from "@src/util/search";
+import { ClubId, CompetitionId } from "@src/util/domain-types";
 
 export class GameMapper {
 
@@ -90,6 +91,24 @@ export class GameMapper {
 
     async deleteById(gameId: number): Promise<void> {
         await this.sql`delete from game where id = ${gameId};`;
+    }
+
+    async getNextGames(from: Date, take: number): Promise<Game[]> {
+        const result = await this.sql<IdInterface[]>`select id from game where kickoff >= ${from} and status = ${ GameStatus.Scheduled } order by kickoff asc limit ${take}`;
+        if (result.length === 0) {
+            return [];
+        }
+
+        return this.getMultipleByIds(result.map(item => item.id));
+    }
+
+    async getPreviousGames(from: Date, take: number): Promise<Game[]> {
+        const result = await this.sql<IdInterface[]>`select id from game where kickoff <= ${from} and status = ${ GameStatus.Finished } order by kickoff desc limit ${take}`;
+        if (result.length === 0) {
+            return [];
+        }
+
+        return this.getMultipleByIds(result.map(item => item.id));
     }
 
     async create(dto: CreateGameDto): Promise<number> {
@@ -705,6 +724,47 @@ export class GameMapper {
 
             return gameId;
         });
+    }
+
+    async getLastFinishedGames(opponentId: ClubId, take: number, onlyOpponents?: ReadonlyArray<ClubId>, onlyCompetitions?: ReadonlyArray<CompetitionId>, onlyHome?: boolean, onlyAway?: boolean, excludeNeutralGround?: boolean): Promise<Game[]> {
+        const result = await this.sql<GameDaoInterface[]>`
+            select
+                g.*
+            from
+                game g
+            where
+                g.opponent_id = ${opponentId} and 
+                g.status = ${ GameStatus.Finished } 
+                ${isDefined(onlyOpponents) ? this.andWhereInOpponentIds(onlyOpponents) : this.sql``}
+                ${isDefined(onlyCompetitions) ? this.andWhereInCompetitions(onlyCompetitions) : this.sql``}
+                ${onlyHome === true ? this.andWhereHome(true) : this.sql``}
+                ${onlyAway === true ? this.andWhereHome(false) : this.sql``}
+                ${excludeNeutralGround === true ? this.andWhereNeutralGround(false) : this.sql``}
+            order by
+                g.kickoff desc
+            limit ${take}`;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
+    }
+
+    private andWhereHome(isHome: boolean) {
+        return this.sql`and g.is_home_team = ${ isHome }`;
+    }
+
+    private andWhereNeutralGround(isNeutralGround: boolean) {
+        return this.sql`and g.is_neutral_ground = ${ isNeutralGround }`;
+    }
+
+    private andWhereInOpponentIds(opponentIds: ReadonlyArray<ClubId>) {
+         return this.sql`and g.opponent_id in ${ this.sql(opponentIds) }`;
+    }
+
+    private andWhereInCompetitions(competitionIds: ReadonlyArray<CompetitionId>) {
+         return this.sql`and g.competition_id in ${ this.sql(competitionIds) }`;
     }
 
     private async getMultipleByIdsResult(ids: number[]): Promise<GameDaoInterface[]> {

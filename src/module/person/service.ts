@@ -3,6 +3,7 @@ import { PersonMapper } from "./mapper";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { CreatePerson } from "@src/model/internal/create-person";
 import { normalizeForSearch } from "@src/util/search";
+import { isNotDefined } from "@src/util/common";
 
 export class PersonService {
 
@@ -28,6 +29,14 @@ export class PersonService {
         validateNotNull(id, "id");
 
         return await this.mapper.getById(id);
+    }
+
+    async requireById(id: number): Promise<Person> {
+        const person = await this.getById(id);
+        if (isNotDefined(person)) {
+            throw new Error(`No person with ID ${id} exists`);
+        }
+        return person;
     }
 
     async getMapByIds(ids: number[]): Promise<Map<number, Person>> {

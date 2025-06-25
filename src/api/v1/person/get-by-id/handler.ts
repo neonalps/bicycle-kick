@@ -15,20 +15,19 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
     ) {}
 
     public async handle(_: AuthenticationContext, dto: GetPersonByIdRequestDto): Promise<GetPersonByIdResponseDto> {
-        const person = await this.personService.getById(dto.personId);
-        if (person === null) {
-            throw new Error(`No person with ID ${dto.personId} exists`);
-        }
+        const person = await this.personService.requireById(dto.personId);
 
         const response: GetPersonByIdResponseDto = {
             person: this.apiHelper.convertPersonToBasicDto(person),
         }
 
         if (dto.includeStatistics === true) {
-            const statsDetailsContext = await this.statsService.getPlayerStats([person.id]);
-            const playerStatsDetails = ensureNotNullish(statsDetailsContext.playerStats.get(person.id));
+            const performanceStatsDetailsContext = await this.statsService.getPlayerPerformanceStats([person.id]);
+            const playerPerformanceStatsDetails = ensureNotNullish(performanceStatsDetailsContext.playerStats.get(person.id));
 
-            response.stats = this.apiHelper.convertStatsDetailsMapToDto(playerStatsDetails, statsDetailsContext.seasons, statsDetailsContext.competitions);
+            /*response.stats = {
+                performance: this.apiHelper.convertPerformanceStatsDetailsMapToDto(playerPerformanceStatsDetails, performanceStatsDetailsContext.seasons, performanceStatsDetailsContext.competitions),
+            }*/
         }
         
         return response;

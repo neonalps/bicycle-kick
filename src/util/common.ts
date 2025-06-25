@@ -98,3 +98,8 @@ export function ensureNotNullish<T>(input: T | null | undefined, errorMessage?: 
 export function convertNumberString(input: string): number {
     return Number(input);
 }
+
+export function assertUnreachable(x: never, errorMessage?: string): never {
+  errorMessage ||= `This should be unreachable. Unexpected value ${JSON.stringify(x)}`;
+  throw new Error(errorMessage);
+}

@@ -77,6 +77,7 @@ import { CacheService } from "@src/module/cache/service";
 import { SearchService } from "@src/module/search/service";
 import { StatsService } from "@src/module/stats/service";
 import { StatsMapper } from "@src/module/stats/mapper";
+import { DashboardService } from "@src/module/dashboard/service";
 
 export class DependencyHelper {
 
@@ -170,6 +171,8 @@ export class DependencyHelper {
         const statsMapper = new StatsMapper(sqlInstance);
         const statsService = new StatsService(statsMapper, competitionService, seasonService);
 
+        const dashboardService = new DashboardService(gameService, dateSource);
+
         const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,
             mainClubCity: "Graz",
@@ -228,6 +231,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.ClubService, clubService);
         dependencies.set(Dependencies.CompetitionService, competitionService);
         dependencies.set(Dependencies.CryptoService, cryptoService);
+        dependencies.set(Dependencies.DashboardService, dashboardService);
         dependencies.set(Dependencies.DateSource, dateSource);
         dependencies.set(Dependencies.GameService, gameService);
         dependencies.set(Dependencies.GameAttendedService, gameAttendedService);

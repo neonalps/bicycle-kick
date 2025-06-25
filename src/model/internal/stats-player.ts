@@ -1,6 +1,7 @@
 import { CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 import { Competition } from "./competition";
 import { Season } from "./season";
+import { Club } from "./club";
 
 export type PlayerStatsMapContext = {
     seasons: Map<SeasonId, Season>;
@@ -42,4 +43,9 @@ export interface CompetitionPlayerStatsDetails extends Omit<PlayerSeasonCompetit
 export interface PlayerStatsDetails {
     season?: Season;        // no season indicates they are the overall stats for the player
     competitions: CompetitionPlayerStatsDetails[];
+}
+
+export interface PlayerGoalsAgainstClubStatsItem {
+    clubId: number;
+    goalsScored: number;
 }

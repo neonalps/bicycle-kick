@@ -3,5 +3,8 @@ import { PlayerSeasonStatsItemDto } from "./stats-player";
 
 export interface GetPersonByIdResponseDto {
     person: BasicPersonDto;
-    stats?: Array<PlayerSeasonStatsItemDto>;
+    stats?: {
+        performance: Array<PlayerSeasonStatsItemDto>;
+        goalsAgainstClubs: Array<GoalsAgainstClubStatsItem>;
+    }
 }

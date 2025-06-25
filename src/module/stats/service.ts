@@ -15,7 +15,7 @@ export class StatsService {
         private readonly seasonService: SeasonService,
     ) {}
 
-    async getPlayerStats(playerIds: ArrayNonEmpty<number>): Promise<PlayerStatsMapContext> {
+    async getPlayerPerformanceStats(playerIds: ArrayNonEmpty<number>): Promise<PlayerStatsMapContext> {
         validateNotNull(playerIds, "playerIds");
 
         const uniqueIds = uniqueArrayElements(playerIds);
@@ -33,7 +33,7 @@ export class StatsService {
         });
 
         const result: Map<PersonId, Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>> = new Map();
-        const playerStats = await this.mapper.getPlayerStats(uniqueIds as ArrayNonEmpty<number>);
+        const playerStats = await this.mapper.getPlayerPerformanceStats(uniqueIds as ArrayNonEmpty<number>);
         for (const personId of playerStats.keys()) {
             const playerEntries = playerStats.get(personId) ?? [];
 

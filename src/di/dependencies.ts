@@ -7,6 +7,7 @@ export enum Dependencies {
     ClubService,
     CompetitionService,
     CryptoService,
+    DashboardService,
     DateSource,
     GameService,
     GameAttendedService,

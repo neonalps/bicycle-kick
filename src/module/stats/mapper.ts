@@ -1,14 +1,15 @@
 import { Sql } from "@src/db";
-import { PlayerStatsDaoInterface } from "@src/model/internal/interface/stats-player";
-import { PlayerSeasonCompetitionStats } from "@src/model/internal/stats-player";
+import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerPerformanceStatsDaoInterface } from "@src/model/internal/interface/stats-player";
+import { PlayerGoalsAgainstClubStatsItem, PlayerSeasonCompetitionStats } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
+import { CompetitionId, PersonId } from "@src/util/domain-types";
 
 export class StatsMapper {
 
     constructor(private readonly sql: Sql) {}
 
-    async getPlayerStats(playerIds: ArrayNonEmpty<number>): Promise<Map<number, PlayerSeasonCompetitionStats[]>> {
-        const result = await this.sql<PlayerStatsDaoInterface[]>`
+    async getPlayerPerformanceStats(playerIds: ArrayNonEmpty<PersonId>, forMain: boolean = true): Promise<Map<PersonId, PlayerSeasonCompetitionStats[]>> {
+        const result = await this.sql<PlayerPerformanceStatsDaoInterface[]>`
             select
                 g.season_id,
                 s."start",
@@ -39,7 +40,8 @@ export class StatsMapper {
                 left join season s on s.id = g.season_id
                 left join competition c on c.id = g.competition_id
             where
-                gp.person_id in ${ this.sql(playerIds) }
+                gp.person_id in ${ this.sql(playerIds) } and
+                gp.for_main = ${ forMain }
             group by 
                 g.season_id, g.competition_id, gp.person_id, s."start", c.sort_order
             having
@@ -53,9 +55,9 @@ export class StatsMapper {
             return new Map();
         }
 
-        return result.reduce((accumulator: Map<number, PlayerSeasonCompetitionStats[]>, current: PlayerStatsDaoInterface) => {
+        return result.reduce((accumulator: Map<number, PlayerSeasonCompetitionStats[]>, current: PlayerPerformanceStatsDaoInterface) => {
             const existing = accumulator.get(current.personId);
-            const convertedItem = this.convertToEntity(current);
+            const convertedItem = this.convertPlayerPerformanceStatsToEntity(current);
             if (isDefined(existing)) {
                 existing.push(convertedItem);
             } else {
@@ -65,7 +67,43 @@ export class StatsMapper {
         }, new Map());
     }
 
-    private convertToEntity(item: PlayerStatsDaoInterface): PlayerSeasonCompetitionStats {
+    async getPlayerGoalsAgainstClubStats(playerIds: ArrayNonEmpty<PersonId>, competitionFilter?: Array<CompetitionId>): Promise<Map<PersonId, PlayerGoalsAgainstClubStatsItem[]>> {
+        // TODO implement competition filter
+        const result = await this.sql<PlayerGoalsAgainstClubStatsDaoInterface[]>`
+            select 
+                c.id as club_id
+                sum(gp.goals_scored) as goals_scored
+            from 
+                game_players gp left join
+                game g on gp.game_id = g.id left join 
+                club c on c.id = g.opponent_id
+            where
+                gp.person_id in ${ this.sql(playerIds) } and
+                gp.goals_scored > 0 and
+                gp.for_main = true
+            group by
+                c.id, gp.person_id
+            order by
+                sum(gp.goals_scored) desc
+        `;
+
+        if (result.length === 0) {
+            return new Map();
+        }
+
+        return result.reduce((accumulator: Map<PersonId, PlayerGoalsAgainstClubStatsItem[]>, current: PlayerGoalsAgainstClubStatsDaoInterface) => {
+            const existing = accumulator.get(current.personId);
+            const convertedItem: PlayerGoalsAgainstClubStatsItem = { clubId: current.clubId, goalsScored: Number(current.goalsScored) }
+            if (isDefined(existing)) {
+                existing.push(convertedItem);
+            } else {
+                accumulator.set(current.personId, [convertedItem]);
+            }
+            return accumulator;
+        }, new Map());
+    }
+
+    private convertPlayerPerformanceStatsToEntity(item: PlayerPerformanceStatsDaoInterface): PlayerSeasonCompetitionStats {
         return {
             seasonId: item.seasonId,
             competitionId: item.competitionId,

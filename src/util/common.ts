@@ -103,3 +103,17 @@ export function assertUnreachable(x: never, errorMessage?: string): never {
   errorMessage ||= `This should be unreachable. Unexpected value ${JSON.stringify(x)}`;
   throw new Error(errorMessage);
 }
+
+export function groupBy<K extends PropertyKey, V>(array: V[], keyFn: (value: V) => K): Record<K, V[]> {
+  return array.reduce(
+    (acc, item) => {
+      const key = keyFn(item);
+      if (acc[key] === undefined) {
+        acc[key] = [];
+      }
+      acc[key].push(item);
+      return acc;
+    },
+    {} as Record<K, V[]>
+  );
+}

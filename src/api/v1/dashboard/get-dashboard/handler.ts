@@ -26,6 +26,14 @@ export class GetDashboardHandler implements RouteHandler<void, DashboardResponse
             response.lastGame = requireSingleArrayElement(previousGame);
         }
 
+        if (isDefined(dashboard.performanceTrend)) {
+            const games = await this.apiHelper.getOrderedDetailedGameDtos(dashboard.performanceTrend.games.map(game => game.id));
+            response.performanceTrend = {
+                score: dashboard.performanceTrend.score,
+                games,
+            };
+        }
+
         return response;
     }
 

@@ -1,4 +1,5 @@
 import { OverallPosition } from "@src/model/type/position-overall";
+import { DateString } from "@src/util/domain-types";
 
 export interface SquadDaoInterface {
     id: number;
@@ -6,4 +7,6 @@ export interface SquadDaoInterface {
     personId: number;
     overallPosition: OverallPosition;
     shirt?: number;
+    start?: DateString;
+    end?: DateString;
 }

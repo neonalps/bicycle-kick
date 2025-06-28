@@ -5,7 +5,7 @@ import {GameService} from "@src/module/game/service";
 import {CompetitionService} from "@src/module/competition/service";
 import {VenueService} from "@src/module/venue/service";
 import {PersonService} from "@src/module/person/service";
-import {ensureNotNullish, getOrThrow, getUrlSlug, isDefined, isNotDefined, uniqueArrayElements} from "@src/util/common";
+import {ensureNotNullish, getOrThrow, getUrlSlug, groupBy, isDefined, isNotDefined, uniqueArrayElements} from "@src/util/common";
 import {ClubService} from "@src/module/club/service";
 import {GamePlayer} from "@src/model/internal/game-player";
 import {SeasonService} from "@src/module/season/service";
@@ -26,7 +26,7 @@ import {GameEventType} from "@src/model/external/dto/game-event-type";
 import { ApiConfig } from "@src/api/v1/config";
 import { BasicGameDto } from "@src/model/external/dto/basic-game";
 import { Game } from "@src/model/internal/game";
-import { Squad } from "@src/model/internal/squad";
+import { SquadMember } from "@src/model/internal/squad-member";
 import { SquadMemberDto } from "@src/model/external/dto/squad-member";
 import { GoalGameEventDto } from "@src/model/external/dto/game-event-goal";
 import { GoalGameEvent } from "@src/model/internal/game-event-goal";
@@ -59,7 +59,12 @@ import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 import { TacticalFormation } from "@src/model/external/dto/tactical-formation";
 import { PlayerCompetitionStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
 import { PlayerBaseStats } from "@src/model/internal/stats-player";
-import { CompetitionId, SeasonId } from "@src/util/domain-types";
+import { CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
+import { OverallPosition } from "@src/model/type/position-overall";
+import { getEmptySquad } from "../squad/util";
+import { GameManagerDto } from "@src/model/external/dto/game-manager";
+
+type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
 export class ApiHelperService {
 
@@ -233,6 +238,10 @@ export class ApiHelperService {
             const subOnPlayerMinuteMap = new Map<number, string>();
             const subOffPlayerMinuteMap = new Map<number, string>();
 
+            const yellowCardManagerMinuteMap = new Map<number, string>();
+            const yellowRedCardManagerMinuteMap = new Map<number, string>();
+            const redCardManagerMinuteMap = new Map<number, string>();
+
             const gameEventDtos: GameEventDto[] = [];
             const gameEvents = gameEventsMap.get(game.id) ?? [];
             if (gameEvents !== undefined && gameEvents.length > 0) {
@@ -323,6 +332,15 @@ export class ApiHelperService {
                                 }
                             } else if (isDefined(cardEvent.affectedManager)) {
                                 cardGameEvent.affectedManager = cardEvent.affectedManager;
+
+                                if (gameEvent.eventType === GameEventType.YellowCard) {
+                                    yellowCardManagerMinuteMap.set(cardEvent.affectedManager, gameEvent.minute.toString());
+                                } else if (gameEvent.eventType === GameEventType.YellowRedCard) {
+                                    yellowRedCardManagerMinuteMap.set(cardEvent.affectedManager, gameEvent.minute.toString());
+                                    yellowCardManagerMinuteMap.delete(cardEvent.affectedManager);
+                                } else if (gameEvent.eventType === GameEventType.RedCard) {
+                                    redCardManagerMinuteMap.set(cardEvent.affectedManager, gameEvent.minute.toString());
+                                }
                             }
 
                             gameEventDtos.push(cardGameEvent);
@@ -442,11 +460,26 @@ export class ApiHelperService {
             const gameManagers = gameManagersMap.get(game.id) ?? [];
             for (const gameManager of gameManagers) {
                 const person = getOrThrow(personMap, gameManager.personId, "manager person not found in map");
-                const managerDto = {
+                const managerDto: GameManagerDto = {
                     id: gameManager.id,
                     person: this.convertPersonToSmallDto(person),
                     role: gameManager.role,
                 };
+
+                const yellowCardMinute = yellowCardManagerMinuteMap.get(gameManager.id);
+                if (yellowCardMinute !== undefined) {
+                    managerDto.yellowCard = yellowCardMinute;
+                }
+
+                const yellowRedCardMinute = yellowRedCardManagerMinuteMap.get(gameManager.id);
+                if (yellowRedCardMinute !== undefined) {
+                    managerDto.yellowRedCard = yellowRedCardMinute;
+                }
+
+                const redCardMinute = redCardManagerMinuteMap.get(gameManager.id);
+                if (redCardMinute !== undefined) {
+                    managerDto.redCard = redCardMinute;
+                }
 
                 if (gameManager.forMain) {
                     mainTeamGameReport.managers.push(managerDto);
@@ -533,18 +566,48 @@ export class ApiHelperService {
         return gameIds.map(gameId => getOrThrow(result, gameId, `Failed to find game details in result map for game ID ${gameId}`));
     }
 
-    async getSquadDto(squad: Squad[]): Promise<SquadMemberDto[]> {
-        const playerIds = squad.map(item => item.personId);
+    async getSquadDto(squadMembers: SquadMember[]): Promise<Record<OverallPosition, Array<SquadMemberDto>>> {
+        const playerIds = squadMembers.map(item => item.personId);
+        if (playerIds.length === 0) {
+            return {
+                goalkeeper: [],
+                defender: [],
+                midfielder: [],
+                forward: [],
+            }
+        }
+
         const players = await this.personService.getMapByIds(playerIds);
 
-        return squad.map(item => {
-            return {
-                id: item.id,
-                player: this.convertPersonToBasicDto(getOrThrow(players, item.personId, `Failed to load squad member with player ID ${item.personId}`)),
-                shirt: item.shirt,
-                overallPosition: item.overallPosition,
-            }
-        });
+        const groupedByPosition = groupBy(squadMembers, (member: SquadMember) => member.overallPosition);
+
+        return {
+            goalkeeper: groupedByPosition.goalkeeper?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
+            defender: groupedByPosition.defender?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
+            midfielder: groupedByPosition.midfielder?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
+            forward: groupedByPosition.forward?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
+        }
+    }
+
+    private convertToSquadMemberDto(member: SquadMember, people: Map<PersonId, Person>): SquadMemberDto {
+        const dto: SquadMemberDto = {
+            id: member.id,
+            player: this.convertPersonToBasicDto(getOrThrow(people, member.personId, `player not found in squad persons map`)),
+        }
+
+        if (isDefined(member.shirt)) {
+            dto.shirt = member.shirt;
+        }
+
+        if (isDefined(member.from)) {
+            dto.from = member.from;
+        }
+
+        if (isDefined(member.to)) {
+            dto.to = member.to;
+        }
+
+        return dto;
     }
 
     convertPersonToBasicDto(item: Person): BasicPersonDto {

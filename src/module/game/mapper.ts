@@ -39,7 +39,7 @@ import { CreateGameEventDaoInterface } from "@src/model/internal/interface/game-
 import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
 import { PsoResult } from "@src/model/type/pso-result";
 import { normalizeForSearch } from "@src/util/search";
-import { ClubId, CompetitionId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, SeasonId } from "@src/util/domain-types";
 
 export class GameMapper {
 
@@ -726,20 +726,35 @@ export class GameMapper {
         });
     }
 
-    async getLastFinishedGames(opponentId: ClubId, take: number, onlyOpponents?: ReadonlyArray<ClubId>, onlyCompetitions?: ReadonlyArray<CompetitionId>, onlyHome?: boolean, onlyAway?: boolean, excludeNeutralGround?: boolean): Promise<Game[]> {
+    async getLastFinishedGames(
+        take: number,
+        queryOptions: {
+            onlySeasons?: ReadonlyArray<SeasonId>,
+            onlyOpponents?: ReadonlyArray<ClubId>,
+            onlyCompetitions?: ReadonlyArray<CompetitionId>,
+            onlyHome?: boolean,
+            onlyAway?: boolean, 
+            excludeNeutralGround?: boolean,
+            onlyDomestic?: boolean,
+            onlyInternational?: boolean,
+        },
+    ): Promise<Game[]> {
         const result = await this.sql<GameDaoInterface[]>`
             select
                 g.*
             from
-                game g
+                game g left join
+                competition c on g.competition_id = c.id
             where
-                g.opponent_id = ${opponentId} and 
                 g.status = ${ GameStatus.Finished } 
-                ${isDefined(onlyOpponents) ? this.andWhereInOpponentIds(onlyOpponents) : this.sql``}
-                ${isDefined(onlyCompetitions) ? this.andWhereInCompetitions(onlyCompetitions) : this.sql``}
-                ${onlyHome === true ? this.andWhereHome(true) : this.sql``}
-                ${onlyAway === true ? this.andWhereHome(false) : this.sql``}
-                ${excludeNeutralGround === true ? this.andWhereNeutralGround(false) : this.sql``}
+                ${isDefined(queryOptions.onlySeasons) ? this.andWhereInSeasonIds(queryOptions.onlySeasons) : this.sql``}
+                ${isDefined(queryOptions.onlyOpponents) ? this.andWhereInOpponentIds(queryOptions.onlyOpponents) : this.sql``}
+                ${isDefined(queryOptions.onlyCompetitions) ? this.andWhereInCompetitionIds(queryOptions.onlyCompetitions) : this.sql``}
+                ${queryOptions.onlyHome === true ? this.andWhereHome(true) : this.sql``}
+                ${queryOptions.onlyAway === true ? this.andWhereHome(false) : this.sql``}
+                ${queryOptions.excludeNeutralGround === true ? this.andWhereNeutralGround(false) : this.sql``}
+                ${queryOptions.onlyDomestic === true ? this.andWhereDomesticCompetition(true) : this.sql``}
+                ${queryOptions.onlyInternational === true ? this.andWhereDomesticCompetition(false) : this.sql``}
             order by
                 g.kickoff desc
             limit ${take}`;
@@ -763,8 +778,16 @@ export class GameMapper {
          return this.sql`and g.opponent_id in ${ this.sql(opponentIds) }`;
     }
 
-    private andWhereInCompetitions(competitionIds: ReadonlyArray<CompetitionId>) {
+    private andWhereInCompetitionIds(competitionIds: ReadonlyArray<CompetitionId>) {
          return this.sql`and g.competition_id in ${ this.sql(competitionIds) }`;
+    }
+
+    private andWhereInSeasonIds(seasonIds: ReadonlyArray<SeasonId>) {
+         return this.sql`and g.season_id in ${ this.sql(seasonIds) }`;
+    }
+
+    private andWhereDomesticCompetition(isDomestic: boolean) {
+         return this.sql`and c.is_domestic = ${ isDomestic }`;
     }
 
     private async getMultipleByIdsResult(ids: number[]): Promise<GameDaoInterface[]> {

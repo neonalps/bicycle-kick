@@ -3,7 +3,6 @@ import { PersonMapper } from "./mapper";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { CreatePerson } from "@src/model/internal/create-person";
 import { normalizeForSearch } from "@src/util/search";
-import { isNotDefined } from "@src/util/common";
 
 export class PersonService {
 

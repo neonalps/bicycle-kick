@@ -30,7 +30,7 @@ export class GetSeasonSquadRouteProvider implements RouteProvider<GetSeasonSquad
             path: '/api/v1/seasons/:seasonId/squad',
             schema,
             handler: this.handler,
-            authenticated: true,
+            authenticated: false,
         }
     }
 

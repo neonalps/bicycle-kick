@@ -3,7 +3,7 @@ import { GameMapper } from "./mapper";
 import { validateNotNull } from "@src/util/validation";
 import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
 import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
-import { ClubId, CompetitionId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, SeasonId } from "@src/util/domain-types";
 
 export class GameService {
 
@@ -88,11 +88,21 @@ export class GameService {
         return await this.mapper.getPreviousGames(from, take);
     }
 
-    async getLastFinishedGames(opponentId: ClubId, take: number, onlyOpponentIds?: ReadonlyArray<ClubId>, onlyCompetitions?: ReadonlyArray<CompetitionId>, onlyHome?: boolean, onlyAway?: boolean, excludeNeutralGround?: boolean): Promise<Array<Game>> {
-        validateNotNull(opponentId, "opponentId");
+    async getLastFinishedGames(
+        take: number, 
+        queryOptions: {
+            onlySeasons?: ReadonlyArray<SeasonId>,
+            onlyOpponents?: ReadonlyArray<ClubId>,
+            onlyCompetitions?: ReadonlyArray<CompetitionId>,
+            onlyHome?: boolean,
+            onlyAway?: boolean, 
+            excludeNeutralGround?: boolean,
+            onlyDomestic?: boolean,
+            onlyInternational?: boolean,
+        } = {}): Promise<Array<Game>> {
         validateNotNull(take, "take");
 
-        return await this.mapper.getLastFinishedGames(opponentId, take, onlyOpponentIds, onlyCompetitions, onlyHome, onlyAway, excludeNeutralGround);
+        return await this.mapper.getLastFinishedGames(take, queryOptions);
     }
 
 }

@@ -1,8 +1,9 @@
-import { OverallPosition } from "@src/model/type/position-overall";
 import { BasicPersonDto } from "./basic-person";
 
 export interface SquadMemberDto {
+    id: number;
     player: BasicPersonDto;
-    overallPosition: OverallPosition;
     shirt?: number;
+    from?: string;
+    to?: string;
 }

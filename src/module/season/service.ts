@@ -3,6 +3,7 @@ import { SeasonMapper } from "./mapper";
 import { validateNotNull } from "@src/util/validation";
 import { DateSource } from "@src/util/date";
 import { PaginationParams } from "@src/module/pagination/constants";
+import { SeasonId } from "@src/util/domain-types";
 
 export interface GetAllSeasonsPaginationParams extends PaginationParams<Date> {}
 export interface GetSeasonGamesPaginationParams extends PaginationParams<Date> {}
@@ -11,10 +12,18 @@ export class SeasonService {
 
     constructor(private readonly dateSource: DateSource, private readonly mapper: SeasonMapper) {}
 
-    async getById(id: number): Promise<Season | null> {
+    async getById(id: SeasonId): Promise<Season | null> {
         validateNotNull(id, "id");
 
         return await this.mapper.getById(id);
+    }
+
+    async requireById(id: SeasonId): Promise<Season> {
+        const season = await this.getById(id);
+        if (season === null) {
+            throw new Error(`No season with ID ${id} exists`);
+        }
+        return season;
     }
 
     async getMapByIds(ids: number[]): Promise<Map<number, Season>> {

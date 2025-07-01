@@ -21,12 +21,14 @@ import { Sql } from "@src/db";
 import { GameService } from "@src/module/game/service";
 import { Game } from "@src/model/internal/game";
 import { AdvancedQueryResult } from "@src/module/advanced-query/result";
+import { Answer, AnswerComposer } from "./answer/composer";
 
 export interface AdvancedQueryConfig {
     mainClubId: number;
     mainClubCity: string;
     mainClubNames: string[];
     enabledTokenizers: Tokenizer[];
+    enabledComposers: AnswerComposer[];
     batchSize: number;
 }
 
@@ -121,10 +123,14 @@ export class AdvancedQueryService {
         const checkResult = this.check(gameEvents, postProcessingFilters);
         console.log(`checkResult is ${checkResult}`);*/
 
+        // compose answer
+        const answer = await this.getAnswerComposerResult();
+
         // stage 7: return
         return {
             games: orderedGames,
             query: sqlQuery,
+            answer: answer,
         }
         
     }
@@ -165,6 +171,17 @@ export class AdvancedQueryService {
         }
 
         throw new Error("No tokenizer returned a result");
+    }
+
+    private async getAnswerComposerResult(): Promise<Answer> {
+        for (const composer of this.config.enabledComposers) {
+            const answer = composer.answer();
+            if (answer !== null) {
+                return answer;
+            }
+        }
+
+        throw new Error("No composer returned an answer");
     }
 
     private async resolveFilters(descriptor: ScenarioDescriptor): Promise<void> {

@@ -78,6 +78,7 @@ import { SearchService } from "@src/module/search/service";
 import { StatsService } from "@src/module/stats/service";
 import { StatsMapper } from "@src/module/stats/mapper";
 import { DashboardService } from "@src/module/dashboard/service";
+import { GermanAnswerComposer } from "@src/module/advanced-query/answer/composer-de";
 
 export class DependencyHelper {
 
@@ -178,6 +179,7 @@ export class DependencyHelper {
             mainClubCity: "Graz",
             mainClubNames: ["Sturm", "Blackies"],
             enabledTokenizers: [],
+            enabledComposers: [],
             batchSize: 50,
         };
 
@@ -189,6 +191,9 @@ export class DependencyHelper {
 
         const englishTokenizer = new EnglishTokenizer(advancedQueryConfig, globalResolveService, uuidSource);
         advancedQueryConfig.enabledTokenizers.push(englishTokenizer);
+
+        const germanAnswerComposer = new GermanAnswerComposer();
+        advancedQueryConfig.enabledComposers.push(germanAnswerComposer);
 
         const personIdResolver = new PersonIdResolver(personService);
         const idResolvers: Map<FilterName, IdResolver> = new Map();

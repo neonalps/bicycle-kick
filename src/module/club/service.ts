@@ -12,6 +12,14 @@ export class ClubService {
         return await this.mapper.getById(id);
     }
 
+    async requireById(id: number): Promise<Club> {
+        const club = await this.getById(id);
+        if (club === null) {
+            throw new Error(`No club with ID ${id} exists`);
+        }
+        return club;
+    }
+
     async getMapByIds(ids: number[]): Promise<Map<number, Club>> {
         validateNotNull(ids, "ids");
         if (ids.length === 0) {

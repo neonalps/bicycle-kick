@@ -884,7 +884,7 @@ export class ApiHelperService {
         }
 
         if (isDefined(venue.longitude)) {
-            dto.longitued = venue.longitude;
+            dto.longitude = venue.longitude;
         }
 
         return dto;

@@ -1,4 +1,5 @@
 import { BasicVenueDto } from "./basic-venue";
+import { DetailedGameDto } from "./detailed-game";
 
 export interface BasicClubDto {
     id: number;
@@ -12,4 +13,5 @@ export interface BasicClubDto {
     district?: string;
     countryCode: string;
     homeVenue?: BasicVenueDto;
+    lastGames?: DetailedGameDto[];
 }

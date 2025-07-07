@@ -18,10 +18,18 @@ export class GetClubByIdRouteProvider implements RouteProvider<GetClubByIdReques
                 type: 'object',
                 required: [ 'clubId' ],
                 properties: {
-                    clubId: { type: 'string' }
+                    clubId: { type: 'string' },
                 },
                 additionalProperties: false,
-            }            
+            },
+            querystring: {
+                type: 'object',
+                required: [],
+                properties: {
+                    includeLastGames: { type: 'boolean' },
+                },
+                additionalProperties: false,
+            }          
         };
 
         return {

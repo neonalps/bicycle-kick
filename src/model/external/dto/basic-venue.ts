@@ -7,5 +7,5 @@ export interface BasicVenueDto {
     countryCode: string;
     capacity?: number;
     latitude?: number;
-    longitued?: number;
+    longitude?: number;
 }

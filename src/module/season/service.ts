@@ -3,10 +3,10 @@ import { SeasonMapper } from "./mapper";
 import { validateNotNull } from "@src/util/validation";
 import { DateSource } from "@src/util/date";
 import { PaginationParams } from "@src/module/pagination/constants";
-import { SeasonId } from "@src/util/domain-types";
+import { DateString, SeasonId } from "@src/util/domain-types";
 
-export interface GetAllSeasonsPaginationParams extends PaginationParams<Date> {}
-export interface GetSeasonGamesPaginationParams extends PaginationParams<Date> {}
+export interface GetAllSeasonsPaginationParams extends PaginationParams<DateString> {}
+export interface GetSeasonGamesPaginationParams extends PaginationParams<DateString> {}
 
 export class SeasonService {
 
@@ -39,7 +39,7 @@ export class SeasonService {
         return await this.mapper.getAllOrderedInMap();
     }
 
-    async getForDate(date: Date): Promise<Season | null> {
+    async getForDate(date: DateString): Promise<Season | null> {
         validateNotNull(date, "date");
         
         return await this.mapper.getForDate(date);
@@ -61,7 +61,7 @@ export class SeasonService {
     }
 
     async getCurrent(): Promise<Season | null> {
-        return await this.mapper.getForDate(this.dateSource.getToday());
+        return await this.mapper.getForDate(this.dateSource.getToday().toISOString());
     }
 
     async getLast(): Promise<Season | null> {
@@ -73,7 +73,7 @@ export class SeasonService {
         const lastSeasonEnd = new Date();
         lastSeasonEnd.setDate(currentSeason.start.getDate() - 1);
 
-        return await this.mapper.getForDate(lastSeasonEnd);
+        return await this.mapper.getForDate(lastSeasonEnd.toISOString());
     }
 
 }

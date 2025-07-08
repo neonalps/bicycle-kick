@@ -5,7 +5,7 @@ import { GameStatus } from "@src/model/type/game-status";
 import { Tendency } from "@src/model/type/tendency";
 import { SortOrder } from "@src/module/pagination/constants";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
-import { getOrThrow, isDefined, requireSingleArrayElement } from "@src/util/common";
+import { getOrThrow, isDefined, isNotDefined, requireSingleArrayElement } from "@src/util/common";
 import { CreateGameDto } from "@src/model/internal/create-game";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { ClubInputDto } from "@src/model/external/dto/club-input";
@@ -39,7 +39,7 @@ import { CreateGameEventDaoInterface } from "@src/model/internal/interface/game-
 import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
 import { PsoResult } from "@src/model/type/pso-result";
 import { normalizeForSearch } from "@src/util/search";
-import { ClubId, CompetitionId, SeasonId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, DateString, GameId, SeasonId } from "@src/util/domain-types";
 
 export class GameMapper {
 
@@ -80,7 +80,7 @@ export class GameMapper {
         return resultMap;
     }
 
-    async getOrderedSeasonGameIdsPaginated(seasonId: number, lastSeenDate: Date, limit: number, order: SortOrder): Promise<number[]> {
+    async getOrderedSeasonGameIdsPaginated(seasonId: number, lastSeenDate: DateString, limit: number, order: SortOrder): Promise<number[]> {
         const result = await this.sql<IdInterface[]>`select id from game where season_id = ${ seasonId } and kickoff ${ order === SortOrder.Ascending ? this.sql`>` : this.sql`<` } ${ lastSeenDate } order by kickoff ${ order === SortOrder.Ascending ? this.sql`asc` : this.sql`desc` } limit ${ limit }`;
         if (result.length === 0) {
             return [];
@@ -111,37 +111,65 @@ export class GameMapper {
         return this.getMultipleByIds(result.map(item => item.id));
     }
 
-    async create(dto: CreateGameDto): Promise<number> {
+    async createOrUpdatedScheduled(dto: CreateGameDto): Promise<number> {
         return await this.sql.begin(async tx => {
-            const [opponentId, competitionId] = await Promise.all([
-                this.resolveClubId(tx, dto.opponent),
-                this.resolveCompetitionId(tx, dto.competition),
-            ]);
+            const existingGameId = await this.resolveExistingScheduledGame(tx, dto.kickoff);
 
-            const venueId = await this.resolveVenueId(tx, dto.venue);
-            
-            const temporaryGame = {
-                seasonId: dto.seasonId,
-                kickoff: dto.kickoff,
-                opponentId,
-                competitionId,
-                competitionRound: dto.competitionRound,
-                competitionStage: dto.competitionStage,
-                venueId,
-                status: dto.status,
-                attendance: dto.attendance,
-                isHomeTeam: dto.isHomeGame,
-                isNeutralGround: dto.isNeutralGround,
-                isPractice: dto.isPractice,
-                tablePositionMainBefore: dto.tablePositionMainBefore,
-                tablePositionMainAfter: dto.tablePositionMainAfter,
-                tablePositionOpponentBefore: dto.tablePositionOpponentBefore,
-                tablePositionOpponentAfter: dto.tablePositionOpponentAfter,
-                tablePositionOffset: dto.tablePositionOffset,
-            };
+            let gameId: GameId | undefined = undefined;
+            if (existingGameId === null) {
+                // we must create a new game
+                const [opponentId, competitionId] = await Promise.all([
+                    this.resolveClubId(tx, dto.opponent),
+                    this.resolveCompetitionId(tx, dto.competition),
+                ]);
 
-            const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'competitionStage', 'venueId', 'status', 'attendance', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
-            const gameId = temporaryGameResult[0].id;
+                const venueId = await this.resolveVenueId(tx, dto.venue);
+                
+                const temporaryGame = {
+                    seasonId: dto.seasonId,
+                    kickoff: dto.kickoff,
+                    opponentId,
+                    competitionId,
+                    competitionRound: dto.competitionRound,
+                    competitionStage: dto.competitionStage,
+                    venueId,
+                    status: dto.status,
+                    attendance: dto.attendance,
+                    isHomeTeam: dto.isHomeGame,
+                    isNeutralGround: dto.isNeutralGround,
+                    isPractice: dto.isPractice,
+                    tablePositionMainBefore: dto.tablePositionMainBefore,
+                    tablePositionMainAfter: dto.tablePositionMainAfter,
+                    tablePositionOpponentBefore: dto.tablePositionOpponentBefore,
+                    tablePositionOpponentAfter: dto.tablePositionOpponentAfter,
+                    tablePositionOffset: dto.tablePositionOffset,
+                };
+
+                const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'competitionStage', 'venueId', 'status', 'attendance', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
+                gameId = temporaryGameResult[0].id;
+            } else {
+                // we update the existing scheduled game entry
+                gameId = existingGameId;
+
+                const existingGameUpdate = {
+                    status: dto.status,
+                    attendance: dto.attendance,
+                    isHomeTeam: dto.isHomeGame,
+                    isNeutralGround: dto.isNeutralGround,
+                    isPractice: dto.isPractice,
+                    tablePositionMainBefore: dto.tablePositionMainBefore,
+                    tablePositionMainAfter: dto.tablePositionMainAfter,
+                    tablePositionOpponentBefore: dto.tablePositionOpponentBefore,
+                    tablePositionOpponentAfter: dto.tablePositionOpponentAfter,
+                    tablePositionOffset: dto.tablePositionOffset,
+                }
+
+                await tx`update game set ${ tx(existingGameUpdate, 'attendance', 'status', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } where id = ${gameId}`;
+            }
+
+            if (gameId === undefined) {
+                throw new Error(`Failed to obtain game ID`);
+            }
 
             let goalkeeperMainPersonId: number | null = null;
             let goalkeeperOpponentPersonId: number | null = null;
@@ -847,6 +875,15 @@ export class GameMapper {
         await tx`insert into external_provider_club (external_provider, external_id, club_id) values (${externalClub.provider}, ${externalClub.id}, ${createdClubId});`;
 
         return createdClubId;
+    }
+
+    private async resolveExistingScheduledGame(tx: postgres.TransactionSql, kickoff: DateString): Promise<GameId | null> {
+        const existingGameResult = await tx<IdInterface[]>`select id from game where kickoff = ${kickoff} and status = ${ GameStatus.Scheduled }`;
+        if (existingGameResult.length !== 1) {
+            return null;
+        }
+
+        return existingGameResult[0].id;
     }
 
     private async resolvePersonId(tx: postgres.TransactionSql, person: PersonInputDto): Promise<number> {

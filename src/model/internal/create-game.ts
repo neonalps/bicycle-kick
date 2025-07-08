@@ -6,10 +6,11 @@ import { CreateGamePlayerDto } from "@src/model/external/dto/create-game-player"
 import { CreateGameManagerDto } from "@src/model/external/dto/create-game-manager";
 import { CreateGameRefereeDto } from "@src/model/external/dto/create-game-referee";
 import { CreateGameEventDto } from "@src/model/external/dto/create-game-event";
-import { GameInputDto } from "../external/dto/game-input";
+import { GameInputDto } from "@src/model/external/dto/game-input";
+import { DateString } from "@src/util/domain-types";
 
 export interface CreateGameDto {
-    kickoff: Date;
+    kickoff: DateString;
     seasonId: number;
     opponent: ClubInputDto;
     competition: CompetitionInputDto;

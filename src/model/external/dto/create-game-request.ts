@@ -7,9 +7,10 @@ import { ClubInputDto } from "./club-input";
 import { CompetitionInputDto } from "./competition-input";
 import { VenueInputDto } from "./venue-input";
 import { GameInputDto } from "./game-input";
+import { DateString } from "@src/util/domain-types";
 
 export interface CreateGameRequestDto {
-    kickoff: Date;
+    kickoff: DateString;
     opponent: ClubInputDto;
     competition: CompetitionInputDto;
     competitionRound: string;

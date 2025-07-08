@@ -51,7 +51,7 @@ export class GameService {
             throw new Error(`No season found for kickoff date ${dto.kickoff}`);
         }
 
-        const createdGameId = await this.mapper.create({
+        const createdGameId = await this.mapper.createOrUpdatedScheduled({
             ...dto,
             seasonId: season.id,
             isPractice: dto.isPractice ?? false,

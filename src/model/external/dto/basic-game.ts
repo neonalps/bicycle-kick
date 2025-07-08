@@ -5,10 +5,11 @@ import { ScoreTuple } from "@src/model/internal/score";
 import { SmallSeasonDto } from "./small-season";
 import { SmallCompetitionDto } from "./small-competition";
 import { SmallClubDto } from "./small-club";
+import { DateString } from "@src/util/domain-types";
 
 export interface BasicGameDto {
     id: number;
-    kickoff: Date;
+    kickoff: DateString;
     opponent: SmallClubDto;
     season: SmallSeasonDto;
     competition: SmallCompetitionDto;

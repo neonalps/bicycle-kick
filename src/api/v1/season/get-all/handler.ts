@@ -47,7 +47,7 @@ export class GetAllSeasonsRouteHandler implements RouteHandler<GetAllSeasonsRequ
             return {
                 order,
                 limit,
-                lastSeen,
+                lastSeen: lastSeen.toISOString(),
             };
         }
 
@@ -62,7 +62,7 @@ export class GetAllSeasonsRouteHandler implements RouteHandler<GetAllSeasonsRequ
         const newParams: GetAllSeasonsPaginationParams = {
             limit: oldParams.limit,
             order: oldParams.order,
-            lastSeen: this.paginationService.getLastElement(items).start,
+            lastSeen: this.paginationService.getLastElement(items).start.toISOString(),
         };
 
         return this.paginationService.encode(newParams);

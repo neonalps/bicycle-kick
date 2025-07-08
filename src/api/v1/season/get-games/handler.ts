@@ -47,7 +47,7 @@ export class GetSeasonGamesRouteHandler implements RouteHandler<GetSeasonGamesRe
             return {
                 order,
                 limit,
-                lastSeen,
+                lastSeen: lastSeen.toISOString(),
             };
         }
 

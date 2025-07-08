@@ -65,7 +65,7 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
         }
 
         return {
-            kickoff: this.timeSource.unixTimestampToDate(input.event.startTimestamp),
+            kickoff: this.timeSource.unixTimestampToDate(input.event.startTimestamp).toISOString(),
             status: GameStatus.Finished,
             isHomeGame,
             attendance: input.event.attendance,

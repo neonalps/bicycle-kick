@@ -3,6 +3,7 @@ import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { SeasonDaoInterface } from "@src/model/internal/interface/season.interface";
 import { Season } from "@src/model/internal/season";
 import { SortOrder } from "@src/module/pagination/constants";
+import { DateString } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 
 export class SeasonMapper {
@@ -46,7 +47,7 @@ export class SeasonMapper {
         return resultMap;
     }
 
-    async getForDate(date: Date): Promise<Season | null> {
+    async getForDate(date: DateString): Promise<Season | null> {
         const result = await this.sql<SeasonDaoInterface[]>`select * from season where "start" <= ${date} and "end" >= ${date}`;
         if (result.length !== 1) {
             return null;
@@ -55,7 +56,7 @@ export class SeasonMapper {
         return this.convertToEntity(result[0]);
     }
 
-    async getAllPaginated(lastSeenDate: Date, limit: number, order: SortOrder): Promise<Season[]> {
+    async getAllPaginated(lastSeenDate: DateString, limit: number, order: SortOrder): Promise<Season[]> {
         const result = await this.sql<SeasonDaoInterface[]>`select * from season where "start" ${order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${lastSeenDate} order by "start" ${this.determineSortOrder(order)} limit ${limit}`;
         if (result.length === 0) {
             return [];

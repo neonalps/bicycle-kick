@@ -1,9 +1,10 @@
 import { Tendency } from "@src/model/type/tendency";
 import { GameStatus } from "@src/model/type/game-status";
+import { DateString } from "@src/util/domain-types";
 
 export interface Game {
     id: number;
-    kickoff: Date;
+    kickoff: DateString;
     resultTendency: Tendency;
     opponentId: number;
     competitionId: number;

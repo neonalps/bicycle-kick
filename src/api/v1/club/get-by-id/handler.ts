@@ -22,7 +22,7 @@ export class GetClubByIdRouteHandler implements RouteHandler<GetClubByIdRequestD
 
         if (dto.includeLastGames === true) {
             const lastGames = await this.gameService.getLastFinishedGames(10, { onlyOpponents: [ clubId ] });
-            responseDto.lastGames = await this.apiHelper.getOrderedDetailedGameDtos(lastGames.map(game => game.id));
+            responseDto.lastGames = await this.apiHelper.getOrderedBasicGameDtos(lastGames);
         }
 
         return responseDto;

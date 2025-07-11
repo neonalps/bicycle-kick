@@ -147,7 +147,7 @@ export class SearchService {
         const result: SearchResultItemDto = {
             type: SearchEntity.Venue,
             entityId: item.id,
-            title: item.name,
+            title: `${item.name} (${item.city})`,
         }
 
         return result;

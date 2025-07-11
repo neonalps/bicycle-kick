@@ -989,7 +989,7 @@ export class GameMapper {
             latitude: externalVenue.latitude,
             longitude: externalVenue.longitude,
             district: externalVenue.district,
-            normalizedSearch: normalizeForSearch(externalVenue.name),
+            normalizedSearch: normalizeForSearch([externalVenue.name, externalVenue.city].join(" ")),
         }, tx);
 
         await tx`insert into external_provider_venue (external_provider, external_id, venue_id) values (${externalVenue.provider}, ${externalVenue.id}, ${createdVenueId});`;

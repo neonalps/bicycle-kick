@@ -24,7 +24,7 @@ export class RegularSearchRouteProvider implements RouteProvider<RegularSearchRe
                         type: 'array', 
                         items: {
                             type: 'string',
-                            enum: [SearchEntity.Club, SearchEntity.Game, SearchEntity.Person, SearchEntity.Season],
+                            enum: [SearchEntity.Club, SearchEntity.Competition, SearchEntity.Game, SearchEntity.Person, SearchEntity.Season, SearchEntity.Venue],
                         },
                     },
                 },

@@ -13,6 +13,8 @@ import { GetSeasonSquadRouteHandler } from "./get-squad/handler";
 import { SquadService } from "@src/module/squad/service";
 import { GetSeasonSquadRouteProvider } from "./get-squad/route-provider";
 import { CacheService } from "@src/module/cache/service";
+import { GetSeasonForDateHandler } from "./get-for-date/handler";
+import { GetSeasonForDateRouteProvider } from "./get-for-date/route-provider";
 
 export function getSeasonRouteProviders(): RouteProvider<any, any>[] {
 
@@ -24,11 +26,13 @@ export function getSeasonRouteProviders(): RouteProvider<any, any>[] {
     const squadService = dependencyManager.get<SquadService>(Dependencies.SquadService);
     
     const getAllSeasonsHandler = new GetAllSeasonsRouteHandler(apiHelperService, cacheService, paginationService, seasonService);
+    const getForDateHandler = new GetSeasonForDateHandler(apiHelperService, seasonService);
     const getSeasonGamesHandler = new GetSeasonGamesRouteHandler(apiHelperService, cacheService, gameService, paginationService);
     const getSeasonSquadHandler = new GetSeasonSquadRouteHandler(apiHelperService, squadService);
 
     return [
         new GetAllSeasonsRouteProvider(getAllSeasonsHandler),
+        new GetSeasonForDateRouteProvider(getForDateHandler),
         new GetSeasonGamesRouteProvider(getSeasonGamesHandler),
         new GetSeasonSquadRouteProvider(getSeasonSquadHandler),
     ];

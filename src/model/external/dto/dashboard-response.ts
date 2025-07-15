@@ -1,8 +1,8 @@
-import { DetailedGameDto } from "./detailed-game";
+import { BasicGameDto } from "./basic-game";
 import { PerformanceTrendDto } from "./performance-trend";
 
 export interface DashboardResponseDto {
-    lastGame?: DetailedGameDto;
-    upcomingGame?: DetailedGameDto;
+    lastGame?: BasicGameDto;
+    upcomingGame?: BasicGameDto;
     performanceTrend?: PerformanceTrendDto;
 }

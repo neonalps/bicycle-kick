@@ -17,12 +17,12 @@ export class GetDashboardHandler implements RouteHandler<void, DashboardResponse
         const response: DashboardResponseDto = {};
 
         if (isDefined(dashboard.nextGame)) {
-            const nextGame = await this.apiHelper.getOrderedDetailedGameDtos([dashboard.nextGame.id]);
+            const nextGame = await this.apiHelper.getOrderedBasicGameDtos([dashboard.nextGame]);
             response.upcomingGame = requireSingleArrayElement(nextGame);
         }
 
         if (isDefined(dashboard.previousGame)) {
-            const previousGame = await this.apiHelper.getOrderedDetailedGameDtos([dashboard.previousGame.id]);
+            const previousGame = await this.apiHelper.getOrderedBasicGameDtos([dashboard.previousGame]);
             response.lastGame = requireSingleArrayElement(previousGame);
         }
 

@@ -171,6 +171,11 @@ export class GameMapper {
                 throw new Error(`Failed to obtain game ID`);
             }
 
+            // abort here if there are no linups or events
+            if (dto.lineupMain.length === 0 && dto.lineupOpponent.length === 0 && dto.events.length === 0) {
+                return gameId;
+            }
+
             let goalkeeperMainPersonId: number | null = null;
             let goalkeeperOpponentPersonId: number | null = null;
 

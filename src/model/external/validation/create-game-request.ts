@@ -7,6 +7,7 @@ import { createGameRefereeValidation } from "./create-game-referee";
 import { gameInputValidation } from "./game-input";
 import { gameStatusValidation } from "./game-status";
 import { ObjectType } from "./types";
+import { venueInputValidation } from "./venue-input";
 
 export const createGameRequestSchema: ObjectType = {
     type: 'object',
@@ -15,6 +16,7 @@ export const createGameRequestSchema: ObjectType = {
         'opponent',
         'competition',
         'competitionRound',
+        'venue',
         'isHomeGame',
         'status',
         'lineupMain',
@@ -30,6 +32,7 @@ export const createGameRequestSchema: ObjectType = {
         competition: competitionInputValidation,
         competitionRound: { type: 'string' },
         isHomeGame: { type: 'boolean' },
+        venue: venueInputValidation,
         status: gameStatusValidation,
         attendance: { type: 'number' },
         isSoldOut: { type: 'boolean' },

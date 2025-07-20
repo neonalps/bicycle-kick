@@ -1,4 +1,5 @@
 export enum ExternalProvider {
     Fotmob = "fotmob",
-    Sofascore = "sofascore"
+    Sofascore = "sofascore",
+    User = "user",
 }

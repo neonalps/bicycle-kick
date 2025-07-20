@@ -123,6 +123,7 @@ export class GameMapper {
                     this.resolveCompetitionId(tx, dto.competition),
                 ]);
 
+                // we resolve the venue ID separately because if a new club needs to be created above it will also resolve the venue, which could lead to duplicate database entries
                 const venueId = await this.resolveVenueId(tx, dto.venue);
                 
                 const temporaryGame = {

@@ -18,6 +18,8 @@ import { GameAttendedService } from "@src/module/game-attended/service";
 import { AttendGameRouteProvider } from "./attend/route-provider";
 import { UnattendGameHandler } from "./unattend/handler";
 import { UnattendGameRouteProvider } from "./unattend/route-provider";
+import { CreateGameRouteHandler } from "./create/handler";
+import { CreateGameRouteProvider } from "./create/route-provider";
 
 export function getGameRouteProviders(): RouteProvider<any, any>[] {
 
@@ -28,6 +30,7 @@ export function getGameRouteProviders(): RouteProvider<any, any>[] {
     const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
 
     const getGameByIdHandler = new GetGameByIdRouteHandler(apiHelperService, gameService, permissionService);
+    const createGameHandler = new CreateGameRouteHandler(apiHelperService, gameService, permissionService);
     const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(gameService, permissionService);
     const starGameHandler = new StarGameHandler(gameStarService);
     const unstarGameHandler = new UnstarGameHandler(gameStarService);
@@ -36,6 +39,7 @@ export function getGameRouteProviders(): RouteProvider<any, any>[] {
 
     return [
         new GetGameByIdRouteProvider(getGameByIdHandler),
+        new CreateGameRouteProvider(createGameHandler),
         new DeleteGameByIdRouteProvider(deleteGameByIdHandler),
         new StarGameRouteProvider(starGameHandler),
         new UnstarGameRouteProvider(unstarGameHandler),

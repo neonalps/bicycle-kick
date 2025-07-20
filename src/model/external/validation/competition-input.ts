@@ -1,5 +1,5 @@
 import { competitionIdValidation } from "./competition-id";
-import { externalClubValidation } from "./external-club";
+import { externalCompetitionValidation } from "./external-competition";
 import { ObjectType } from "./types";
 
 export const competitionInputValidation: ObjectType = {
@@ -7,7 +7,7 @@ export const competitionInputValidation: ObjectType = {
     required: [],
     properties: {
         competitionId: competitionIdValidation,
-        externalCompetition: externalClubValidation,
+        externalCompetition: externalCompetitionValidation,
     },
     additionalProperties: false,
 } as const;

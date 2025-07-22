@@ -1,7 +1,15 @@
-import { CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 import { Competition } from "./competition";
 import { Season } from "./season";
 import { Club } from "./club";
+
+export type PlayerStatsResult = {
+    clubs: Map<ClubId, Club>;
+    competitions: Map<CompetitionId, Competition>;
+    seasons: Map<SeasonId, Season>;
+    performance?: Map<PersonId, Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>>;
+    goalsAgainstClub?: Map<PersonId, Array<PlayerGoalsAgainstClubStatsItem>>;
+}
 
 export type PlayerStatsMapContext = {
     seasons: Map<SeasonId, Season>;

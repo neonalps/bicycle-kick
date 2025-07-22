@@ -3,7 +3,7 @@ import { GameMapper } from "./mapper";
 import { validateNotNull } from "@src/util/validation";
 import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
 import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
-import { ClubId, CompetitionId, SeasonId } from "@src/util/domain-types";
+import { QueryOptions } from "@src/model/internal/query-options";
 
 export class GameService {
 
@@ -90,16 +90,7 @@ export class GameService {
 
     async getLastFinishedGames(
         take: number, 
-        queryOptions: {
-            onlySeasons?: ReadonlyArray<SeasonId>,
-            onlyOpponents?: ReadonlyArray<ClubId>,
-            onlyCompetitions?: ReadonlyArray<CompetitionId>,
-            onlyHome?: boolean,
-            onlyAway?: boolean, 
-            excludeNeutralGround?: boolean,
-            onlyDomestic?: boolean,
-            onlyInternational?: boolean,
-        } = {}): Promise<Array<Game>> {
+        queryOptions: QueryOptions = {}): Promise<Array<Game>> {
         validateNotNull(take, "take");
 
         return await this.mapper.getLastFinishedGames(take, queryOptions);

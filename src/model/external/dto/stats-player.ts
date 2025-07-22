@@ -7,6 +7,11 @@ export type PlayerSeasonStatsItemDto = {
     competitions: Array<PlayerCompetitionStatsItemDto>;
 }
 
+export type GoalsAgainstClubStatsItemDto = {
+    club: SmallClubDto;
+    goalsScored: number;
+}
+
 export type PlayerSubCompetitionStatsItemDto = {
     isParent?: boolean;
     competition?: SmallCompetitionDto;

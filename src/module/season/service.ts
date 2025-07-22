@@ -64,6 +64,14 @@ export class SeasonService {
         return await this.mapper.getForDate(this.dateSource.getToday().toISOString());
     }
 
+    async requireCurrent(): Promise<Season> {
+        const currentSeason = await this.getCurrent();
+        if (currentSeason === null) {
+            throw new Error(`Failed to find current season`);
+        }
+        return currentSeason;
+    }
+
     async getLast(): Promise<Season | null> {
         const currentSeason = await this.getCurrent();
         if (currentSeason === null) {

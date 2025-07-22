@@ -1,5 +1,6 @@
 import { Sql } from "@src/db";
 import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerPerformanceStatsDaoInterface } from "@src/model/internal/interface/stats-player";
+import { QueryOptions } from "@src/model/internal/query-options";
 import { PlayerGoalsAgainstClubStatsItem, PlayerSeasonCompetitionStats } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
 import { CompetitionId, PersonId } from "@src/util/domain-types";
@@ -67,11 +68,12 @@ export class StatsMapper {
         }, new Map());
     }
 
-    async getPlayerGoalsAgainstClubStats(playerIds: ArrayNonEmpty<PersonId>, competitionFilter?: Array<CompetitionId>): Promise<Map<PersonId, PlayerGoalsAgainstClubStatsItem[]>> {
-        // TODO implement competition filter
+    async getPlayerGoalsAgainstClubStats(playerIds: ArrayNonEmpty<PersonId>, queryOptions: QueryOptions = {}, forMain = true): Promise<Map<PersonId, PlayerGoalsAgainstClubStatsItem[]>> {
+        // TODO implement query options
         const result = await this.sql<PlayerGoalsAgainstClubStatsDaoInterface[]>`
             select 
-                c.id as club_id
+                c.id as club_id,
+                gp.person_id as person_id,
                 sum(gp.goals_scored) as goals_scored
             from 
                 game_players gp left join
@@ -80,7 +82,7 @@ export class StatsMapper {
             where
                 gp.person_id in ${ this.sql(playerIds) } and
                 gp.goals_scored > 0 and
-                gp.for_main = true
+                gp.for_main = ${ forMain }
             group by
                 c.id, gp.person_id
             order by

@@ -57,9 +57,9 @@ import { GameAttendedService } from "@src/module/game-attended/service";
 import { GameStarService } from "@src/module/game-star/service";
 import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 import { TacticalFormation } from "@src/model/external/dto/tactical-formation";
-import { PlayerCompetitionStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
-import { PlayerBaseStats } from "@src/model/internal/stats-player";
-import { CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
+import { PlayerCompetitionStatsItemDto, PlayerGoalsAgainstClubStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem } from "@src/model/internal/stats-player";
+import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 import { OverallPosition } from "@src/model/type/position-overall";
 import { getEmptySquad } from "../squad/util";
 import { GameManagerDto } from "@src/model/external/dto/game-manager";
@@ -794,6 +794,15 @@ export class ApiHelperService {
             });
         }
         return result;
+    }
+
+    convertGoalsAgainstClubsStatsItems(items: ReadonlyArray<PlayerGoalsAgainstClubStatsItem>, clubMap: Map<ClubId, Club>): ReadonlyArray<PlayerGoalsAgainstClubStatsItemDto> {
+        return items.map(item => {
+            return {
+                club: this.convertClubToSmallDto(getOrThrow(clubMap, item.clubId, `club ${item.clubId} not found in club map`)),
+                goalsScored: item.goalsScored,
+            }
+        });
     }
     
     convertToPlayerStatsItemDto(stats: PlayerBaseStats): PlayerStatsItemDto {

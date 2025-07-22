@@ -22,12 +22,14 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
         }
 
         if (dto.includeStatistics === true) {
-            const performanceStatsDetailsContext = await this.statsService.getPlayerPerformanceStats([person.id]);
-            const playerPerformanceStatsDetails = ensureNotNullish(performanceStatsDetailsContext.playerStats.get(person.id));
+            const performanceStatsDetailsContext = await this.statsService.getPlayerStats([person.id], {});
+            const playerPerformanceStatsDetails = ensureNotNullish(performanceStatsDetailsContext.playerStats?.get(person.id));
+            const goalsAgainstClubsStatsDetails = performanceStatsDetailsContext.goalsAgainstClub?.get(person.id) || [];
 
-            /*response.stats = {
-                performance: this.apiHelper.convertPerformanceStatsDetailsMapToDto(playerPerformanceStatsDetails, performanceStatsDetailsContext.seasons, performanceStatsDetailsContext.competitions),
-            }*/
+            response.stats = {
+                performance: this.apiHelper.convertPerformanceStatsDetailsMapToDto(playerPerformanceStatsDetails, performanceStatsDetailsContext.seasons!, performanceStatsDetailsContext.competitions!),
+                goalsAgainstClubs: this.apiHelper.convertGoalsAgainstClubsStatsItems(goalsAgainstClubsStatsDetails, performanceStatsDetailsContext.clubs!),
+            }
         }
         
         return response;

@@ -170,9 +170,9 @@ export class DependencyHelper {
         const sofascoreGameProvider = new SofascoreGameProvider({ mainTeamName: ["Sturm Graz"] }, timeSource);
 
         const statsMapper = new StatsMapper(sqlInstance);
-        const statsService = new StatsService(statsMapper, competitionService, seasonService);
+        const statsService = new StatsService(statsMapper, clubService, competitionService, seasonService);
 
-        const dashboardService = new DashboardService(gameService, dateSource);
+        const dashboardService = new DashboardService(gameService, seasonService, dateSource);
 
         const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,

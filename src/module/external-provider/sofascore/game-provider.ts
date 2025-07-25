@@ -276,6 +276,8 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                 return BookableOffence.Foul;
             case 'handball':
                 return BookableOffence.Handball;
+            case 'unallowed field entering':
+                return BookableOffence.UnallowedFieldEntering;
             case 'dangerous play':
                 return BookableOffence.DangerousPlay;
             case 'simulation':

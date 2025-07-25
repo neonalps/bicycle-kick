@@ -79,6 +79,9 @@ import { StatsService } from "@src/module/stats/service";
 import { StatsMapper } from "@src/module/stats/mapper";
 import { DashboardService } from "@src/module/dashboard/service";
 import { GermanAnswerComposer } from "@src/module/advanced-query/answer/composer-de";
+import { WeltfussballClient } from "@src/module/external-provider/weltfussball/client";
+import { ExternalProviderMapper } from "@src/module/external-provider/mapper";
+import { ExternalProviderService } from "@src/module/external-provider/service";
 
 export class DependencyHelper {
 
@@ -183,6 +186,11 @@ export class DependencyHelper {
             batchSize: 50,
         };
 
+        const externalProviderMapper = new ExternalProviderMapper(sqlInstance);
+        const externalProviderService = new ExternalProviderService(externalProviderMapper, personService);
+
+        const weltfussballClient = new WeltfussballClient(httpClient);
+
         const globalResolveConfig: GlobalResolveServiceConfig = {
 
         };
@@ -238,6 +246,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.CryptoService, cryptoService);
         dependencies.set(Dependencies.DashboardService, dashboardService);
         dependencies.set(Dependencies.DateSource, dateSource);
+        dependencies.set(Dependencies.ExternalProviderService, externalProviderService);
         dependencies.set(Dependencies.GameService, gameService);
         dependencies.set(Dependencies.GameAttendedService, gameAttendedService);
         dependencies.set(Dependencies.GameEventService, gameEventService);
@@ -257,6 +266,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.TimeSource, timeSource);
         dependencies.set(Dependencies.UuidSource, uuidSource);
         dependencies.set(Dependencies.VenueService, venueService);
+        dependencies.set(Dependencies.WeltfussballClient, weltfussballClient);
 
         return dependencies;
     }

@@ -6,4 +6,5 @@ export enum BookableOffence {
     Handball = "handball",
     Other = "other",
     UnsportingBehavious = "unsportingBehaviour",
+    UnallowedFieldEntering = "unallowedFieldEntering",
 };

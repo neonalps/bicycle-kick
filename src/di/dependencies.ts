@@ -9,6 +9,7 @@ export enum Dependencies {
     CryptoService,
     DashboardService,
     DateSource,
+    ExternalProviderService,
     GameService,
     GameAttendedService,
     GameEventService,
@@ -29,4 +30,5 @@ export enum Dependencies {
     TimeSource,
     UuidSource,
     VenueService,
+    WeltfussballClient,
 };

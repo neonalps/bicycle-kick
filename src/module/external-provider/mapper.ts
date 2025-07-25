@@ -1,8 +1,10 @@
 import { Sql } from "@src/db";
 import { ExternalProviderPerson } from "@src/model/internal/external-provider-person";
+import { ExternalProviderClubDaoInterface } from "@src/model/internal/interface/external-provider-club.interface copy";
 import { ExternalProviderPersonDaoInterface } from "@src/model/internal/interface/external-provider-person.interface";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { ExternalProvider } from "@src/model/type/external-provider";
+import { ClubId } from "@src/util/domain-types";
 
 export class ExternalProviderMapper {
 
@@ -29,6 +31,18 @@ export class ExternalProviderMapper {
         }
 
         return this.convertToEntity(result[0]);
+    }
+
+    async getMultipleClubIdsByExternalProvider(provider: ExternalProvider, externalIds: ReadonlyArray<string>): Promise<Map<string, ClubId>> {
+        const result = await this.sql<ExternalProviderClubDaoInterface[]>`select * from external_provider_club where external_provider = ${ provider } and external_id in ${ this.sql(externalIds) }`;
+        if (result.length === 0) {
+            return new Map();
+        }
+
+        return result.reduce((acc, current) => {
+            acc.set(current.externalId, current.clubId);
+            return acc;
+        }, new Map<string, ClubId>());
     }
 
     private async getPersonById(id: number): Promise<ExternalProviderPerson | null> {

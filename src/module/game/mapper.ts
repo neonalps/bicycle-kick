@@ -382,14 +382,14 @@ export class GameMapper {
 
                         if (wasGoalForMain) {
                             const opponentGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperOpponentPersonId, `failed to find goalkeeper opponent`);
-                            opponentGoalkeeper.goalsConceded = (opponentGoalkeeper.goalsConceded || 0) + 1;
+                            opponentGoalkeeper.goalsConceded = (opponentGoalkeeper.goalsConceded ?? 0) + 1;
 
                             if (goalGameEvent.penalty) {
                                 opponentGoalkeeper.regulationPenaltiesFaced += 1;
                             }
                         } else {
                             const mainGoalkeeper = getOrThrow(personGamePlayerIdMap, goalkeeperMainPersonId, `failed to find goalkeeper main`);
-                            mainGoalkeeper.goalsConceded = (mainGoalkeeper.goalsConceded || 0) + 1;
+                            mainGoalkeeper.goalsConceded = (mainGoalkeeper.goalsConceded ?? 0) + 1;
 
                             if (goalGameEvent.penalty) {
                                 mainGoalkeeper.regulationPenaltiesFaced += 1;
@@ -449,8 +449,8 @@ export class GameMapper {
                         const substitutionGameEvent = event as CreateSubstitutionGameEventDto;
                         const playerOn = await this.resolvePersonId(tx, substitutionGameEvent.playerOn);
                         const playerOff = await this.resolvePersonId(tx, substitutionGameEvent.playerOff);
-                        const playerOnGamePlayerEntry = getOrThrow(personGamePlayerIdMap, playerOn, `failed to find player on during event processing in game player map (person ID ${playerOn})`);
-                        const playerOffGamePlayerEntry = getOrThrow(personGamePlayerIdMap, playerOff, `failed to find player off during event processing in game player map (person ID ${playerOff})`);
+                        const playerOnGamePlayerEntry = getOrThrow(personGamePlayerIdMap, playerOn, `failed to find player on during event processing in game player map (person ID ${playerOn}), event: ${JSON.stringify(event)}`);
+                        const playerOffGamePlayerEntry = getOrThrow(personGamePlayerIdMap, playerOff, `failed to find player off during event processing in game player map (person ID ${playerOff}), event: ${JSON.stringify(event)}`);
 
                         if (playerOnGamePlayerEntry.forMain && (goalkeeperMainPersonId === playerOff || hasMainGoalkeeperBeenSentOff)) {
                             console.log(`detected main goalkeeper switch to person ID ${playerOn}`);
@@ -605,7 +605,7 @@ export class GameMapper {
                     case GameEventType.RedCard:
                         const cardEvent = event as CreateYellowCardGameEventDto;
                         const affectedPlayer = cardEvent.affectedPlayer !== undefined ? await this.resolvePersonId(tx, cardEvent.affectedPlayer) : null;
-                        const affectedPlayerPlayerEntry = affectedPlayer !== null ? getOrThrow(personGamePlayerIdMap, affectedPlayer, `failed to find affected player in game player map (person ID ${affectedPlayer})`) : null;
+                        const affectedPlayerPlayerEntry = affectedPlayer !== null ? getOrThrow(personGamePlayerIdMap, affectedPlayer, `failed to find affected player in game player map (person ID ${affectedPlayer}), event: ${JSON.stringify(event)}`) : null;
                         const affectedManager = cardEvent.affectedManager !== undefined ? await this.resolvePersonId(tx, cardEvent.affectedManager) : null;
                         const affectedManagerEntry = affectedManager !== null ? getOrThrow(personGameManagerIdMap, affectedManager, `failed to find affected manager in game manager map (person ID ${affectedManager})`) : null;
                         const reason = cardEvent.reason;        // will also work for reds

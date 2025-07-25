@@ -9,20 +9,22 @@ export interface HttpResponse<T> {
 
 export class HttpClient {
 
-    get = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>>): Promise<HttpResponse<T>> => {
+    get = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>> & { textOnly?: boolean }): Promise<HttpResponse<T>> => {
         return this.performRequest(url, { ...options, method: HTTP_METHOD.GET });
     };
     
-    post = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>>): Promise<HttpResponse<T>> => {
+    post = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>> & { textOnly?: boolean }): Promise<HttpResponse<T>> => {
         return this.performRequest(url, { ...options, method: HTTP_METHOD.POST });
     };
 
-    private performRequest = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>>): Promise<HttpResponse<T>> => {
+    private performRequest = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>> & { textOnly?: boolean }): Promise<HttpResponse<T>> => {
         const { statusCode, body } = await request(url, options);
-    
+
+        const bodyValue = options?.textOnly === true ? await body.text() : await body.json();
+
         return {
             statusCode,
-            body: await body.json() as T
+            body: bodyValue as T,
         }
     };
 

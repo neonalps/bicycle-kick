@@ -17,6 +17,7 @@ export enum Dependencies {
     GamePlayerService,
     GameRefereeService,
     GameStarService,
+    MatchdayDetailsService,
     OAuthService,
     PaginationService,
     PermissionService,

@@ -63,6 +63,9 @@ import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-type
 import { OverallPosition } from "@src/model/type/position-overall";
 import { getEmptySquad } from "../squad/util";
 import { GameManagerDto } from "@src/model/external/dto/game-manager";
+import { Fixture, TablePosition } from "../matchday-details/types";
+import { FixtureDto } from "@src/model/external/dto/fixture";
+import { TablePositionDto } from "@src/model/external/dto/table-position";
 
 type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
@@ -869,6 +872,58 @@ export class ApiHelperService {
         }
 
         return result;
+    }
+
+    convertMatchdayFixturesToDto(fixtures: Fixture[]): FixtureDto[] {
+        return fixtures.map(item => this.convertMatchdayFixtureToDto(item));
+    }
+
+    convertMatchdayFixtureToDto(fixture: Fixture): FixtureDto {
+        const dto: FixtureDto = {
+            kickoff: fixture.kickoff,
+            status: fixture.status,
+            home: this.convertClubToSmallDto(fixture.home),
+            away: this.convertClubToSmallDto(fixture.away),
+            fullTime: fixture.fullTime,
+        }
+
+        if (fixture.halfTime) {
+            dto.halfTime = fixture.halfTime;
+        }
+
+        if (fixture.afterExtraTime) {
+            dto.afterExtraTime = fixture.afterExtraTime;
+        }
+
+        if (fixture.afterPenaltyShootOut) {
+            dto.afterPenaltyShootOut = fixture.afterPenaltyShootOut;
+        }
+
+        if (fixture.href) {
+            dto.href = fixture.href;
+        }
+
+        return dto;
+    }
+
+    convertMatchdayTableToDto(table: TablePosition[]): TablePositionDto[] {
+        return table.map(item => this.convertMatchdayTablePositionToDto(item));
+    }
+
+    convertMatchdayTablePositionToDto(position: TablePosition): TablePositionDto {
+        const dto: TablePositionDto = {
+            position: position.position,
+            club: this.convertClubToSmallDto(position.club),
+            gamesPlayed: position.gamesPlayed,
+            wins: position.wins,
+            draws: position.draws,
+            defeats: position.defeats,
+            goalsFor: position.goalsFor,
+            goalsAgainst: position.goalsAgainst,
+            points: position.points,
+        }
+
+        return dto;
     }
 
     private convertVenueToBasicDto(venue: Venue): BasicVenueDto {

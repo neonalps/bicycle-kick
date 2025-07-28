@@ -1,7 +1,7 @@
 import { ExternalProvider } from "@src/model/type/external-provider";
-import { MatchdayDetails } from "./types";
+import { ExternalMatchdayDetails, FetchMatchdayDetailsRequest } from "./types";
 
 export interface MatchdayDetailsProvider {
     getName(): ExternalProvider;
-    provideMatchDetails(): Promise<MatchdayDetails>;
+    provideMatchDetails(request: FetchMatchdayDetailsRequest): Promise<ExternalMatchdayDetails>;
 }

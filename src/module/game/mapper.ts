@@ -5,7 +5,7 @@ import { GameStatus } from "@src/model/type/game-status";
 import { Tendency } from "@src/model/type/tendency";
 import { SortOrder } from "@src/module/pagination/constants";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
-import { getOrThrow, isDefined, isNotDefined, requireSingleArrayElement } from "@src/util/common";
+import { getOrThrow, isDefined, requireSingleArrayElement } from "@src/util/common";
 import { CreateGameDto } from "@src/model/internal/create-game";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { ClubInputDto } from "@src/model/external/dto/club-input";

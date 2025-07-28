@@ -1,15 +1,24 @@
 import { Competition } from "@src/model/internal/competition";
 import { validateNotNull } from "@src/util/validation";
 import { CompetitionMapper } from "./mapper";
+import { CompetitionId } from "@src/util/domain-types";
 
 export class CompetitionService {
 
     constructor(private readonly mapper: CompetitionMapper) {}
 
-    async getById(id: number): Promise<Competition | null> {
+    async getById(id: CompetitionId): Promise<Competition | null> {
         validateNotNull(id, "id");
 
         return await this.mapper.getById(id);
+    }
+
+    async requireById(id: CompetitionId): Promise<Competition> {
+        const competition = await this.getById(id);
+        if (competition === null) {
+            throw new Error(`No competition with ID ${id} exists`);
+        }
+        return competition;
     }
 
     async getMapByIds(ids: number[]): Promise<Map<number, Competition>> {

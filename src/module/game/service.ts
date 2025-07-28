@@ -4,6 +4,7 @@ import { validateNotNull } from "@src/util/validation";
 import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
 import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
 import { QueryOptions } from "@src/model/internal/query-options";
+import { GameId } from "@src/util/domain-types";
 
 export class GameService {
 
@@ -12,10 +13,18 @@ export class GameService {
         private readonly seasonService: SeasonService,
     ) {}
 
-    async getById(id: number): Promise<Game | null> {
+    async getById(id: GameId): Promise<Game | null> {
         validateNotNull(id, "id");
 
         return await this.mapper.getById(id);
+    }
+
+    async requireById(id: GameId): Promise<Game> {
+        const game = await this.getById(id);
+        if (game === null) {
+            throw new Error(`No game with ID ${id} exists`);
+        }
+        return game;
     }
 
     async getMultipleByIds(ids: number[]): Promise<Game[]> {

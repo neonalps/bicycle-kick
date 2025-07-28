@@ -82,6 +82,7 @@ import { GermanAnswerComposer } from "@src/module/advanced-query/answer/composer
 import { WeltfussballClient } from "@src/module/external-provider/weltfussball/client";
 import { ExternalProviderMapper } from "@src/module/external-provider/mapper";
 import { ExternalProviderService } from "@src/module/external-provider/service";
+import { MatchdayDetailsService } from "@src/module/matchday-details/service";
 
 export class DependencyHelper {
 
@@ -191,6 +192,8 @@ export class DependencyHelper {
 
         const weltfussballClient = new WeltfussballClient(httpClient);
 
+        const matchdayDetailsService = new MatchdayDetailsService({ mainClubId: 1 }, clubService, competitionService, gameService, externalProviderService, seasonService);
+
         const globalResolveConfig: GlobalResolveServiceConfig = {
 
         };
@@ -254,6 +257,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.GamePlayerService, gamePlayerService);
         dependencies.set(Dependencies.GameRefereeService, gameRefereeService);
         dependencies.set(Dependencies.GameStarService, gameStarService);
+        dependencies.set(Dependencies.MatchdayDetailsService, matchdayDetailsService);
         dependencies.set(Dependencies.OAuthService, oAuthService);
         dependencies.set(Dependencies.PaginationService, paginationService);
         dependencies.set(Dependencies.PermissionService, permissionService);

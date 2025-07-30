@@ -31,5 +31,7 @@ export enum Dependencies {
     TimeSource,
     UuidSource,
     VenueService,
+
+    BundesligaClient,
     WeltfussballClient,
 };

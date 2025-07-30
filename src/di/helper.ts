@@ -83,6 +83,9 @@ import { WeltfussballClient } from "@src/module/external-provider/weltfussball/c
 import { ExternalProviderMapper } from "@src/module/external-provider/mapper";
 import { ExternalProviderService } from "@src/module/external-provider/service";
 import { MatchdayDetailsService } from "@src/module/matchday-details/service";
+import { BundesligaClient } from "@src/module/external-provider/bundesliga/client";
+import { ExternalProvider } from "@src/model/type/external-provider";
+import { MatchdayDetailsProvider } from "@src/module/matchday-details/provider";
 
 export class DependencyHelper {
 
@@ -190,9 +193,12 @@ export class DependencyHelper {
         const externalProviderMapper = new ExternalProviderMapper(sqlInstance);
         const externalProviderService = new ExternalProviderService(externalProviderMapper, personService);
 
-        const weltfussballClient = new WeltfussballClient(httpClient);
+        const matchdayProviders = new Map<ExternalProvider, MatchdayDetailsProvider>([
+            [ExternalProvider.Bundesliga, new BundesligaClient(httpClient)],
+            [ExternalProvider.Weltfussball, new WeltfussballClient(httpClient)],
+        ]);
 
-        const matchdayDetailsService = new MatchdayDetailsService({ mainClubId: 1 }, clubService, competitionService, gameService, externalProviderService, seasonService);
+        const matchdayDetailsService = new MatchdayDetailsService({ mainClubId: 1, clients: matchdayProviders }, clubService, competitionService, gameService, externalProviderService, seasonService);
 
         const globalResolveConfig: GlobalResolveServiceConfig = {
 
@@ -270,7 +276,6 @@ export class DependencyHelper {
         dependencies.set(Dependencies.TimeSource, timeSource);
         dependencies.set(Dependencies.UuidSource, uuidSource);
         dependencies.set(Dependencies.VenueService, venueService);
-        dependencies.set(Dependencies.WeltfussballClient, weltfussballClient);
 
         return dependencies;
     }

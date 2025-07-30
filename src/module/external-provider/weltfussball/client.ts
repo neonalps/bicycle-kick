@@ -5,6 +5,14 @@ import { ScoreTuple } from "@src/model/internal/score";
 import { MatchdayDetailsProvider } from "@src/module/matchday-details/provider";
 import { ExternalProvider } from "@src/model/type/external-provider";
 import { GameStatus } from "@src/model/type/game-status";
+import { isDefined } from "@src/util/common";
+
+type GameScore = {
+    fullTime: ScoreTuple;
+    halfTime: ScoreTuple;
+    afterExtraTime?: ScoreTuple;
+    afterPenaltyShootOut?: ScoreTuple;
+}
 
 export class WeltfussballClient implements MatchdayDetailsProvider {
 
@@ -12,6 +20,10 @@ export class WeltfussballClient implements MatchdayDetailsProvider {
     private static readonly MATCHDAY_BASE_URL = WeltfussballClient.BASE_URL + `/spielplan`;
 
     constructor(private readonly http: HttpClient) {}
+
+    supports(request: FetchMatchdayDetailsRequest): boolean {
+        return [1, 2, 4].includes(request.competition.id);
+    }
 
     getName(): ExternalProvider {
         return ExternalProvider.Weltfussball;
@@ -22,15 +34,18 @@ export class WeltfussballClient implements MatchdayDetailsProvider {
     }
 
     private buildRequestUrl(spec: FetchMatchdayDetailsRequest): string {
-        return `${WeltfussballClient.MATCHDAY_BASE_URL}/${this.buildCompetitionUrlPart(spec)}/${spec.competitionRound}/`;
+        return `${WeltfussballClient.MATCHDAY_BASE_URL}/${this.buildCompetitionUrlPart(spec)}`;
     }
 
     private buildCompetitionUrlPart(spec: FetchMatchdayDetailsRequest): string {
+        const seasonString = spec.season.name.replace('/', '-');
         switch (spec.competition.id) {
             case 1:
-                return `aut-bundesliga-${spec.season.name.replace('/', '-')}-meistergruppe-spieltag`;
+                return `aut-bundesliga-${seasonString}-meistergruppe-spieltag/${spec.competitionRound}/`;
             case 2:
-                return `aut-bundesliga-${spec.season.name.replace('/', '-')}-spieltag`;
+                return `aut-bundesliga-${seasonString}-spieltag/${spec.competitionRound}/`;
+            case 4:
+                return `aut-oefb-cup-${seasonString}-${this.getCupCompetitionRoundString(spec)}/0/`;
             default:
                 throw new Error(`No handler for competition ID ${spec.competition.id}`);
         }
@@ -50,7 +65,7 @@ export class WeltfussballClient implements MatchdayDetailsProvider {
             if (tableIndex === 0) {
                 // fixtures
                 result.fixtures = this.parseFixtures(tableRows);
-            } else if (tableIndex === 1) {
+            } else if (tableIndex === 1 && request.competition.id !== 4) {
                 // table positions
                 result.table = this.parseTablePositions(tableRows);
             }
@@ -59,6 +74,25 @@ export class WeltfussballClient implements MatchdayDetailsProvider {
         }
 
         return result;
+    }
+
+    private getCupCompetitionRoundString(spec: FetchMatchdayDetailsRequest): string {
+        if (spec.competitionRound === "1" || spec.competitionRound === "2") {
+            return `${spec.competitionRound}-runde`;
+        }
+
+        switch (spec.competitionRound) {
+            case 'final':
+                return 'finale';
+            case 'semifinal':
+                return 'halbfinale';
+            case 'quarterfinal':
+                return 'viertelfinale';
+            case 'roundOf16':
+                return 'achtelfinale';
+            default:
+                throw new Error(`Unhandled cup competition round ${spec.competitionRound}`);
+        }
     }
 
     private parseFixtures(rows: HTMLElement[]): ExternalFixture[] {
@@ -99,7 +133,7 @@ export class WeltfussballClient implements MatchdayDetailsProvider {
             const indexModifier = firstColumnIsDate ? 0 : -1;
             const kickoffTime = tempFixture[1 + indexModifier];
 
-            const scores = tempFixture[4 + indexModifier].split(' ');
+            const scores = tempFixture[4 + indexModifier].trim();
 
             const kickoffIsoString = [
                 currentDate?.substring(6, 10),
@@ -112,7 +146,9 @@ export class WeltfussballClient implements MatchdayDetailsProvider {
                 ':00.000',
             ].join('');
 
-            fixtures.push({
+            const gameScore = this.parseScoreString(scores);
+
+            const parsedFixture: ExternalFixture = {
                 kickoff: kickoffIsoString,
                 status: GameStatus.Finished,        // TODO implement
                 home: {
@@ -121,13 +157,45 @@ export class WeltfussballClient implements MatchdayDetailsProvider {
                 away: {
                     name: tempFixture[3 + indexModifier],
                 },
-                fullTime: this.parseScoreTuple(scores[0]),
-                halfTime: this.parseScoreTuple(scores[1].replaceAll('(', '').replaceAll(')', '')),
+                halfTime: gameScore.halfTime,
+                fullTime: gameScore.fullTime,
                 href: `${WeltfussballClient.BASE_URL}${tempFixture[5 + indexModifier]}`,
-            })
+            };
+
+            if (isDefined(gameScore.afterExtraTime)) {
+                parsedFixture.afterExtraTime = gameScore.afterExtraTime;
+            }
+
+            if (isDefined(gameScore.afterPenaltyShootOut)) {
+                parsedFixture.afterPenaltyShootOut = gameScore.afterPenaltyShootOut;
+            }
+
+            fixtures.push(parsedFixture);
         }
 
         return fixtures;
+    }
+
+    private parseScoreString(scoreString: string): GameScore {
+        if (scoreString.endsWith("n.V.") || scoreString.endsWith("n.V")) {
+            return {
+                fullTime: this.parseScoreTuple(scoreString.substring(10, 13)),
+                halfTime: this.parseScoreTuple(scoreString.substring(5, 8)),
+                afterExtraTime: this.parseScoreTuple(scoreString.substring(0, 3)),
+            }
+        } else if (scoreString.endsWith("i.E.") || scoreString.endsWith("i.E")) {
+            return {
+                afterPenaltyShootOut: this.parseScoreTuple(scoreString.substring(0, 3)),
+                fullTime: this.parseScoreTuple(scoreString.substring(10, 13)),
+                halfTime: this.parseScoreTuple(scoreString.substring(5, 8)),
+                afterExtraTime: this.parseScoreTuple(scoreString.substring(15, 18)),
+            }
+        } else {
+            return {
+                fullTime: this.parseScoreTuple(scoreString.substring(0, 3)),
+                halfTime: this.parseScoreTuple(scoreString.substring(5, 8)),
+            }
+        }
     }
 
     private parseScoreTuple(score: string): ScoreTuple {

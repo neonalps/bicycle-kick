@@ -20,6 +20,9 @@ import { UnattendGameHandler } from "./unattend/handler";
 import { UnattendGameRouteProvider } from "./unattend/route-provider";
 import { CreateGameRouteHandler } from "./create/handler";
 import { CreateGameRouteProvider } from "./create/route-provider";
+import { MatchdayDetailsService } from "@src/module/matchday-details/service";
+import { GetMatchdayDetailsRouteHandler } from "./matchday-details/handler";
+import { GetMatchdayDetailsRouteProvider } from "./matchday-details/route-provider";
 
 export function getGameRouteProviders(): RouteProvider<any, any>[] {
 
@@ -28,6 +31,7 @@ export function getGameRouteProviders(): RouteProvider<any, any>[] {
     const gameService = dependencyManager.get<GameService>(Dependencies.GameService);
     const gameStarService = dependencyManager.get<GameStarService>(Dependencies.GameStarService);
     const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
+    const matchdayDetailsService = dependencyManager.get<MatchdayDetailsService>(Dependencies.MatchdayDetailsService);
 
     const getGameByIdHandler = new GetGameByIdRouteHandler(apiHelperService, gameService, permissionService);
     const createGameHandler = new CreateGameRouteHandler(apiHelperService, gameService, permissionService);
@@ -36,6 +40,7 @@ export function getGameRouteProviders(): RouteProvider<any, any>[] {
     const unstarGameHandler = new UnstarGameHandler(gameStarService);
     const attendGameHandler = new AttendGameHandler(gameAttendService);
     const unattendGameHandler = new UnattendGameHandler(gameAttendService);
+    const loadExternalMatchdayDetailsHandler = new GetMatchdayDetailsRouteHandler(apiHelperService, matchdayDetailsService);
 
     return [
         new GetGameByIdRouteProvider(getGameByIdHandler),
@@ -45,5 +50,6 @@ export function getGameRouteProviders(): RouteProvider<any, any>[] {
         new UnstarGameRouteProvider(unstarGameHandler),
         new AttendGameRouteProvider(attendGameHandler),
         new UnattendGameRouteProvider(unattendGameHandler),
+        new GetMatchdayDetailsRouteProvider(loadExternalMatchdayDetailsHandler),
     ];
 }

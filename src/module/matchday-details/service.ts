@@ -2,14 +2,18 @@ import { ClubService } from "@src/module/club/service";
 import { MatchdayDetailsProvider } from "./provider";
 import { ExternalProviderService } from "@src/module/external-provider/service";
 import { FetchMatchdayDetailsRequest, MatchdayDetails } from "./types";
-import { getOrThrow, promiseAllObject } from "@src/util/common";
+import { promiseAllObject } from "@src/util/common";
 import { GameService } from "@src/module/game/service";
 import { GetMatchdayDetailsRequestDto } from "@src/model/external/dto/get-matchday-details-request";
 import { CompetitionService } from "@src/module/competition/service";
 import { SeasonService } from "@src/module/season/service";
+import { Club } from "@src/model/internal/club";
+import { ClubId } from "@src/util/domain-types";
+import { ExternalProvider } from "@src/model/type/external-provider";
 
 export type MatchdayDetailsConfig = {
     mainClubId: number;
+    clients: Map<ExternalProvider, MatchdayDetailsProvider>;
 }
 
 export class MatchdayDetailsService {
@@ -23,7 +27,7 @@ export class MatchdayDetailsService {
         private readonly seasonService: SeasonService,
     ) {}
 
-    async getDetails(provider: MatchdayDetailsProvider, requestDto: GetMatchdayDetailsRequestDto): Promise<MatchdayDetails> {
+    async getDetails(requestDto: GetMatchdayDetailsRequestDto, preferredProvider?: ExternalProvider, throwOnUnknownClub = false): Promise<MatchdayDetails> {
         const game = await this.gameService.requireById(requestDto.gameId);
 
         const gameInfo = await promiseAllObject({
@@ -37,6 +41,8 @@ export class MatchdayDetailsService {
             competitionRound: game.competitionRound,
             competitionStage: game.competitionStage,
         };
+
+        const provider = this.determineProviderOrThrow(request, preferredProvider);
 
         const matchdayDetails = await provider.provideMatchDetails(request);
 
@@ -58,29 +64,60 @@ export class MatchdayDetailsService {
             competition: gameInfo.competition,
             season: gameInfo.season,
             fixtures: matchdayDetails.fixtures?.map(item => {
-                const homeClubId = getOrThrow(resolvedClubIds, item.home.name, `failed to find ${item.home.name} in resolved club IDs`);
-                const awayClubId = getOrThrow(resolvedClubIds, item.away.name, `failed to find ${item.away.name} in resolved club IDs`);
+                const homeClub = this.resolveClub(resolvedClubIds, clubDetailsMap, item.home.name, throwOnUnknownClub);
+                const awayClub = this.resolveClub(resolvedClubIds, clubDetailsMap, item.away.name, throwOnUnknownClub);
 
-                if (homeClubId === this.config.mainClubId || awayClubId === this.config.mainClubId) {
+                if (homeClub.id === this.config.mainClubId || awayClub.id === this.config.mainClubId) {
                     // we don't need to return the main club game
                     return null;
                 }
 
                 return {
                     ...item,
-                    home: getOrThrow(clubDetailsMap, homeClubId, `failed to find ${homeClubId} in club details map`),
-                    away: getOrThrow(clubDetailsMap, awayClubId, `Failed to find club ${awayClubId} in club details map`),
+                    home: homeClub,
+                    away: awayClub,
                 };
             }).filter(item => item !== null),
             table: matchdayDetails.table?.map(item => {
-                const clubId = getOrThrow(resolvedClubIds, item.club.name, `failed to find ${item.club.name} in resolved club IDs`);
                 return {
                     ...item,
-                    club: getOrThrow(clubDetailsMap, clubId, `failed to find ${clubId} in club details map`),
+                    club: this.resolveClub(resolvedClubIds, clubDetailsMap, item.club.name, throwOnUnknownClub),
                 }
             }),
         };
         
+    }
+    
+    private determineProviderOrThrow(request: FetchMatchdayDetailsRequest, preferredProvider?: ExternalProvider): MatchdayDetailsProvider {
+        if (preferredProvider && this.config.clients.get(preferredProvider)?.supports(request)) {
+            return this.config.clients.get(preferredProvider) as MatchdayDetailsProvider;
+        }
+
+        for (const client of this.config.clients.values()) {
+            if (client.supports(request)) {
+                return client;
+            }
+        }
+
+        throw new Error(`No suitable provider for request`);
+    }
+
+    private resolveClub(resolvedClubIds: Map<string, ClubId>, clubDetails: Map<ClubId, Club>, clubMapKey: string, throwOnUnknownClub: boolean): Club {
+        const clubId = resolvedClubIds.get(clubMapKey);
+        if (clubId === undefined && throwOnUnknownClub) {
+            throw new Error(`failed to find ${clubMapKey} in resolved club IDs map`);
+        }
+
+        if (clubId === undefined) {
+            return { name: clubMapKey, shortName: clubMapKey, id: 0, city: '', countryCode: '' };
+        }
+
+        const club = clubDetails.get(clubId);
+        if (club === undefined && throwOnUnknownClub) {
+            throw new Error(`failed to find ${clubId} in club details map`);
+        }
+
+        return club ? club : { name: clubMapKey, shortName: clubMapKey, id: clubId, city: '', countryCode: '' }
     }
 
 }

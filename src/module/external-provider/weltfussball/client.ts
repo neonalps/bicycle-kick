@@ -177,24 +177,40 @@ export class WeltfussballClient implements MatchdayDetailsProvider {
     }
 
     private parseScoreString(scoreString: string): GameScore {
-        if (scoreString.endsWith("n.V.") || scoreString.endsWith("n.V")) {
+        const scoreParts = scoreString
+            .replaceAll("(", "")
+            .replaceAll(")", "")
+            .replaceAll(",", "")
+            .replaceAll("n.V.", "")
+            .replaceAll("n.V", "")
+            .replaceAll("i.E.", "")
+            .replaceAll("i.E", "")
+            .trim()
+            .split(" ");
+
+        if (scoreParts.length === 4) {
+            // pso
             return {
-                fullTime: this.parseScoreTuple(scoreString.substring(10, 13)),
-                halfTime: this.parseScoreTuple(scoreString.substring(5, 8)),
-                afterExtraTime: this.parseScoreTuple(scoreString.substring(0, 3)),
+                afterPenaltyShootOut: this.parseScoreTuple(scoreParts[0].trim()),
+                halfTime: this.parseScoreTuple(scoreParts[1].trim()),
+                fullTime: this.parseScoreTuple(scoreParts[2].trim()),
+                afterExtraTime: this.parseScoreTuple(scoreParts[3].trim()),
             }
-        } else if (scoreString.endsWith("i.E.") || scoreString.endsWith("i.E")) {
+        } else if (scoreParts.length === 3) {
+            // aet
             return {
-                afterPenaltyShootOut: this.parseScoreTuple(scoreString.substring(0, 3)),
-                fullTime: this.parseScoreTuple(scoreString.substring(10, 13)),
-                halfTime: this.parseScoreTuple(scoreString.substring(5, 8)),
-                afterExtraTime: this.parseScoreTuple(scoreString.substring(15, 18)),
+                afterExtraTime: this.parseScoreTuple(scoreParts[0].trim()),
+                halfTime: this.parseScoreTuple(scoreParts[1].trim()),
+                fullTime: this.parseScoreTuple(scoreParts[2].trim()),
+            }
+        } else if (scoreParts.length === 2) {
+            // regular
+            return {
+                fullTime: this.parseScoreTuple(scoreParts[0].trim()),
+                halfTime: this.parseScoreTuple(scoreParts[1].trim()),
             }
         } else {
-            return {
-                fullTime: this.parseScoreTuple(scoreString.substring(0, 3)),
-                halfTime: this.parseScoreTuple(scoreString.substring(5, 8)),
-            }
+            throw new Error(`Failed to parse score string: ${scoreString}`);
         }
     }
 

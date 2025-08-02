@@ -24,7 +24,7 @@ export type Fixture = {
     status: GameStatus;
     home: Club;
     away: Club;
-    fullTime: ScoreTuple;
+    fullTime?: ScoreTuple;
     halfTime?: ScoreTuple;
     afterExtraTime?: ScoreTuple;
     afterPenaltyShootOut?: ScoreTuple;
@@ -53,7 +53,7 @@ export type ExternalFixture = {
     status: GameStatus;
     home: ExternalClub;
     away: ExternalClub;
-    fullTime: ScoreTuple;
+    fullTime?: ScoreTuple;
     halfTime?: ScoreTuple;
     afterExtraTime?: ScoreTuple;
     afterPenaltyShootOut?: ScoreTuple;

@@ -8,7 +8,7 @@ export interface FixtureDto {
     status: GameStatus;
     home: SmallClubDto;
     away: SmallClubDto;
-    fullTime: ScoreTuple;
+    fullTime?: ScoreTuple;
     halfTime?: ScoreTuple;
     afterExtraTime?: ScoreTuple;
     afterPenaltyShootOut?: ScoreTuple;

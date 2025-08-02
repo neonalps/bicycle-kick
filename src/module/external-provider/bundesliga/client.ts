@@ -84,13 +84,18 @@ export class BundesligaClient implements MatchdayDetailsProvider {
                 const awayClubId = awayClub?.substring(awayClub.lastIndexOf('/') + 1) as string;
 
                 const fullTimeScoreNode = gameNode.childNodes[5].childNodes[1].childNodes[0].childNodes[0];
-                const fullTime = this.parseScoreTuple(fullTimeScoreNode.textContent);
 
-                const halfTimeScoreNode = gameNode.childNodes[5].childNodes[1].childNodes[0].childNodes[1];
-                const halfTime = this.parseScoreTuple(halfTimeScoreNode.textContent.trim().substring(1, 4));
+                let fullTime: ScoreTuple | undefined;
+                let halfTime: ScoreTuple | undefined;
+                if (fullTimeScoreNode.textContent !== "-:-") {
+                    fullTime = this.parseScoreTuple(fullTimeScoreNode.textContent);
+
+                    const halfTimeScoreNode = gameNode.childNodes[5].childNodes[1].childNodes[0].childNodes[1];
+                    halfTime = this.parseScoreTuple(halfTimeScoreNode.textContent.trim().substring(1, 4));
+                }
 
                 result.push({
-                    status: GameStatus.Finished,
+                    status: fullTime ? GameStatus.Finished : GameStatus.Scheduled,
                     kickoff: kickoff,
                     href: [BundesligaClient.BASE_URL, detailsLink].join(''),
                     home: {

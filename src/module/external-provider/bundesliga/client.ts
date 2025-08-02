@@ -87,7 +87,7 @@ export class BundesligaClient implements MatchdayDetailsProvider {
 
                 let fullTime: ScoreTuple | undefined;
                 let halfTime: ScoreTuple | undefined;
-                if (fullTimeScoreNode.textContent !== "-:-") {
+                if (fullTimeScoreNode.textContent !== "-:-" && fullTimeScoreNode.textContent !== "LIVE") {
                     fullTime = this.parseScoreTuple(fullTimeScoreNode.textContent);
 
                     const halfTimeScoreNode = gameNode.childNodes[5].childNodes[1].childNodes[0].childNodes[1];
@@ -95,7 +95,7 @@ export class BundesligaClient implements MatchdayDetailsProvider {
                 }
 
                 result.push({
-                    status: fullTime ? GameStatus.Finished : GameStatus.Scheduled,
+                    status: fullTime ? GameStatus.Finished : fullTimeScoreNode.textContent === "LIVE" ? GameStatus.Ongoing : GameStatus.Scheduled,
                     kickoff: kickoff,
                     href: [BundesligaClient.BASE_URL, detailsLink].join(''),
                     home: {

@@ -4,7 +4,7 @@ import { ExternalProviderClubDaoInterface } from "@src/model/internal/interface/
 import { ExternalProviderPersonDaoInterface } from "@src/model/internal/interface/external-provider-person.interface";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { ExternalProvider } from "@src/model/type/external-provider";
-import { ClubId } from "@src/util/domain-types";
+import { ClubId, PersonId } from "@src/util/domain-types";
 
 export class ExternalProviderMapper {
 
@@ -31,6 +31,15 @@ export class ExternalProviderMapper {
         }
 
         return this.convertToEntity(result[0]);
+    }
+
+    async getExternalProvidersForPerson(personId: PersonId): Promise<ReadonlyArray<ExternalProviderPerson>> {
+        const result = await this.sql<ExternalProviderPersonDaoInterface[]>`select * from external_provider_person where person_id = ${ personId }`;
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
     }
 
     async getMultipleClubIdsByExternalProvider(provider: ExternalProvider, externalIds: ReadonlyArray<string>): Promise<Map<string, ClubId>> {

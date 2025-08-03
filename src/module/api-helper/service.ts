@@ -61,11 +61,14 @@ import { PlayerCompetitionStatsItemDto, PlayerGoalsAgainstClubStatsItemDto, Play
 import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 import { OverallPosition } from "@src/model/type/position-overall";
-import { getEmptySquad } from "../squad/util";
 import { GameManagerDto } from "@src/model/external/dto/game-manager";
 import { Fixture, TablePosition } from "../matchday-details/types";
 import { FixtureDto } from "@src/model/external/dto/fixture";
 import { TablePositionDto } from "@src/model/external/dto/table-position";
+import { ExternalProviderPerson } from "@src/model/internal/external-provider-person";
+import { ExternalProviderLinkDto } from "@src/model/external/dto/external-provider-link";
+import { normalizeForSearch } from "@src/util/search";
+import { ExternalProvider } from "@src/model/type/external-provider";
 
 type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
@@ -589,6 +592,22 @@ export class ApiHelperService {
             defender: groupedByPosition.defender?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
             midfielder: groupedByPosition.midfielder?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
             forward: groupedByPosition.forward?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
+        }
+    }
+
+    convertExternalProviderPersonLinks(person: Person, externalProviderPersons: ReadonlyArray<ExternalProviderPerson>): ExternalProviderLinkDto[] {
+        return externalProviderPersons.map(item => ({
+            provider: item.externalProvider,
+            link: this.getExternalProviderPersonLink(item.externalProvider, person, item.externalId),
+        }))
+    }
+
+    private getExternalProviderPersonLink(provider: ExternalProvider, person: Person, externalPersonId: string): string {
+        switch (provider) {
+            case 'sofascore':
+                return `https://www.sofascore.com/football/player/${normalizeForSearch([person.firstName, person.lastName].join(' ').replaceAll(' ', '-'))}/${externalPersonId}`
+            default:
+                throw new Error(`Unhandled external provider ${provider}`);
         }
     }
 

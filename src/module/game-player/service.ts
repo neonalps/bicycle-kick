@@ -1,6 +1,19 @@
 import { validateNotNull } from "@src/util/validation";
 import { GamePlayerMapper } from "./mapper";
 import { GamePlayer } from "@src/model/internal/game-player";
+import { PaginationParams } from "@src/module/pagination/constants";
+import { DateString, PersonId } from "@src/util/domain-types";
+
+export interface GetPlayerGamesPlayedPaginationParams extends PaginationParams<DateString> {
+    competitionId?: number;
+    seasonId?: number;
+    goalsScored?: number;
+    assists?: number;
+    ownGoals?: number;
+    yellowCard?: boolean;
+    yellowRedCard?: boolean;
+    redCard?: boolean;
+}
 
 export class GamePlayerService {
 
@@ -19,6 +32,16 @@ export class GamePlayerService {
         }
 
         return await this.mapper.getPlayersForGamesMap(gameIds);
+    }
+
+    async getGamesPlayedPaginated(personId: PersonId, params: GetPlayerGamesPlayedPaginationParams): Promise<GamePlayer[]> {
+        validateNotNull(personId, "personId");
+        validateNotNull(params, "params");
+        validateNotNull(params.limit, "params.limit");
+        validateNotNull(params.order, "params.order");
+        validateNotNull(params.lastSeen, "params.lastSeen");
+
+        return await this.mapper.getGamesPlayedPaginated(personId, params);
     }
 
 }

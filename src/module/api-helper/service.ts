@@ -69,6 +69,7 @@ import { ExternalProviderPerson } from "@src/model/internal/external-provider-pe
 import { ExternalProviderLinkDto } from "@src/model/external/dto/external-provider-link";
 import { normalizeForSearch } from "@src/util/search";
 import { ExternalProvider } from "@src/model/type/external-provider";
+import { GamePlayedDto } from "@src/model/external/dto/game-played";
 
 type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
@@ -122,13 +123,19 @@ export class ApiHelperService {
                 opponent: this.convertClubToSmallDto(opponent),
                 competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
                 venue: this.convertVenueToGameVenueDto(venue),
-                round: game.competitionRound,
-                stage: game.competitionStage,
-                attendance: game.attendance,
                 resultTendency: game.resultTendency,
+                round: game.competitionRound,
                 status: game.status,
                 isHomeGame: game.isHomeTeam,
             };
+
+            if (isDefined(game.competitionStage)) {
+                basicGame.stage = game.competitionStage;
+            }
+
+            if (isDefined(game.attendance)) {
+                basicGame.attendance = game.attendance;
+            }
 
             if (isDefined(game.fullTimeGoalsMain) && isDefined(game.fullTimeGoalsOpponent)) {
                 basicGame.fullTime = [game.fullTimeGoalsMain, game.fullTimeGoalsOpponent];
@@ -593,6 +600,71 @@ export class ApiHelperService {
             midfielder: groupedByPosition.midfielder?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
             forward: groupedByPosition.forward?.map(item => this.convertToSquadMemberDto(item, players)) ?? [],
         }
+    }
+
+    async convertGamePlayerToGamePlayedDtos(gamePlayer: GamePlayer[]): Promise<GamePlayedDto[]> {
+        const gameDetails = await this.gameService.getMultipleByIds(gamePlayer.map(item => item.gameId));
+        const basicGames = await this.getOrderedBasicGameDtos(gameDetails);
+
+        return gamePlayer.map(item => {
+            const dto: GamePlayedDto = {
+                game: basicGames.find(game => game.id === item.gameId)!,
+            };
+
+            if (isDefined(item.minutesPlayed)) {
+                dto.minutesPlayed = item.minutesPlayed;
+            }
+
+            if (item.isStarting === true) {
+                dto.starting = item.isStarting;
+            }
+
+            if (item.isCaptain === true) {
+                dto.captain = item.isCaptain;
+            }
+
+            if (item.goalsScored) {
+                dto.goalsScored = item.goalsScored;
+            }
+
+            if (item.assists) {
+                dto.assists = item.assists;
+            }
+
+            if (item.goalsConceded) {
+                dto.goalsConceded = item.goalsConceded;
+            }
+
+            if (item.yellowCard) {
+                dto.yellowCard = item.yellowCard;
+            }
+
+            if (item.yellowRedCard) {
+                dto.yellowRedCard = item.yellowRedCard;
+            }
+
+            if (item.redCard) {
+                dto.redCard = item.redCard;
+            }
+
+            if (item.regulationPenaltiesTaken && item.regulationPenaltiesScored) {
+                dto.regulationPenaltiesTaken = [item.regulationPenaltiesTaken, item.regulationPenaltiesScored];
+            }
+
+            if (item.regulationPenaltiesFaced && item.regulationPenaltiesSaved) {
+                dto.regulationPenaltiesFaced = [item.regulationPenaltiesFaced, item.regulationPenaltiesSaved];
+            }
+
+            if (item.psoPenaltiesTaken && item.psoPenaltiesScored) {
+                dto.psoPenaltiesTaken = [item.psoPenaltiesTaken, item.psoPenaltiesScored];
+            }
+
+            if (item.psoPenaltiesFaced && item.psoPenaltiesSaved) {
+                dto.psoPenaltiesFaced = [item.psoPenaltiesFaced, item.psoPenaltiesSaved];
+            }
+
+            return dto;
+        });
     }
 
     convertExternalProviderPersonLinks(person: Person, externalProviderPersons: ReadonlyArray<ExternalProviderPerson>): ExternalProviderLinkDto[] {

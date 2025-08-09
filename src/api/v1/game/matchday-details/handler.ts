@@ -4,7 +4,6 @@ import { MatchdayDetailsService } from "@src/module/matchday-details/service";
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { isDefined } from "@src/util/common";
 import { GetMatchdayDetailsRequestDto } from "@src/model/external/dto/get-matchday-details-request";
-import { BundesligaClient } from "@src/module/external-provider/bundesliga/client";
 
 export class GetMatchdayDetailsRouteHandler implements RouteHandler<GetMatchdayDetailsRequestDto, MatchdayDetailsResponseDto> {
 

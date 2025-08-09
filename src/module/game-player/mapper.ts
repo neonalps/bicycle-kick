@@ -1,6 +1,10 @@
 import { Sql } from "@src/db";
 import { GamePlayer } from "@src/model/internal/game-player";
 import { GamePlayerDaoInterface } from "@src/model/internal/interface/game-player.interface";
+import { SortOrder } from "@src/module/pagination/constants";
+import { GetPlayerGamesPlayedPaginationParams } from "./service";
+import { isDefined } from "@src/util/common";
+import { PersonId } from "@src/util/domain-types";
 
 export class GamePlayerMapper {
 
@@ -37,10 +41,65 @@ export class GamePlayerMapper {
         return resultMap;
     }
 
+    async getGamesPlayedPaginated(personId: PersonId, params: GetPlayerGamesPlayedPaginationParams): Promise<GamePlayer[]> {
+        const result = await this.sql<GamePlayerDaoInterface[]>`
+            select
+                gp.*
+            from
+                game g left join
+                game_players gp on gp.game_id = g.id
+            where
+                gp.person_id = ${ personId }
+                ${params.goalsScored ? this.sql` and gp.goals_scored = ${params.goalsScored}` : this.sql``}
+                ${isDefined(params.yellowCard) ? this.sql` and gp.yellow_card = ${params.yellowCard}` : this.sql``}
+                ${isDefined(params.yellowRedCard) ? this.sql` and gp.yellow_red_card = ${params.yellowRedCard}` : this.sql``}
+                ${isDefined(params.redCard) ? this.sql` and gp.red_card = ${params.redCard}` : this.sql``}
+            order by
+                g.kickoff ${ this.determineSortOrder(params.order) }
+            limit
+                ${ params.limit }
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
+    }
+
     private convertToEntity(item: GamePlayerDaoInterface): GamePlayer {
         return {
-            ...item,
+            id: item.id,
+            gameId: item.gameId,
+            personId: item.personId,
+            sortOrder: item.sortOrder,
+            forMain: item.forMain,
+            minutesPlayed: item.minutesPlayed,
+            shirt: item.shirt,
+            isStarting: item.isStarting,
+            isCaptain: item.isCaptain,
+            goalsScored: item.goalsScored,
+            assists: item.assists,
+            goalsConceded: item.goalsConceded,
+            ownGoals: item.ownGoals,
+            yellowCard: item.yellowCard,
+            yellowRedCard: item.yellowRedCard,
+            redCard: item.redCard,
+            positionGrid: item.positionGrid,
+            positionKey: item.positionKey,
+            regulationPenaltiesTaken: item.regulationPenaltiesTaken,
+            regulationPenaltiesScored: item.regulationPenaltiesScored,
+            regulationPenaltiesFaced: item.regulationPenaltiesFaced,
+            regulationPenaltiesSaved: item.regulationPenaltiesSaved,
+            psoPenaltiesTaken: item.psoPenaltiesTaken,
+            psoPenaltiesScored: item.psoPenaltiesScored,
+            psoPenaltiesFaced: item.psoPenaltiesFaced,
+            psoPenaltiesSaved: item.psoPenaltiesSaved,
         };
+    }
+
+    private determineSortOrder(order: SortOrder) {
+        return order === SortOrder.Descending ? this.sql`desc` : this.sql`asc`;
     }
 
 }

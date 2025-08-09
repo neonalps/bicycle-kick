@@ -5,6 +5,8 @@ import { SortOrder } from "@src/module/pagination/constants";
 import { GetPlayerGamesPlayedPaginationParams } from "./service";
 import { isDefined } from "@src/util/common";
 import { PersonId } from "@src/util/domain-types";
+import { ValueWithModifier } from "@src/model/internal/stats-query-modifier";
+import { parseValueWithModifier } from "@src/util/stats";
 
 export class GamePlayerMapper {
 
@@ -42,6 +44,8 @@ export class GamePlayerMapper {
     }
 
     async getGamesPlayedPaginated(personId: PersonId, params: GetPlayerGamesPlayedPaginationParams): Promise<GamePlayer[]> {
+        const goalsScoredWithModifier: ValueWithModifier | undefined = params.goalsScored ? parseValueWithModifier(params.goalsScored) : undefined;
+
         const result = await this.sql<GamePlayerDaoInterface[]>`
             select
                 gp.*
@@ -50,7 +54,7 @@ export class GamePlayerMapper {
                 game_players gp on gp.game_id = g.id
             where
                 gp.person_id = ${ personId }
-                ${params.goalsScored ? this.sql` and gp.goals_scored = ${params.goalsScored}` : this.sql``}
+                ${goalsScoredWithModifier ? this.sql` and gp.goals_scored >= ${goalsScoredWithModifier?.value}` : this.sql``}
                 ${isDefined(params.yellowCard) ? this.sql` and gp.yellow_card = ${params.yellowCard}` : this.sql``}
                 ${isDefined(params.yellowRedCard) ? this.sql` and gp.yellow_red_card = ${params.yellowRedCard}` : this.sql``}
                 ${isDefined(params.redCard) ? this.sql` and gp.red_card = ${params.redCard}` : this.sql``}

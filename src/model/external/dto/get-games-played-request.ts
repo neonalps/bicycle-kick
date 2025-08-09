@@ -4,7 +4,7 @@ export interface GetGamesPlayedRequestDto extends PaginationQueryParams {
     personId: number;
     competitionId?: number;
     seasonId?: number;
-    goalsScored?: number;
+    goalsScored?: string;
     assists?: number;
     goalsConceded?: number;
     ownGoals?: number;

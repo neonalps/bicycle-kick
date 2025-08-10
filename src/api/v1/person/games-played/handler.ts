@@ -48,8 +48,16 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
                 lastSeen: lastSeen.toISOString(),
             };
 
+            if (dto.opponentId) {
+                params.opponentId = dto.opponentId;
+            }
+
             if (dto.goalsScored) {
                 params.goalsScored = dto.goalsScored;
+            }
+
+            if (dto.assists) {
+                params.assists = dto.assists;
             }
 
             if (dto.yellowCard) {

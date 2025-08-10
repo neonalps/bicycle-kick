@@ -5,7 +5,7 @@ import { ExternalProviderService } from "@src/module/external-provider/service";
 import { PersonService } from "@src/module/person/service";
 import { StatsService } from "@src/module/stats/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
-import { ensureNotNullish, promiseAllObject } from "@src/util/common";
+import { promiseAllObject } from "@src/util/common";
 
 export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequestDto, GetPersonByIdResponseDto> {
 
@@ -32,7 +32,7 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
 
         if (dto.includeStatistics === true) {
             const performanceStatsDetailsContext = await this.statsService.getPlayerStats([person.id], {});
-            const playerPerformanceStatsDetails = ensureNotNullish(performanceStatsDetailsContext.playerStats?.get(person.id));
+            const playerPerformanceStatsDetails = performanceStatsDetailsContext.playerStats?.get(person.id) || new Map();
             const goalsAgainstClubsStatsDetails = performanceStatsDetailsContext.goalsAgainstClub?.get(person.id) || [];
 
             response.stats = {

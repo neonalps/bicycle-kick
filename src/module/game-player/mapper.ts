@@ -44,6 +44,8 @@ export class GamePlayerMapper {
     }
 
     async getGamesPlayedPaginated(personId: PersonId, params: GetPlayerGamesPlayedPaginationParams): Promise<GamePlayer[]> {
+        const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined
+        const assistsWithModifier: ValueWithModifier | undefined = params.assists ? parseValueWithModifier(params.assists) : undefined;
         const goalsScoredWithModifier: ValueWithModifier | undefined = params.goalsScored ? parseValueWithModifier(params.goalsScored) : undefined;
 
         const result = await this.sql<GamePlayerDaoInterface[]>`
@@ -54,7 +56,9 @@ export class GamePlayerMapper {
                 game_players gp on gp.game_id = g.id
             where
                 gp.person_id = ${ personId }
-                ${goalsScoredWithModifier ? this.sql` and gp.goals_scored >= ${goalsScoredWithModifier?.value}` : this.sql``}
+                ${opponentIds ? this.sql` and g.opponent_id in ${ this.sql(opponentIds) }` : this.sql``}
+                ${assistsWithModifier ? this.sql` and gp.assists >= ${assistsWithModifier.value}` : this.sql``}
+                ${goalsScoredWithModifier ? this.sql` and gp.goals_scored >= ${goalsScoredWithModifier.value}` : this.sql``}
                 ${isDefined(params.yellowCard) ? this.sql` and gp.yellow_card = ${params.yellowCard}` : this.sql``}
                 ${isDefined(params.yellowRedCard) ? this.sql` and gp.yellow_red_card = ${params.yellowRedCard}` : this.sql``}
                 ${isDefined(params.redCard) ? this.sql` and gp.red_card = ${params.redCard}` : this.sql``}

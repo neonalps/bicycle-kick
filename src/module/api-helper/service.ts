@@ -631,6 +631,10 @@ export class ApiHelperService {
                 dto.assists = item.assists;
             }
 
+            if (item.ownGoals) {
+                dto.ownGoals = item.ownGoals;
+            }
+
             if (item.goalsConceded) {
                 dto.goalsConceded = item.goalsConceded;
             }

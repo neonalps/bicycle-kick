@@ -2,10 +2,11 @@ import { PaginationQueryParams } from "@src/module/pagination/constants";
 
 export interface GetGamesPlayedRequestDto extends PaginationQueryParams {
     personId: number;
-    competitionId?: number;
+    competitionId?: string;
+    opponentId?: string;
     seasonId?: number;
     goalsScored?: string;
-    assists?: number;
+    assists?: string;
     goalsConceded?: number;
     ownGoals?: number;
     isCaptain?: boolean;

@@ -5,10 +5,11 @@ import { PaginationParams } from "@src/module/pagination/constants";
 import { DateString, PersonId } from "@src/util/domain-types";
 
 export interface GetPlayerGamesPlayedPaginationParams extends PaginationParams<DateString> {
-    competitionId?: number;
+    competitionId?: string;
+    opponentId?: string;
     seasonId?: number;
     goalsScored?: string;
-    assists?: number;
+    assists?: string;
     ownGoals?: number;
     yellowCard?: boolean;
     yellowRedCard?: boolean;

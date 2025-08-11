@@ -52,6 +52,18 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
                 params.opponentId = dto.opponentId;
             }
 
+            if (dto.competitionId) {
+                params.competitionId = dto.competitionId;
+            }
+
+            if (dto.seasonId) {
+                params.seasonId = dto.seasonId;
+            }
+
+            if (dto.minutesPlayed) {
+                params.minutesPlayed = dto.minutesPlayed;
+            }
+
             if (dto.goalsScored) {
                 params.goalsScored = dto.goalsScored;
             }

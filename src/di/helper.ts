@@ -130,7 +130,7 @@ export class DependencyHelper {
         const gameEventService = new GameEventService(gameEventMapper);
         const gameManagerMapper = new GameManagerMapper(sqlInstance);
         const gameManagerService = new GameManagerService(gameManagerMapper);
-        const gamePlayerMapper = new GamePlayerMapper(sqlInstance);
+        const gamePlayerMapper = new GamePlayerMapper(sqlInstance, competitionService);
         const gamePlayerService = new GamePlayerService(gamePlayerMapper);
         const gameRefereeMapper = new GameRefereeMapper(sqlInstance);
         const gameRefereeService = new GameRefereeService(gameRefereeMapper);

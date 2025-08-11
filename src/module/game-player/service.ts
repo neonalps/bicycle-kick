@@ -7,7 +7,8 @@ import { DateString, PersonId } from "@src/util/domain-types";
 export interface GetPlayerGamesPlayedPaginationParams extends PaginationParams<DateString> {
     competitionId?: string;
     opponentId?: string;
-    seasonId?: number;
+    seasonId?: string;
+    minutesPlayed?: string;
     goalsScored?: string;
     assists?: string;
     ownGoals?: number;

@@ -3,14 +3,15 @@ import { GamePlayer } from "@src/model/internal/game-player";
 import { GamePlayerDaoInterface } from "@src/model/internal/interface/game-player.interface";
 import { SortOrder } from "@src/module/pagination/constants";
 import { GetPlayerGamesPlayedPaginationParams } from "./service";
-import { isDefined } from "@src/util/common";
-import { PersonId } from "@src/util/domain-types";
+import { isDefined, isNotDefined } from "@src/util/common";
+import { CompetitionId, PersonId } from "@src/util/domain-types";
 import { ValueWithModifier } from "@src/model/internal/stats-query-modifier";
 import { parseValueWithModifier } from "@src/util/stats";
+import { CompetitionService } from "@src/module/competition/service";
 
 export class GamePlayerMapper {
 
-    constructor(private readonly sql: Sql) {}
+    constructor(private readonly sql: Sql, private readonly competitionService: CompetitionService) {}
 
     async getPlayersForGame(gameId: number): Promise<GamePlayer[]> {
         const result = await this.sql<GamePlayerDaoInterface[]>`select * from game_players where game_id = ${ gameId }`;
@@ -44,9 +45,14 @@ export class GamePlayerMapper {
     }
 
     async getGamesPlayedPaginated(personId: PersonId, params: GetPlayerGamesPlayedPaginationParams): Promise<GamePlayer[]> {
-        const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined
+        const competitionIds = params.competitionId ? params.competitionId.split(",") : undefined;
+        const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined;
+        const seasonIds = params.seasonId ? params.seasonId.split(",") : undefined;
         const assistsWithModifier: ValueWithModifier | undefined = params.assists ? parseValueWithModifier(params.assists) : undefined;
         const goalsScoredWithModifier: ValueWithModifier | undefined = params.goalsScored ? parseValueWithModifier(params.goalsScored) : undefined;
+        const minutesPlayedWithModifier: ValueWithModifier | undefined = params.minutesPlayed ? parseValueWithModifier(params.minutesPlayed) : undefined;
+
+        const effectiveCompetitionIds = await this.getEffectiveCompetitionIds(competitionIds);
 
         const result = await this.sql<GamePlayerDaoInterface[]>`
             select
@@ -56,7 +62,11 @@ export class GamePlayerMapper {
                 game_players gp on gp.game_id = g.id
             where
                 gp.person_id = ${ personId }
+                and g.kickoff ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
+                ${effectiveCompetitionIds.length > 0 ? this.sql` and g.competition_id in ${ this.sql(effectiveCompetitionIds) }` : this.sql``}
                 ${opponentIds ? this.sql` and g.opponent_id in ${ this.sql(opponentIds) }` : this.sql``}
+                ${seasonIds ? this.sql` and g.season_id in ${ this.sql(seasonIds) }` : this.sql``}
+                ${minutesPlayedWithModifier ? this.sql` and gp.minutes_played >= ${minutesPlayedWithModifier.value}` : this.sql``}
                 ${assistsWithModifier ? this.sql` and gp.assists >= ${assistsWithModifier.value}` : this.sql``}
                 ${goalsScoredWithModifier ? this.sql` and gp.goals_scored >= ${goalsScoredWithModifier.value}` : this.sql``}
                 ${isDefined(params.yellowCard) ? this.sql` and gp.yellow_card = ${params.yellowCard}` : this.sql``}
@@ -108,6 +118,24 @@ export class GamePlayerMapper {
 
     private determineSortOrder(order: SortOrder) {
         return order === SortOrder.Descending ? this.sql`desc` : this.sql`asc`;
+    }
+
+    private async getEffectiveCompetitionIds(competitionIds?: string[]): Promise<ReadonlyArray<CompetitionId>> {
+        if (isNotDefined(competitionIds)) {
+            return [];
+        }
+
+        const result = new Set<CompetitionId>();
+        for (const competitionId of competitionIds as string[]) {
+            // add the competition id itself
+            const realCompetitionId = Number(competitionId);
+            result.add(realCompetitionId);
+
+            const childCompetitions = await this.competitionService.getChildCompetitions(realCompetitionId);
+            childCompetitions.map(item => item.id).forEach(competitionId => result.add(competitionId));
+        }
+
+        return Array.from(result);
     }
 
 }

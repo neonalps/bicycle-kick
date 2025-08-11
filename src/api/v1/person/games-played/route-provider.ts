@@ -32,6 +32,7 @@ export class GetPersonGamesPlayedRouteProvider implements RouteProvider<GetGames
                     competitionId: { type: 'string' },
                     opponentId: { type: 'string' },
                     seasonId: { type: 'string' },
+                    minutesPlayed: { type: 'string' },
                     goalsScored: { type: 'string' },
                     assists: { type: 'string' },
                     yellowCard: { type: 'boolean' },

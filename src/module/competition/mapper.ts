@@ -3,6 +3,8 @@ import { Competition } from "@src/model/internal/competition";
 import { CreateCompetition } from "@src/model/internal/create-competition";
 import { CompetitionDaoInterface } from "@src/model/internal/interface/competition.interface";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
+import { isDefined } from "@src/util/common";
+import { CompetitionId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
 
@@ -64,6 +66,23 @@ export class CompetitionMapper {
         const results = await Promise.all(parts.map(part => this.findByNormalizedSearchValue(part)));
         const matchedIds = results.flat().map(item => item.id);    
         return await this.getMultipleByIds(groupByOccurrenceAndGetLargest(matchedIds));
+    }
+
+    async getChildCompetitions(competitionId: CompetitionId, combineStatisticsWithParent?: boolean): Promise<Competition[]> {
+        const result = await this.sql<CompetitionDaoInterface[]>`
+            select
+                * 
+            from
+                competition
+             where
+                parent_id = ${competitionId} 
+                ${ isDefined(combineStatisticsWithParent) ? this.sql` and combine_statistics_with_parent = ${ combineStatisticsWithParent }` : this.sql`` }`;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
     }
 
     private async findByNormalizedSearchValue(search: string): Promise<IdInterface[]> {

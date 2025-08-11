@@ -40,4 +40,10 @@ export class CompetitionService {
         return await this.mapper.getAllInMap();
     }
 
+    async getChildCompetitions(competitionId: CompetitionId, combineStatisticsWithParent?: boolean): Promise<Competition[]> {
+        validateNotNull(competitionId, "competitionId");
+
+        return await this.mapper.getChildCompetitions(competitionId, combineStatisticsWithParent);
+    }
+
 }

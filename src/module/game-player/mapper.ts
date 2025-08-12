@@ -45,6 +45,7 @@ export class GamePlayerMapper {
     }
 
     async getGamesPlayedPaginated(personId: PersonId, params: GetPlayerGamesPlayedPaginationParams): Promise<GamePlayer[]> {
+        const forMain = isDefined(params.forMain) ? params.forMain : true;
         const competitionIds = params.competitionId ? params.competitionId.split(",") : undefined;
         const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined;
         const seasonIds = params.seasonId ? params.seasonId.split(",") : undefined;
@@ -63,6 +64,7 @@ export class GamePlayerMapper {
             where
                 gp.person_id = ${ personId }
                 and g.kickoff ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
+                and gp.for_main = ${forMain}
                 ${effectiveCompetitionIds.length > 0 ? this.sql` and g.competition_id in ${ this.sql(effectiveCompetitionIds) }` : this.sql``}
                 ${opponentIds ? this.sql` and g.opponent_id in ${ this.sql(opponentIds) }` : this.sql``}
                 ${seasonIds ? this.sql` and g.season_id in ${ this.sql(seasonIds) }` : this.sql``}

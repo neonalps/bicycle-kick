@@ -105,4 +105,10 @@ export class GameService {
         return await this.mapper.getLastFinishedGames(take, queryOptions);
     }
 
+    async search(parts: string[]): Promise<Game[]> {
+        validateNotNull(parts, "parts");
+
+        return await this.mapper.search(parts);
+    }
+
 }

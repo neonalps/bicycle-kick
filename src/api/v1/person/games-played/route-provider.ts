@@ -29,6 +29,7 @@ export class GetPersonGamesPlayedRouteProvider implements RouteProvider<GetGames
                 required: [],
                 properties: {
                     playerId: { type: 'string' },
+                    forMain: { type: 'boolean' },
                     competitionId: { type: 'string' },
                     opponentId: { type: 'string' },
                     seasonId: { type: 'string' },

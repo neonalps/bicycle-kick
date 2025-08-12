@@ -15,6 +15,7 @@ export interface GetPlayerGamesPlayedPaginationParams extends PaginationParams<D
     yellowCard?: boolean;
     yellowRedCard?: boolean;
     redCard?: boolean;
+    forMain?: boolean;
 }
 
 export class GamePlayerService {

@@ -13,6 +13,8 @@ import { Season } from "@src/model/internal/season";
 import { CompetitionService } from "@src/module/competition/service";
 import { Competition } from "@src/model/internal/competition";
 import { ApiConfig } from "@src/api/v1/config";
+import { GameService } from "@src/module/game/service";
+import { Game } from "@src/model/internal/game";
 
 export class SearchService {
 
@@ -29,6 +31,7 @@ export class SearchService {
         private readonly apiConfig: ApiConfig,
         private readonly clubService: ClubService,
         private readonly competitionService: CompetitionService,
+        private readonly gameService: GameService,
         private readonly personService: PersonService,
         private readonly seasonService: SeasonService,
         private readonly venueService: VenueService,
@@ -48,6 +51,10 @@ export class SearchService {
 
         if (entities.includes(SearchEntity.Competition)) {
             searchProviders.push(this.searchForCompetition(normalizedParts));
+        }
+
+        if (entities.includes(SearchEntity.Game)) {
+            searchProviders.push(this.searchForGame(normalizedParts));
         }
 
         if (entities.includes(SearchEntity.Person)) {
@@ -74,6 +81,11 @@ export class SearchService {
     private async searchForCompetition(parts: string[]): Promise<SearchResultItemDto[]> {
         const competitionResults = await this.competitionService.search(parts);
         return competitionResults.map(item => this.convertCompetition(item));
+    }
+
+    private async searchForGame(parts: string[]): Promise<SearchResultItemDto[]> {
+        const gameResults = await this.gameService.search(parts);
+        return gameResults.map(item => this.convertGame(item));
     }
 
     private async searchForPerson(parts: string[]): Promise<SearchResultItemDto[]> {
@@ -114,6 +126,16 @@ export class SearchService {
 
         if (isDefined(item.iconSmall)) {
             result.icon = this.getMediaUrl(item.iconSmall);
+        }
+
+        return result;
+    }
+
+    private convertGame(item: Game): SearchResultItemDto {
+        const result: SearchResultItemDto = {
+            type: SearchEntity.Game,
+            entityId: item.id,
+            title: `Game`,
         }
 
         return result;

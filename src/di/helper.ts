@@ -169,7 +169,7 @@ export class DependencyHelper {
             venueService
         );
 
-        const searchService = new SearchService(apiConfig, clubService, competitionService, personService, seasonService, venueService);
+        const searchService = new SearchService(apiConfig, clubService, competitionService, gameService, personService, seasonService, venueService);
 
         const paginationService = new PaginationService(base64Utils);
         const permissionService = new PermissionService();

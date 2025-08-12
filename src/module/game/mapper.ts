@@ -5,7 +5,7 @@ import { GameStatus } from "@src/model/type/game-status";
 import { Tendency } from "@src/model/type/tendency";
 import { SortOrder } from "@src/module/pagination/constants";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
-import { getOrThrow, isDefined, requireSingleArrayElement } from "@src/util/common";
+import { getOrThrow, isDefined, requireSingleArrayElement, uniqueArrayElements } from "@src/util/common";
 import { CreateGameDto } from "@src/model/internal/create-game";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { ClubInputDto } from "@src/model/external/dto/club-input";
@@ -40,6 +40,8 @@ import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/creat
 import { PsoResult } from "@src/model/type/pso-result";
 import { normalizeForSearch } from "@src/util/search";
 import { ClubId, CompetitionId, DateString, GameId, SeasonId } from "@src/util/domain-types";
+import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
+import { ScoreTuple } from "@src/model/internal/score";
 
 export class GameMapper {
 
@@ -800,6 +802,43 @@ export class GameMapper {
         return result.map(item => this.convertToEntity(item));
     }
 
+    async search(parts: string[]): Promise<Game[]> {
+        const clubLikeParts: string[] = [];
+        const resultLikeParts: string[] = [];
+        const yearLikeParts: string[] = [];
+
+        for (const part of parts) {
+            if (part.length >= 2 && part.length <= 4 && !isNaN(Number(part))) {
+                yearLikeParts.push(part);
+            } else if (part.split(":").length === 2) {
+                resultLikeParts.push(part);
+            } else {
+                clubLikeParts.push(part);
+            }
+        }
+
+        const firstStageResults = await Promise.all([
+            ...clubLikeParts.map(item => this.searchForGamesWithOpponent(item)),
+            ...yearLikeParts.map(item => this.searchForKickoffYear(item)),
+        ]);
+        const firstStageGameIds = firstStageResults.flat().map(item => item.id);
+        
+        const secondStageResults = await Promise.all(
+            resultLikeParts
+                .map(item => this.safelyParseScoreTuple(item))
+                .filter(item => item !== null)
+                .map(item => this.searchForScore(item, firstStageGameIds))
+        );
+        const secondStageGameIds = secondStageResults.flat().map(item => item.id);
+
+        const matchedIds = [
+            ...firstStageGameIds,
+            ...secondStageGameIds,
+        ];
+        
+        return await this.getMultipleByIds(groupByOccurrenceAndGetLargest(matchedIds));
+    }
+
     private andWhereHome(isHome: boolean) {
         return this.sql`and g.is_home_team = ${ isHome }`;
     }
@@ -826,6 +865,53 @@ export class GameMapper {
 
     private async getMultipleByIdsResult(ids: number[]): Promise<GameDaoInterface[]> {
         return await this.sql<GameDaoInterface[]>`select * from game where id in ${ this.sql(ids) }`;
+    }
+
+    private safelyParseScoreTuple(input: string): ScoreTuple | null {
+        const parts = input.split(":");
+        if (parts.length !== 2 || !parts.every(part => !isNaN(Number(part)))) {
+            return null;
+        }
+
+        // we don't distinguish between home and away here because we try both combinations anyway
+        return [Number(parts[0]), Number(parts[1])];
+    }
+
+    private async searchForGamesWithOpponent(normalizedClubName: string): Promise<IdInterface[]> {
+        const wildCard = `%${normalizedClubName}%`;
+        return await this.sql<IdInterface[]>`
+            select
+                g.id
+            from
+                game g left join
+                club c on c.id = g.opponent_id
+            where
+                c.normalized_search like ${ wildCard }
+        `;
+    }
+
+    private async searchForScore(score: ScoreTuple, eligibleGameIds?: GameId[]): Promise<IdInterface[]> {
+        return await this.sql<IdInterface[]>`
+            select
+                id
+            from
+                game
+            where
+                ${isDefined(eligibleGameIds) && eligibleGameIds.length > 0 ? this.sql`id in ${ this.sql(eligibleGameIds) } and ` : this.sql``}
+                full_time_goals_main = ${ score[0] } and full_time_goals_opponent = ${ score[1] } or
+                full_time_goals_main = ${ score[1] } and full_time_goals_opponent = ${ score[0] }
+        `;
+    }
+
+    private async searchForKickoffYear(year: string): Promise<IdInterface[]> {
+        return await this.sql<IdInterface[]>`
+            select
+                id
+            from
+                game
+            where
+                date_part('year', kickoff) = ${ year }
+        `;
     }
 
     private convertToEntity(item: GameDaoInterface): Game {

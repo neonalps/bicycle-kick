@@ -507,7 +507,7 @@ export class ApiHelperService {
                 const person = getOrThrow(personMap, gameReferee.personId, "referee person not found in map");
                 refereeDtos.push({
                     id: gameReferee.id,
-                    person: this.convertPersonToSmallDto(person),
+                    person: this.convertPersonToBasicDto(person),
                     role: gameReferee.role,
                 })
             }

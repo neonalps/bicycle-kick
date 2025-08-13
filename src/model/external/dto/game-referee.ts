@@ -1,8 +1,8 @@
+import { BasicPersonDto } from "./basic-person";
 import { RefereeRole } from "./referee-role";
-import { SmallPersonDto } from "./small-person";
 
 export interface GameRefereeDto {
     id: number;
-    person: SmallPersonDto;
+    person: BasicPersonDto;
     role: RefereeRole;
 }

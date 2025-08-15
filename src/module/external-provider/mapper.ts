@@ -1,4 +1,5 @@
 import { Sql } from "@src/db";
+import { ExternalProviderClub } from "@src/model/internal/external-provider-club";
 import { ExternalProviderPerson } from "@src/model/internal/external-provider-person";
 import { ExternalProviderClubDaoInterface } from "@src/model/internal/interface/external-provider-club.interface copy";
 import { ExternalProviderPersonDaoInterface } from "@src/model/internal/interface/external-provider-person.interface";
@@ -30,7 +31,7 @@ export class ExternalProviderMapper {
             return null;
         }
 
-        return this.convertToEntity(result[0]);
+        return this.convertPersonToEntity(result[0]);
     }
 
     async getExternalProvidersForPerson(personId: PersonId): Promise<ReadonlyArray<ExternalProviderPerson>> {
@@ -39,7 +40,16 @@ export class ExternalProviderMapper {
             return [];
         }
 
-        return result.map(item => this.convertToEntity(item));
+        return result.map(item => this.convertPersonToEntity(item));
+    }
+
+    async getExternalProvidersForClub(clubId: ClubId): Promise<ReadonlyArray<ExternalProviderClub>> {
+        const result = await this.sql<ExternalProviderClubDaoInterface[]>`select * from external_provider_club where club_id = ${ clubId }`;
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertClubToEntity(item));
     }
 
     async getMultipleClubIdsByExternalProvider(provider: ExternalProvider, externalIds: ReadonlyArray<string>): Promise<Map<string, ClubId>> {
@@ -60,15 +70,24 @@ export class ExternalProviderMapper {
             return null;
         }
 
-        return this.convertToEntity(result[0]);
+        return this.convertPersonToEntity(result[0]);
     }
 
-    private convertToEntity(item: ExternalProviderPersonDaoInterface): ExternalProviderPerson {
+    private convertPersonToEntity(item: ExternalProviderPersonDaoInterface): ExternalProviderPerson {
         return {
             id: item.id,
             externalProvider: item.externalProvider as ExternalProvider,
             externalId: item.externalId,
             personId: item.personId,
+        }
+    }
+
+    private convertClubToEntity(item: ExternalProviderClubDaoInterface): ExternalProviderClub {
+        return {
+            id: item.id,
+            externalProvider: item.externalProvider as ExternalProvider,
+            externalId: item.externalId,
+            clubId: item.clubId,
         }
     }
 

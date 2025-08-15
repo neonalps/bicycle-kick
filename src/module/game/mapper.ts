@@ -762,6 +762,25 @@ export class GameMapper {
         });
     }
 
+    async getAllOrderedGamesAgainstOpponent(opponentId: ClubId, sortOrder = SortOrder.Descending): Promise<Game[]> {
+        const result = await this.sql<GameDaoInterface[]>`
+            select
+                g.*
+            from
+                game g left join
+                competition c on g.competition_id = c.id
+            where
+                g.opponent_id = ${ opponentId }
+            order by
+                g.kickoff ${ this.determineSortOrder(sortOrder) }`;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
+    }
+
     async getLastFinishedGames(
         take: number,
         queryOptions: {
@@ -1152,6 +1171,10 @@ export class GameMapper {
         }
 
         return result;
+    }
+
+    private determineSortOrder(order: SortOrder) {
+        return order === SortOrder.Descending ? this.sql`desc` : this.sql`asc`;
     }
 
 }

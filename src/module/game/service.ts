@@ -4,7 +4,8 @@ import { validateNotNull } from "@src/util/validation";
 import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
 import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
 import { QueryOptions } from "@src/model/internal/query-options";
-import { GameId } from "@src/util/domain-types";
+import { ClubId, GameId } from "@src/util/domain-types";
+import { SortOrder } from "../pagination/constants";
 
 export class GameService {
 
@@ -103,6 +104,12 @@ export class GameService {
         validateNotNull(take, "take");
 
         return await this.mapper.getLastFinishedGames(take, queryOptions);
+    }
+
+    async getAllOrderedGamesAgainstOpponent(opponentId: ClubId, sortOrder = SortOrder.Descending): Promise<Game[]> {
+        validateNotNull(opponentId, "opponentId");
+
+        return await this.mapper.getAllOrderedGamesAgainstOpponent(opponentId, sortOrder);
     }
 
     async search(parts: string[]): Promise<Game[]> {

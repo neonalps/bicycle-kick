@@ -17,7 +17,7 @@ export interface BasicGameDto {
     stage?: string;
     isHomeGame: boolean;
     status: GameStatus;
-    resultTendency: Tendency;
+    resultTendency?: Tendency;
     fullTime?: ScoreTuple;
     halfTime?: ScoreTuple;
     afterExtraTime?: ScoreTuple;

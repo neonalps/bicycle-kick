@@ -5,6 +5,7 @@ import { ExternalProviderPerson } from "@src/model/internal/external-provider-pe
 import { ExternalPersonDto } from "@src/model/external/dto/external-person";
 import { PersonService } from "@src/module/person/service";
 import { ClubId, PersonId } from "@src/util/domain-types";
+import { ExternalProviderClub } from "@src/model/internal/external-provider-club";
 
 export class ExternalProviderService {
 
@@ -43,6 +44,12 @@ export class ExternalProviderService {
         validateNotNull(personId, "personId");
 
         return await this.mapper.getExternalProvidersForPerson(personId);
+    }
+
+    async getExternalProvidersForClub(clubId: ClubId): Promise<ReadonlyArray<ExternalProviderClub>> {
+        validateNotNull(clubId, "clubId");
+
+        return await this.mapper.getExternalProvidersForClub(clubId);
     }
 
     private async createExternalProviderPerson(provider: ExternalProvider, externalId: string, personId: number): Promise<ExternalProviderPerson> {

@@ -70,6 +70,7 @@ import { ExternalProviderLinkDto } from "@src/model/external/dto/external-provid
 import { normalizeForSearch } from "@src/util/search";
 import { ExternalProvider } from "@src/model/type/external-provider";
 import { GamePlayedDto } from "@src/model/external/dto/game-played";
+import { ExternalProviderClub } from "@src/model/internal/external-provider-club";
 
 type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
@@ -123,11 +124,14 @@ export class ApiHelperService {
                 opponent: this.convertClubToSmallDto(opponent),
                 competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
                 venue: this.convertVenueToGameVenueDto(venue),
-                resultTendency: game.resultTendency,
                 round: game.competitionRound,
                 status: game.status,
                 isHomeGame: game.isHomeTeam,
             };
+
+            if (isDefined(game.resultTendency)) {
+                basicGame.resultTendency = game.resultTendency;
+            }
 
             if (isDefined(game.competitionStage)) {
                 basicGame.stage = game.competitionStage;
@@ -520,7 +524,6 @@ export class ApiHelperService {
                 competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
                 venue: this.convertVenueToGameVenueDto(venue),
                 round: game.competitionRound,
-                resultTendency: game.resultTendency,
                 status: game.status,
                 fullTime: [game.fullTimeGoalsMain, game.fullTimeGoalsOpponent],
                 halfTime: [game.halfTimeGoalsMain, game.halfTimeGoalsOpponent],
@@ -531,6 +534,10 @@ export class ApiHelperService {
                     events: gameEventDtos,
                     referees: refereeDtos,
                 },
+            }
+
+            if (isDefined(game.resultTendency)) {
+                detailedGameDto.resultTendency = game.resultTendency;
             }
 
             if (isDefined(game.competitionStage)) {
@@ -682,6 +689,26 @@ export class ApiHelperService {
         switch (provider) {
             case 'sofascore':
                 return `https://www.sofascore.com/football/player/${normalizeForSearch([person.firstName, person.lastName].join(' ').replaceAll(' ', '-'))}/${externalPersonId}`
+            default:
+                throw new Error(`Unhandled external provider ${provider}`);
+        }
+    }
+
+    convertExternalProviderClubLinks(club: Club, externalProviderClubs: ReadonlyArray<ExternalProviderClub>): ExternalProviderLinkDto[] {
+        return externalProviderClubs.map(item => ({
+            provider: item.externalProvider,
+            link: this.getExternalProviderClubLink(item.externalProvider, club, item.externalId),
+        }))
+    }
+
+    private getExternalProviderClubLink(provider: ExternalProvider, club: Club, externalClubId: string): string {
+        switch (provider) {
+            case 'sofascore':
+                return `https://www.sofascore.com/team/football/${normalizeForSearch([club.name].join(' ').replaceAll(' ', '-'))}/${externalClubId}`;
+            case 'weltfussball':
+                return `https://www.weltfussball.at/teams/${normalizeForSearch([externalClubId].join(' ').replaceAll(' ', '-'))}/`;
+            case 'bundesliga':
+                return `https://www.bundesliga.at/de/team/${normalizeForSearch([club.name].join(' ').replaceAll(' ', '-'))}/${externalClubId}`;
             default:
                 throw new Error(`Unhandled external provider ${provider}`);
         }

@@ -1,9 +1,9 @@
 import { ExternalProvider } from "@src/model/type/external-provider";
-import { PersonId } from "@src/util/domain-types";
+import { ClubId } from "@src/util/domain-types";
 
-export interface ExternalProviderPerson {
+export interface ExternalProviderClub {
     id: number;
     externalProvider: ExternalProvider;
     externalId: string;
-    personId: PersonId;
+    clubId: ClubId;
 }

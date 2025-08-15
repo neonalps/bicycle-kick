@@ -2,9 +2,9 @@ import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types
 import { requireNonNull } from "@src/util/common";
 import { GetClubByIdRouteHandler } from "./handler";
 import { GetClubByIdRequestDto } from "@src/model/external/dto/get-club-by-id-request";
-import { BasicClubDto } from "@src/model/external/dto/basic-club";
+import { GetClubByIdResponseDto } from "@src/model/external/dto/get-club-by-id-response";
 
-export class GetClubByIdRouteProvider implements RouteProvider<GetClubByIdRequestDto, BasicClubDto> {
+export class GetClubByIdRouteProvider implements RouteProvider<GetClubByIdRequestDto, GetClubByIdResponseDto> {
 
     private readonly handler: GetClubByIdRouteHandler;
 
@@ -12,7 +12,7 @@ export class GetClubByIdRouteProvider implements RouteProvider<GetClubByIdReques
         this.handler = requireNonNull(handler);
     }
 
-    provide(): RouteDefinition<GetClubByIdRequestDto, BasicClubDto> {
+    provide(): RouteDefinition<GetClubByIdRequestDto, GetClubByIdResponseDto> {
         const schema: RequestSchema = {
             params: {
                 type: 'object',
@@ -26,6 +26,7 @@ export class GetClubByIdRouteProvider implements RouteProvider<GetClubByIdReques
                 type: 'object',
                 required: [],
                 properties: {
+                    includeAllGames: { type: 'boolean' },
                     includeLastGames: { type: 'boolean' },
                 },
                 additionalProperties: false,

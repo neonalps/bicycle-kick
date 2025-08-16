@@ -12,18 +12,20 @@ import { GetPersonGamesPlayedRouteHandler } from "./games-played/handler";
 import { PaginationService } from "@src/module/pagination/service";
 import { PermissionService } from "@src/module/permission/service";
 import { GetPersonGamesPlayedRouteProvider } from "./games-played/route-provider";
+import { GameService } from "@src/module/game/service";
 
 export function getPersonRouteProviders(): RouteProvider<any, any>[] {
 
     const apiHelperService = dependencyManager.get<ApiHelperService>(Dependencies.ApiHelperService);
     const externalProviderService = dependencyManager.get<ExternalProviderService>(Dependencies.ExternalProviderService);
+    const gameService = dependencyManager.get<GameService>(Dependencies.GameService);
     const gamePlayerService = dependencyManager.get<GamePlayerService>(Dependencies.GamePlayerService);
     const paginationService = dependencyManager.get<PaginationService>(Dependencies.PaginationService);
     const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
     const personService = dependencyManager.get<PersonService>(Dependencies.PersonService);
     const statsService = dependencyManager.get<StatsService>(Dependencies.StatsService);
 
-    const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(apiHelperService, externalProviderService, personService, statsService);
+    const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(apiHelperService, externalProviderService, gameService, personService, statsService);
     const getPersonGamesPlayedRouteHandler = new GetPersonGamesPlayedRouteHandler(apiHelperService, gamePlayerService, paginationService, permissionService);
 
     return [

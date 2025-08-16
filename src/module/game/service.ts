@@ -4,8 +4,9 @@ import { validateNotNull } from "@src/util/validation";
 import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
 import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
 import { QueryOptions } from "@src/model/internal/query-options";
-import { ClubId, GameId } from "@src/util/domain-types";
+import { ClubId, GameId, PersonId } from "@src/util/domain-types";
 import { SortOrder } from "../pagination/constants";
+import { RefereeRole } from "@src/model/external/dto/referee-role";
 
 export class GameService {
 
@@ -116,6 +117,12 @@ export class GameService {
         validateNotNull(parts, "parts");
 
         return await this.mapper.search(parts);
+    }
+
+    async getOrderedGamesForReferee(personId: PersonId, role = RefereeRole.Referee, sortOrder = SortOrder.Descending): Promise<Array<Game>> {
+        validateNotNull(personId, "personId");
+
+        return await this.mapper.getOrderedGamesForReferee(personId, role, sortOrder);
     }
 
 }

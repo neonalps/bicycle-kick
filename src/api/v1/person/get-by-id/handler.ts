@@ -2,6 +2,7 @@ import { GetPersonByIdRequestDto } from "@src/model/external/dto/get-person-by-i
 import { GetPersonByIdResponseDto } from "@src/model/external/dto/get-person-by-id-response";
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { ExternalProviderService } from "@src/module/external-provider/service";
+import { GameService } from "@src/module/game/service";
 import { PersonService } from "@src/module/person/service";
 import { StatsService } from "@src/module/stats/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
@@ -12,6 +13,7 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
     constructor(
         private readonly apiHelper: ApiHelperService,
         private readonly externalProviderService: ExternalProviderService,
+        private readonly gameService: GameService,
         private readonly personService: PersonService,
         private readonly statsService: StatsService,
     ) {}
@@ -31,13 +33,21 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
         }
 
         if (dto.includeStatistics === true) {
-            const performanceStatsDetailsContext = await this.statsService.getPlayerStats([person.id], {});
+            const { performanceStatsDetailsContext, refereeGames } = await promiseAllObject({
+                performanceStatsDetailsContext: this.statsService.getPlayerStats([person.id], {}),
+                refereeGames: this.gameService.getOrderedGamesForReferee(person.id),
+            });
+            
             const playerPerformanceStatsDetails = performanceStatsDetailsContext.playerStats?.get(person.id) || new Map();
             const goalsAgainstClubsStatsDetails = performanceStatsDetailsContext.goalsAgainstClub?.get(person.id) || [];
 
             response.stats = {
                 performance: this.apiHelper.convertPerformanceStatsDetailsMapToDto(playerPerformanceStatsDetails, performanceStatsDetailsContext.seasons!, performanceStatsDetailsContext.competitions!),
                 goalsAgainstClubs: this.apiHelper.convertGoalsAgainstClubsStatsItems(goalsAgainstClubsStatsDetails, performanceStatsDetailsContext.clubs!),
+            }
+
+            if (refereeGames.length > 0) {
+                response.stats.refereeGames = await this.apiHelper.getOrderedBasicGameDtos(refereeGames);
             }
         }
         

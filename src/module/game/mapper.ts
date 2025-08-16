@@ -39,9 +39,10 @@ import { CreateGameEventDaoInterface } from "@src/model/internal/interface/game-
 import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
 import { PsoResult } from "@src/model/type/pso-result";
 import { normalizeForSearch } from "@src/util/search";
-import { ClubId, CompetitionId, DateString, GameId, SeasonId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, DateString, GameId, PersonId, SeasonId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import { ScoreTuple } from "@src/model/internal/score";
+import { RefereeRole } from "@src/model/external/dto/referee-role";
 
 export class GameMapper {
 
@@ -762,7 +763,7 @@ export class GameMapper {
         });
     }
 
-    async getAllOrderedGamesAgainstOpponent(opponentId: ClubId, sortOrder = SortOrder.Descending): Promise<Game[]> {
+    async getAllOrderedGamesAgainstOpponent(opponentId: ClubId, sortOrder: SortOrder): Promise<Game[]> {
         const result = await this.sql<GameDaoInterface[]>`
             select
                 g.*
@@ -771,6 +772,26 @@ export class GameMapper {
                 competition c on g.competition_id = c.id
             where
                 g.opponent_id = ${ opponentId }
+            order by
+                g.kickoff ${ this.determineSortOrder(sortOrder) }`;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
+    }
+
+    async getOrderedGamesForReferee(personId: PersonId, role: RefereeRole, sortOrder: SortOrder): Promise<Array<Game>> {
+        const result = await this.sql<GameDaoInterface[]>`
+            select
+                g.*
+            from
+                game_referees gr left join
+                game g on g.id = gr.game_id
+            where
+                gr.person_id = ${ personId } and
+                gr.role = ${ role }
             order by
                 g.kickoff ${ this.determineSortOrder(sortOrder) }`;
 

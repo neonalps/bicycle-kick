@@ -28,9 +28,7 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
             person: this.apiHelper.convertPersonToBasicDto(person),
         }
 
-        if (externalProviderPersons.length > 0) {
-            response.externalLinks = this.apiHelper.convertExternalProviderPersonLinks(person, externalProviderPersons);
-        }
+        let isReferee = false;
 
         if (dto.includeStatistics === true) {
             const { performanceStatsDetailsContext, refereeGames } = await promiseAllObject({
@@ -47,8 +45,13 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
             }
 
             if (refereeGames.length > 0) {
+                isReferee = true;
                 response.stats.refereeGames = await this.apiHelper.getOrderedBasicGameDtos(refereeGames);
             }
+        }
+
+        if (externalProviderPersons.length > 0) {
+            response.externalLinks = this.apiHelper.convertExternalProviderPersonLinks(person, externalProviderPersons, isReferee);
         }
         
         return response;

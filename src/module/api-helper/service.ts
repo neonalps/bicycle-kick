@@ -678,17 +678,20 @@ export class ApiHelperService {
         });
     }
 
-    convertExternalProviderPersonLinks(person: Person, externalProviderPersons: ReadonlyArray<ExternalProviderPerson>): ExternalProviderLinkDto[] {
+    convertExternalProviderPersonLinks(person: Person, externalProviderPersons: ReadonlyArray<ExternalProviderPerson>, isReferee = false): ExternalProviderLinkDto[] {
         return externalProviderPersons.map(item => ({
             provider: item.externalProvider,
-            link: this.getExternalProviderPersonLink(item.externalProvider, person, item.externalId),
+            link: this.getExternalProviderPersonLink(item.externalProvider, person, item.externalId, isReferee),
         }))
     }
 
-    private getExternalProviderPersonLink(provider: ExternalProvider, person: Person, externalPersonId: string): string {
+    private getExternalProviderPersonLink(provider: ExternalProvider, person: Person, externalPersonId: string, isReferee: boolean): string {
         switch (provider) {
             case 'sofascore':
-                return `https://www.sofascore.com/football/player/${normalizeForSearch([person.firstName, person.lastName].join(' ').replaceAll(' ', '-'))}/${externalPersonId}`
+                const nameWithId = `${normalizeForSearch([person.firstName, person.lastName].join(' ').replaceAll(' ', '-'))}/${externalPersonId}`;
+                return isReferee ?
+                 `https://www.sofascore.com/referee/${nameWithId}` :
+                 `https://www.sofascore.com/football/player/${nameWithId}`
             default:
                 throw new Error(`Unhandled external provider ${provider}`);
         }

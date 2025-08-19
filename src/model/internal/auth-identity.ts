@@ -1,7 +1,8 @@
 export interface AuthIdentity {
-    displayName: string | null;
-    email: string;
     publicId: string;
+    email: string;
     accessToken: string;
     refreshToken: string;
+    firstName?: string;
+    lastName?: string;
 }

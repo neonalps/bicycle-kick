@@ -2,7 +2,6 @@ import { Account } from "@src/model/internal/account";
 import { AccountMapper } from "./mapper";
 import { CreateAccountDto } from "@src/model/internal/create-account";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
-import { CryptoService } from "../crypto/service";
 import { UuidSource } from "@src/util/uuid";
 import { AccountRole } from "@src/model/type/account-role";
 
@@ -10,15 +9,13 @@ export class AccountService {
 
     constructor(
         private readonly mapper: AccountMapper, 
-        private readonly cryptoService: CryptoService, 
         private readonly uuidSource: UuidSource
     ) {}
 
-    async getOrCreate(email: string, displayName?: string): Promise<Account> {
+    async getOrCreate(email: string, firstName?: string, lastName?: string): Promise<Account> {
         validateNotBlank(email, "email");
 
-        const hashedEmail = this.cryptoService.hash(email);
-        const existingAccount = await this.mapper.getByHashedEmail(hashedEmail);
+        const existingAccount = await this.mapper.getByEmail(email);
         if (existingAccount !== null) {
             if (existingAccount.enabled === false) {
                 throw new Error(`Account is disabled`);
@@ -27,16 +24,15 @@ export class AccountService {
             return existingAccount;
         }
 
-        return await this.create({ publicId: this.uuidSource.getRandom(), hashedEmail, displayName: displayName ?? "" })
+        return await this.create({ publicId: this.uuidSource.getRandom(), email, firstName, lastName });
     }
 
     async create(dto: CreateAccountDto): Promise<Account> {
         validateNotNull(dto, "dto");
         validateNotBlank(dto.publicId, "dto.publicId");
-        validateNotBlank(dto.displayName, "dto.displayName");
-        validateNotBlank(dto.hashedEmail, "dto.hashedEmail");
+        validateNotBlank(dto.email, "dto.email");
 
-        return await this.mapper.create(dto.publicId, dto.hashedEmail, dto.displayName, [AccountRole.Substitute]);
+        return await this.mapper.create(dto.publicId, dto.email, dto.firstName, dto.lastName, true, [AccountRole.Substitute]);
     }
 
     async getByPublicId(publicId: string): Promise<Account | null> {

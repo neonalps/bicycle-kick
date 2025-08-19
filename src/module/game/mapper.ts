@@ -43,6 +43,7 @@ import { ClubId, CompetitionId, DateString, GameId, PersonId, SeasonId } from "@
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import { ScoreTuple } from "@src/model/internal/score";
 import { RefereeRole } from "@src/model/external/dto/referee-role";
+import { ExternalProvider } from "@src/model/type/external-provider";
 
 export class GameMapper {
 
@@ -1004,7 +1005,10 @@ export class GameMapper {
             homeVenueId,
         }, tx);
 
-        await tx`insert into external_provider_club (external_provider, external_id, club_id) values (${externalClub.provider}, ${externalClub.id}, ${createdClubId});`;
+        // if it's a user-provided club we don't have to store a reference
+        if (externalClub.provider !== ExternalProvider.User) {
+            await tx`insert into external_provider_club (external_provider, external_id, club_id) values (${externalClub.provider}, ${externalClub.id}, ${createdClubId});`;
+        }
 
         return createdClubId;
     }
@@ -1049,7 +1053,10 @@ export class GameMapper {
             normalizedSearch: normalizeForSearch([externalPerson.firstName, externalPerson.lastName].join(" ")),
         }, tx);
 
-        await tx`insert into external_provider_person (external_provider, external_id, person_id) values (${externalPerson.provider}, ${externalPerson.id}, ${createdPersonId});`;
+        // if it's a user-provided club we don't have to store a reference)
+        if (externalPerson.provider !== ExternalProvider.User) {
+            await tx`insert into external_provider_person (external_provider, external_id, person_id) values (${externalPerson.provider}, ${externalPerson.id}, ${createdPersonId});`;
+        }
 
         return createdPersonId;
     }
@@ -1084,7 +1091,9 @@ export class GameMapper {
             normalizedSearch: normalizeForSearch(externalCompetition.name),
         }, tx);
 
-        await tx`insert into external_provider_competition (external_provider, external_id, competition_id) values (${externalCompetition.provider}, ${externalCompetition.id}, ${createdCompetitionId});`;
+        if (externalCompetition.provider !== ExternalProvider.User) {
+            await tx`insert into external_provider_competition (external_provider, external_id, competition_id) values (${externalCompetition.provider}, ${externalCompetition.id}, ${createdCompetitionId});`;
+        }
 
         return createdCompetitionId;
     }
@@ -1124,7 +1133,9 @@ export class GameMapper {
             normalizedSearch: normalizeForSearch([externalVenue.name, externalVenue.city].join(" ")),
         }, tx);
 
-        await tx`insert into external_provider_venue (external_provider, external_id, venue_id) values (${externalVenue.provider}, ${externalVenue.id}, ${createdVenueId});`;
+        if (externalVenue.provider !== ExternalProvider.User) {
+            await tx`insert into external_provider_venue (external_provider, external_id, venue_id) values (${externalVenue.provider}, ${externalVenue.id}, ${createdVenueId});`;
+        }
 
         return createdVenueId;
     }

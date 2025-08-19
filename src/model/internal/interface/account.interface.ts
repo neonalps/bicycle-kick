@@ -1,9 +1,10 @@
 export interface AccountDaoInterface {
     id: number;
     publicId: string;
-    hashedEmail: string;
-    displayName: string;
+    email: string;
     enabled: boolean;
     createdAt: Date;
-    roles: string;
+    roles: string[];
+    firstName?: string;
+    lastName?: string;
 }

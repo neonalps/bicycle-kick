@@ -8,4 +8,6 @@ export interface OAuthTokenResponse {
 
 export interface OAuthUserInfo {
     email: string;
+    firstName?: string;
+    lastName?: string;
 }

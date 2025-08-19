@@ -1,5 +1,6 @@
 export interface IdentityDto {
-    displayName: string | null;
-    email: string;
     publicId: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
 }

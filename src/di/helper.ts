@@ -118,7 +118,7 @@ export class DependencyHelper {
         const googleOAuthClient = new GoogleOAuthClient(getGoogleOAuthConfig(), httpClient);
 
         const accountMapper = new AccountMapper(sqlInstance);
-        const accountService = new AccountService(accountMapper, cryptoService, uuidSource);
+        const accountService = new AccountService(accountMapper, uuidSource);
         const cacheService = new CacheService();
         const clubMapper = new ClubMapper(sqlInstance);
         const clubService = new ClubService(clubMapper);

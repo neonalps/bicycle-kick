@@ -16,6 +16,8 @@ type GoogleOAuthTokenResponse = {
 
 type GoogleOAuthUserInfoResponse = {
     email: string;
+    given_name: string;
+    family_name: string;
 }
 
 export interface GoogleOAuthClientConfig {
@@ -85,12 +87,16 @@ export class GoogleOAuthClient implements OAuthProvider {
     
         return {
             email: response.body.email,
+            firstName: response.body.given_name,
+            lastName: response.body.family_name,
         };
     }
 
     private getCodeExchangeParams(code: string): string {
         return getQueryString({
             code,
+            client_id: this.config.clientId,
+            client_secret: this.config.clientSecret,
             grant_type: OAUTH_GRANT_TYPE_AUTHORIZATION_CODE,
             redirect_uri: this.config.redirectUrl,
         });

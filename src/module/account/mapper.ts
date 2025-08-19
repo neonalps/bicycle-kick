@@ -6,13 +6,19 @@ import { AccountRole } from "@src/model/type/account-role";
 
 export class AccountMapper {
 
-    private static JOIN_CHAR = ",";
-
     constructor(private readonly sql: Sql) {}
 
-    async create(publicId: string, hashedEmail: string, displayName: string, roles: AccountRole[]): Promise<Account> {
-        const rolesString = roles.join(AccountMapper.JOIN_CHAR);
-        const result = await this.sql<IdInterface[]>`insert into account (public_id, hashed_email, display_name, roles) values (${ publicId }, ${ hashedEmail }, ${ displayName }, ${ rolesString }) returning id`;
+    async create(publicId: string, email: string, firstName: string | undefined, lastName: string | undefined, enabled: boolean, roles: AccountRole[]): Promise<Account> {
+        const insertInput = {
+            publicId,
+            email,
+            firstName,
+            lastName,
+            enabled,
+            roles,
+        };
+
+        const result = await this.sql<IdInterface[]>`insert into account ${ this.sql(insertInput) } returning id`;
         if (result.length !== 1) {
             this.throwCreateError();
         }
@@ -43,8 +49,8 @@ export class AccountMapper {
         return this.convertToEntity(result[0]);
     }
 
-    async getByHashedEmail(hashedEmail: string): Promise<Account | null> {
-        const result = await this.sql<AccountDaoInterface[]>`${ this.commonAccountSelect() } where hashed_email = ${ hashedEmail }`;
+    async getByEmail(email: string): Promise<Account | null> {
+        const result = await this.sql<AccountDaoInterface[]>`${ this.commonAccountSelect() } where email = ${ email }`;
         if (result.length !== 1) {
             return null;
         }
@@ -53,16 +59,17 @@ export class AccountMapper {
     }
 
     private commonAccountSelect() {
-        return this.sql`select id, public_id, hashed_email, display_name, enabled, created_at from account`;
+        return this.sql`select id, public_id, email, first_name, last_name, enabled, created_at, roles from account`;
     }
 
     private convertToEntity(item: AccountDaoInterface): Account {
         return {
             id: item.id,
             publicId: item.publicId,
-            hashedEmail: item.hashedEmail,
-            displayName: item.displayName,
-            roles: item.roles.split(AccountMapper.JOIN_CHAR) as AccountRole[],
+            email: item.email,
+            firstName: item.firstName,
+            lastName: item.lastName,
+            roles: item.roles as AccountRole[],
             enabled: item.enabled,
             createdAt: item.createdAt,
         }

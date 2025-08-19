@@ -4,7 +4,7 @@ import { OAuthUserInfo } from "./types";
 import { AuthProvider } from "./constants";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { AuthIdentity } from "@src/model/internal/auth-identity";
-import { AuthService } from "../service";
+import { AuthService } from "@src/module/auth/service";
 
 export class OAuthService {
 
@@ -19,14 +19,12 @@ export class OAuthService {
         validateNotNull(userInfo, "userInfo");
         validateNotBlank(userInfo.email, "userInfo.email");
 
-        const account = await this.accountService.getOrCreate(userInfo.email);
+        const account = await this.accountService.getOrCreate(userInfo.email, userInfo.firstName, userInfo.lastName);
 
-        // TODO implement
-        const scopes: string[] = [];
+        const scopes = account.roles;
 
         return {
             publicId: account.publicId,
-            displayName: account.displayName,
             email: userInfo.email,
             accessToken: this.authService.createSignedAccessToken(account.publicId, scopes),
             refreshToken: this.authService.createSignedRefreshToken(account.publicId, scopes),

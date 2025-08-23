@@ -2,6 +2,7 @@ import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types
 import { requireNonNull } from "@src/util/common";
 import { DeleteGameByIdRouteHandler } from "./handler";
 import { DeleteGameByIdRequestDto } from "@src/model/external/dto/delete-game-by-id-request";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class DeleteGameByIdRouteProvider implements RouteProvider<DeleteGameByIdRequestDto, void> {
 
@@ -31,7 +32,10 @@ export class DeleteGameByIdRouteProvider implements RouteProvider<DeleteGameById
             path: '/api/v1/games/:gameId',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.WriteGame,
+            ]
         }
     }
 

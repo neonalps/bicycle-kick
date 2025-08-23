@@ -3,7 +3,6 @@ import { GetGamesPlayedRequestDto } from "@src/model/external/dto/get-games-play
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { GamePlayerService, GetPlayerGamesPlayedPaginationParams } from "@src/module/game-player/service";
-import { PermissionService } from "@src/module/permission/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
 import { MAX_DATE, MIN_DATE, SortOrder } from "@src/module/pagination/constants";
 import { PaginationService } from "@src/module/pagination/service";
@@ -14,16 +13,9 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
         private readonly apiHelperService: ApiHelperService,
         private readonly gamePlayerService: GamePlayerService,
         private readonly paginationService: PaginationService,
-        private readonly permissionService: PermissionService,
     ) {}
 
-    public async handle(context: AuthenticationContext, dto: GetGamesPlayedRequestDto): Promise<PaginatedResponseDto<GamePlayedDto>> {
-        /*if (!context.authenticated || context.account === null) {
-            throw new AuthenticationError(`No authentication present`);
-        }
-
-        this.permissionService.validatePermission(AccountRole.Manager, context.account.roles);*/
-
+    public async handle(_: AuthenticationContext, dto: GetGamesPlayedRequestDto): Promise<PaginatedResponseDto<GamePlayedDto>> {
         this.paginationService.validateQueryParams(dto);
         const paginationParams = this.getPaginationParams(dto);
 

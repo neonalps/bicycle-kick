@@ -3,19 +3,22 @@ import { Account } from "@src/model/internal/account";
 import { AccountDaoInterface } from "@src/model/internal/interface/account.interface";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { AccountRole } from "@src/model/type/account-role";
+import { GetAccountPaginationParams } from "./service";
+import { SortOrder } from "@src/module/pagination/constants";
+import { isDefined } from "@src/util/common";
 
 export class AccountMapper {
 
     constructor(private readonly sql: Sql) {}
 
-    async create(publicId: string, email: string, firstName: string | undefined, lastName: string | undefined, enabled: boolean, roles: AccountRole[]): Promise<Account> {
+    async create(publicId: string, email: string, firstName: string | undefined, lastName: string | undefined, enabled: boolean, role: AccountRole): Promise<Account> {
         const insertInput = {
             publicId,
             email,
             firstName,
             lastName,
             enabled,
-            roles,
+            roles: role,
         };
 
         const result = await this.sql<IdInterface[]>`insert into account ${ this.sql(insertInput) } returning id`;
@@ -58,6 +61,28 @@ export class AccountMapper {
         return this.convertToEntity(result[0]);
     }
 
+    async getAllPaginated(params: GetAccountPaginationParams): Promise<Account[]> {
+        const optionalWildcardSearch = isDefined(params.search) ? `%${params.search}%` : undefined;
+
+        const result = await this.sql<AccountDaoInterface[]>`
+            ${ this.commonAccountSelect() }
+            where
+                id ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
+                ${isDefined(params.role) ? this.sql` and roles = ${params.role}` : this.sql``}
+                ${isDefined(optionalWildcardSearch) ? this.sql` and email ilike ${optionalWildcardSearch} or first_name ilike ${optionalWildcardSearch} or last_name ilike ${optionalWildcardSearch}` : this.sql``}
+            order by
+                id ${ this.determineSortOrder(params.order) }
+            limit
+                ${ params.limit }
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
+    }
+
     private commonAccountSelect() {
         return this.sql`select id, public_id, email, first_name, last_name, enabled, created_at, roles from account`;
     }
@@ -69,10 +94,14 @@ export class AccountMapper {
             email: item.email,
             firstName: item.firstName,
             lastName: item.lastName,
-            roles: item.roles as AccountRole[],
+            roles: item.roles as AccountRole,
             enabled: item.enabled,
             createdAt: item.createdAt,
         }
+    }
+
+    private determineSortOrder(order: SortOrder) {
+        return order === SortOrder.Descending ? this.sql`desc` : this.sql`asc`;
     }
 
     private throwCreateError() {

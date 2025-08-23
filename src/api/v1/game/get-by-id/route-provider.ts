@@ -3,6 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { GetGameByIdRouteHandler } from "./handler";
 import { GetGameByIdRequestDto } from "@src/model/external/dto/get-game-by-id-request";
 import { DetailedGameDto } from "@src/model/external/dto/detailed-game";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetGameByIdRouteProvider implements RouteProvider<GetGameByIdRequestDto, DetailedGameDto> {
 
@@ -32,7 +33,10 @@ export class GetGameByIdRouteProvider implements RouteProvider<GetGameByIdReques
             path: '/api/v1/games/:gameId',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadGame,
+            ]
         }
     }
 

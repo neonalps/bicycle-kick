@@ -18,12 +18,12 @@ export const generateRandomString = (size: number) => {
 
 export const removeNull = <T> (item: T): boolean => item !== null;
 
-export const requireNonNull = <T> (arg: T): T => {
+export const requireNonNull = <T> (arg: T | null | undefined): T => {
     if (isNotDefined(arg)) {
         throw new Error(`null argument passed to requireNonNull`);
     }
 
-    return arg;
+    return arg as T;
 }
 
 export function isDefined<T>(toCheck: T): toCheck is NonNullable<T> {

@@ -2,6 +2,7 @@ import { DashboardResponseDto } from "@src/model/external/dto/dashboard-response
 import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { GetDashboardHandler } from "./handler";
 import { requireNonNull } from "@src/util/common";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetDashboardRouteProvider implements RouteProvider<void, DashboardResponseDto> {
 
@@ -20,7 +21,10 @@ export class GetDashboardRouteProvider implements RouteProvider<void, DashboardR
             path: '/api/v1/dashboard',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadGame,
+            ]
         }
     }
 

@@ -3,6 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { GetPersonByIdRequestDto } from "@src/model/external/dto/get-person-by-id-request";
 import { GetPersonByIdRouteHandler } from "./handler";
 import { GetPersonByIdResponseDto } from "@src/model/external/dto/get-person-by-id-response";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetPersonByIdRouteProvider implements RouteProvider<GetPersonByIdRequestDto, GetPersonByIdResponseDto> {
 
@@ -38,7 +39,10 @@ export class GetPersonByIdRouteProvider implements RouteProvider<GetPersonByIdRe
             path: '/api/v1/people/:personId',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadPerson,
+            ]
         }
     }
 

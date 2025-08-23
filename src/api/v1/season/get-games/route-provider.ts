@@ -5,6 +5,7 @@ import { PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES } from "@src/module/pag
 import { CacheableResponse, RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { requireNonNull } from "@src/util/common";
 import { GetSeasonGamesRouteHandler } from "./handler";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetSeasonGamesRouteProvider implements RouteProvider<GetSeasonGamesRequestDto, CacheableResponse<PaginatedResponseDto<BasicGameDto>>> {
 
@@ -40,7 +41,11 @@ export class GetSeasonGamesRouteProvider implements RouteProvider<GetSeasonGames
             path: '/api/v1/seasons/:seasonId/games',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadSeason,
+                Capability.ReadGame,
+            ]
         }
     }
 

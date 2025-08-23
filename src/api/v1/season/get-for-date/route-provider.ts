@@ -3,6 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { SmallSeasonDto } from "@src/model/external/dto/small-season";
 import { GetSeasonForDateHandler } from "./handler";
 import { GetSeasonForDateRequestDto } from "@src/model/external/dto/get-season-for-date-request";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetSeasonForDateRouteProvider implements RouteProvider<GetSeasonForDateRequestDto, SmallSeasonDto> {
 
@@ -30,7 +31,10 @@ export class GetSeasonForDateRouteProvider implements RouteProvider<GetSeasonFor
             path: '/api/v1/seasons/by-date',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadSeason,
+            ]
         }
     }
 

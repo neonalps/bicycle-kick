@@ -21,15 +21,16 @@ export class OAuthService {
 
         const account = await this.accountService.getOrCreate(userInfo.email, userInfo.firstName, userInfo.lastName);
 
-        const scopes = account.roles;
+        const scope = account.roles;
 
         return {
             publicId: account.publicId,
             email: userInfo.email,
             firstName: userInfo.firstName,
             lastName: userInfo.lastName,
-            accessToken: this.authService.createSignedAccessToken(account.publicId, scopes),
-            refreshToken: this.authService.createSignedRefreshToken(account.publicId, scopes),
+            role: account.roles,
+            accessToken: this.authService.createSignedAccessToken(account.publicId, [scope]),
+            refreshToken: this.authService.createSignedRefreshToken(account.publicId, [scope]),
         }
     }
 

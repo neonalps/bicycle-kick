@@ -7,10 +7,12 @@ import { getOpsRouteProviders } from "./v1/ops/providers";
 import { getClubRouteProviders } from "./v1/club/providers";
 import { getPersonRouteProviders } from "./v1/person/providers";
 import { getDashboardRouteProviders } from "./v1/dashboard/providers";
+import { getAccountRouteProviders } from "./v1/account/provider";
 
 export function getRouteProviders(): RouteProvider<any, any>[] {
 
     return [
+        ...getAccountRouteProviders(),
         ...getAuthRouteProviders(),
         ...getClubRouteProviders(),
         ...getDashboardRouteProviders(),

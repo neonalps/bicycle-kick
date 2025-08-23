@@ -16,6 +16,7 @@ export class OAuthLoginHandler implements RouteHandler<OauthLoginRequestDto, Aut
         const identityDto: IdentityDto = {
             email: identity.email,
             publicId: identity.publicId,
+            role: identity.role,
         }
 
         if (isDefined(identity.firstName)) {

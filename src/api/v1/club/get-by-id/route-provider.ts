@@ -3,6 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { GetClubByIdRouteHandler } from "./handler";
 import { GetClubByIdRequestDto } from "@src/model/external/dto/get-club-by-id-request";
 import { GetClubByIdResponseDto } from "@src/model/external/dto/get-club-by-id-response";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetClubByIdRouteProvider implements RouteProvider<GetClubByIdRequestDto, GetClubByIdResponseDto> {
 
@@ -39,7 +40,10 @@ export class GetClubByIdRouteProvider implements RouteProvider<GetClubByIdReques
             path: '/api/v1/clubs/:clubId',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadClub,
+            ],
         }
     }
 

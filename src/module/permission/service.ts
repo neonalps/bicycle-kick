@@ -1,20 +1,21 @@
-import { AuthorizationError } from "@src/api/error/authorization";
+import { Capability } from "@src/model/internal/capabilities";
 import { AccountRole } from "@src/model/type/account-role";
 import { validateNotNull } from "@src/util/validation";
+import { provideRoleToCapabilities } from "./capabilities";
 
 export class PermissionService {
 
-    validatePermission(required: AccountRole, granted: AccountRole[]): void {
-        validateNotNull(required, "required permission");
-        validateNotNull(granted, "granted permissions");
+    private static readonly ROLE_TO_CAPABILITIES = provideRoleToCapabilities();
 
-        if (!this.hasPermission(required, granted)) {
-            throw new AuthorizationError(`Lacking required permission ${required}`);
+    determineMissingCapabilities(role: AccountRole, requiredCapabilities: ReadonlyArray<Capability>): ReadonlyArray<Capability> {
+        validateNotNull(role, "accountRole");
+        validateNotNull(requiredCapabilities, "requireCapabilities");
+
+        if (requiredCapabilities.length === 0) {
+            return [];
         }
-    }
 
-    private hasPermission(required: AccountRole, granted: AccountRole[]): boolean {
-        return granted.includes(required);
+        return requiredCapabilities.filter(requiredCapability => !PermissionService.ROLE_TO_CAPABILITIES[role].includes(requiredCapability));
     }
 
 }

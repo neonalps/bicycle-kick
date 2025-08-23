@@ -5,6 +5,7 @@ import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response
 import { GamePlayedDto } from "@src/model/external/dto/game-played";
 import { GetPersonGamesPlayedRouteHandler } from "./handler";
 import { PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES } from "@src/module/pagination/constants";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetPersonGamesPlayedRouteProvider implements RouteProvider<GetGamesPlayedRequestDto, PaginatedResponseDto<GamePlayedDto>> {
 
@@ -51,7 +52,11 @@ export class GetPersonGamesPlayedRouteProvider implements RouteProvider<GetGames
             path: '/api/v1/people/:personId/games-played',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadPerson,
+                Capability.ReadStats,
+            ]
         }
     }
 

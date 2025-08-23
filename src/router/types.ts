@@ -1,6 +1,7 @@
 import { HttpMethod } from "@src/http/constants";
 import { ObjectType } from "@src/model/external/validation/types";
 import { Account } from "@src/model/internal/account";
+import { Capability } from "@src/model/internal/capabilities";
 
 export type AuthenticationContext = {
     authenticated: boolean,
@@ -19,6 +20,7 @@ export type RouteDefinition<S, T> = {
     handler: RouteHandler<S, T>,
     authenticated: boolean,
     response?: ResponseSchema,
+    requiredCapabilities?: Capability[],
 }
 
 export type HandlerFunction<S, T> = (principal: AuthenticationContext, _: S, headers: Record<string, string>) => Promise<T>;

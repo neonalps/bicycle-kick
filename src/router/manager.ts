@@ -5,10 +5,11 @@ import { HttpMethod } from "@src/http/constants";
 import logger from "@src/log";
 import dependencyManager from "@src/di/manager";
 import { IllegalStateError } from "@src/api/error/illegal-state";
-import { isDefined } from "@src/util/common";
+import { isDefined, requireNonNull } from "@src/util/common";
 import { AuthenticationError } from "@src/api/error/authentication";
 import { Dependencies } from "@src/di/dependencies";
 import { AccountService } from "@src/module/account/service";
+import { PermissionService } from "@src/module/permission/service";
 
 export class RouteManager {
 
@@ -57,8 +58,21 @@ export class RouteManager {
                 const authenticationContext = await RouteManager.buildAuthenticationContext(route.authenticated, request.user as any);
                 
                 if (route.authenticated === true && !RouteManager.hasValidAuthenthicationContextForAuthenticatedRequest(authenticationContext)) {
-                    this.sendErrorResponse(reply, route, 401, "Unauthorized");
+                    this.sendErrorResponse(reply, route, 401, new Error("Unauthorized"));
                     return;
+                }
+
+                // validate whether the user has the correct capabilities required by the route
+                if (route.authenticated === true && route.requiredCapabilities && route.requiredCapabilities.length > 0) {
+                    const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
+                    const accountRole = requireNonNull(authenticationContext.account).roles;
+                    const missingCapabilities = permissionService.determineMissingCapabilities(accountRole, route.requiredCapabilities);
+                    
+                    if (missingCapabilities.length > 0) {
+                        console.log(`Denying route access because of missing capabilities`, missingCapabilities);
+                        this.sendErrorResponse(reply, route, 401, new Error(`The authentication provided is lacking the following permissions: ${ missingCapabilities.join(', ') }`));
+                        return;
+                    }
                 }
 
                 (request as any).principal = authenticationContext;

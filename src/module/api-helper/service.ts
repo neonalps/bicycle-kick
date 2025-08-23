@@ -71,6 +71,8 @@ import { normalizeForSearch } from "@src/util/search";
 import { ExternalProvider } from "@src/model/type/external-provider";
 import { GamePlayedDto } from "@src/model/external/dto/game-played";
 import { ExternalProviderClub } from "@src/model/internal/external-provider-club";
+import { Account } from "@src/model/internal/account";
+import { AccountDto } from "@src/model/external/dto/account";
 
 type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
@@ -882,6 +884,27 @@ export class ApiHelperService {
 
         if (parent) {
             dto.parent = this.convertCompetitionToSmallDto(parent);
+        }
+
+        return dto;
+    }
+
+    convertAccountToDto(account: Account): AccountDto {
+        const dto: AccountDto = {
+            id: account.id,
+            publicId: account.publicId,
+            email: account.email,
+            role: account.roles,
+            enabled: account.enabled,
+            createdAt: account.createdAt.toISOString(),
+        };
+
+        if (account.firstName) {
+            dto.firstName = account.firstName;
+        }
+
+        if (account.lastName) {
+            dto.lastName = account.lastName;
         }
 
         return dto;

@@ -6,7 +6,7 @@ export interface Account {
     email: string;
     firstName?: string;
     lastName?: string;
-    roles: AccountRole[];
+    roles: AccountRole;
     enabled: boolean;
     createdAt: Date;
 }

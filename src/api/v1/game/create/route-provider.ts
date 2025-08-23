@@ -4,6 +4,7 @@ import { CreateGameRequestDto } from "@src/model/external/dto/create-game-reques
 import { CreateGameRouteHandler } from "./handler";
 import { DetailedGameDto } from "@src/model/external/dto/detailed-game";
 import { createGameRequestSchema } from "@src/model/external/validation/create-game-request";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class CreateGameRouteProvider implements RouteProvider<CreateGameRequestDto, DetailedGameDto> {
 
@@ -24,7 +25,10 @@ export class CreateGameRouteProvider implements RouteProvider<CreateGameRequestD
             path: '/api/v1/games',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.WriteGame,
+            ]
         }
     }
 

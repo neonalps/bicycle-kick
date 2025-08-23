@@ -10,7 +10,6 @@ import { ExternalProviderService } from "@src/module/external-provider/service";
 import { GamePlayerService } from "@src/module/game-player/service";
 import { GetPersonGamesPlayedRouteHandler } from "./games-played/handler";
 import { PaginationService } from "@src/module/pagination/service";
-import { PermissionService } from "@src/module/permission/service";
 import { GetPersonGamesPlayedRouteProvider } from "./games-played/route-provider";
 import { GameService } from "@src/module/game/service";
 
@@ -21,12 +20,11 @@ export function getPersonRouteProviders(): RouteProvider<any, any>[] {
     const gameService = dependencyManager.get<GameService>(Dependencies.GameService);
     const gamePlayerService = dependencyManager.get<GamePlayerService>(Dependencies.GamePlayerService);
     const paginationService = dependencyManager.get<PaginationService>(Dependencies.PaginationService);
-    const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
     const personService = dependencyManager.get<PersonService>(Dependencies.PersonService);
     const statsService = dependencyManager.get<StatsService>(Dependencies.StatsService);
 
     const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(apiHelperService, externalProviderService, gameService, personService, statsService);
-    const getPersonGamesPlayedRouteHandler = new GetPersonGamesPlayedRouteHandler(apiHelperService, gamePlayerService, paginationService, permissionService);
+    const getPersonGamesPlayedRouteHandler = new GetPersonGamesPlayedRouteHandler(apiHelperService, gamePlayerService, paginationService);
 
     return [
         new GetPersonByIdRouteProvider(getPlayerByIdRouteHandler),

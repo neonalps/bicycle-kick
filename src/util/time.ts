@@ -26,6 +26,10 @@ export class TimeSource {
         return Math.floor(Date.now() / 1000);
     }
 
+    public dateToUnixTimestamp(date: Date): number {
+        return Math.floor(date.getTime() / 1000);
+    }
+
     public unixTimestampToDate(unix: number): Date {
         return new Date(unix * 1000);
     }

@@ -18,6 +18,7 @@ const cryptoKey = env.get("CRYPTO_KEY").required().asString();
 const cdnBaseUrl = env.get("CDN_BASE_URL").required().asString();
 const frontendBaseUrl = env.get("FRONTEND_BASE_URL").required().asString();
 const mainClubId = env.get("MAIN_CLUB_ID").required().asIntPositive();
+const sofascoreMainClubId = env.get("SOFASCORE_MAIN_CLUB_ID").required().asIntPositive();
 
 const authTokenAudience = env.get("AUTH_TOKEN_AUDIENCE").required().asString();
 const authTokenIssuer = env.get("AUTH_TOKEN_ISSUER").required().asString();
@@ -64,6 +65,7 @@ export const getDbConnectionUrl = () => dbConnectionUrl;
 export const getCdnBaseUrl = () => cdnBaseUrl;
 export const getFrontendBaseUrl = () => frontendBaseUrl;
 export const getMainClubId = () => mainClubId;
+export const getSofascoreMainClubId = () => sofascoreMainClubId;
 export const getServerHost = () => serverHost;
 export const getServerPort = () => serverPort;
 export const getGoogleOAuthConfig = () => googleOAuthConfig;

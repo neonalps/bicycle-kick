@@ -3,6 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { SofascoreGameDto } from "@src/module/external-provider/sofascore/types";
 import { CreateGameViaExternalProviderRouteHandler } from "./handler";
 import { DetailedGameDto } from "@src/model/external/dto/detailed-game";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class CreateGameViaExternalProviderRouteProvider implements RouteProvider<SofascoreGameDto, DetailedGameDto> {
 
@@ -23,7 +24,12 @@ export class CreateGameViaExternalProviderRouteProvider implements RouteProvider
             path: '/api/v1/ops/create-game-via-external-provider',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.WriteGame,
+                Capability.WriteClub,
+                Capability.WritePerson,
+            ]
         }
     }
 

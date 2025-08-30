@@ -3,6 +3,7 @@ export enum Capability {
     ReadClub = "club.read",
     WriteClub = "club.write",
     // game
+    ImportGame = "game.import",
     ReadGame = "game.read",
     WriteGame = "game.write",
     // person

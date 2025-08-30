@@ -17,6 +17,7 @@ const playerCapabilities: ReadonlyArray<Capability> = [
 const managerCapabilities: ReadonlyArray<Capability> = [
     ...playerCapabilities,
     // add manager role specific capabilities here
+    Capability.ImportGame,
     Capability.ReadUser,
     Capability.WriteUser,
 ];

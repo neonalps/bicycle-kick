@@ -50,7 +50,7 @@ import { PersonMapper } from "@src/module/person/mapper";
 import { SeasonMapper } from "@src/module/season/mapper";
 import { DateSource } from "@src/util/date";
 import { ApiConfig } from "@src/api/v1/config";
-import { getAuthTokenConfig, getCdnBaseUrl, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig } from "@src/config";
+import { getAuthTokenConfig, getCdnBaseUrl, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig, getSofascoreMainClubId } from "@src/config";
 import { CryptoService } from "@src/module/crypto/service";
 import { AccountService } from "@src/module/account/service";
 import { AccountMapper } from "@src/module/account/mapper";
@@ -86,6 +86,7 @@ import { MatchdayDetailsService } from "@src/module/matchday-details/service";
 import { BundesligaClient } from "@src/module/external-provider/bundesliga/client";
 import { ExternalProvider } from "@src/model/type/external-provider";
 import { MatchdayDetailsProvider } from "@src/module/matchday-details/provider";
+import { SofascoreGameImporter } from "@src/module/external-provider/sofascore/game-importer";
 
 export class DependencyHelper {
 
@@ -175,6 +176,7 @@ export class DependencyHelper {
         const permissionService = new PermissionService();
 
         const sofascoreGameProvider = new SofascoreGameProvider({ mainTeamName: ["Sturm Graz"] }, timeSource);
+        const sofascoreGameImporter = new SofascoreGameImporter(getSofascoreMainClubId(), sofascoreGameProvider, timeSource);
 
         const statsMapper = new StatsMapper(sqlInstance);
         const statsService = new StatsService(statsMapper, clubService, competitionService, seasonService);
@@ -270,6 +272,7 @@ export class DependencyHelper {
         dependencies.set(Dependencies.PersonService, personService);
         dependencies.set(Dependencies.SearchService, searchService);
         dependencies.set(Dependencies.SeasonService, seasonService);
+        dependencies.set(Dependencies.SofascoreGameImporter, sofascoreGameImporter);
         dependencies.set(Dependencies.SofascoreGameProvider, sofascoreGameProvider);
         dependencies.set(Dependencies.StatsService, statsService);
         dependencies.set(Dependencies.SquadService, squadService);

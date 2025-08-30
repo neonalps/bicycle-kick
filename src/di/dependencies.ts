@@ -25,6 +25,7 @@ export enum Dependencies {
     ProfileService,
     SearchService,
     SeasonService,
+    SofascoreGameImporter,
     SofascoreGameProvider,
     StatsService,
     SquadService,

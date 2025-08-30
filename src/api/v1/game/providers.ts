@@ -34,7 +34,7 @@ export function getGameRouteProviders(): RouteProvider<any, any>[] {
     const matchdayDetailsService = dependencyManager.get<MatchdayDetailsService>(Dependencies.MatchdayDetailsService);
 
     const getGameByIdHandler = new GetGameByIdRouteHandler(apiHelperService, gameService, permissionService);
-    const createGameHandler = new CreateGameRouteHandler(apiHelperService, gameService, permissionService);
+    const createGameHandler = new CreateGameRouteHandler(apiHelperService, gameService);
     const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(gameService, permissionService);
     const starGameHandler = new StarGameHandler(gameStarService);
     const unstarGameHandler = new UnstarGameHandler(gameStarService);

@@ -2,6 +2,7 @@ import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-type
 import { Competition } from "./competition";
 import { Season } from "./season";
 import { Club } from "./club";
+import { Person } from "./person";
 
 export type PlayerStatsResult = {
     clubs: Map<ClubId, Club>;
@@ -56,4 +57,21 @@ export interface PlayerStatsDetails {
 export interface PlayerGoalsAgainstClubStatsItem {
     clubId: number;
     goalsScored: number;
+}
+
+export interface TopScorerResultItem {
+    personId: PersonId;
+    rank: number;
+    value: number;
+}
+
+export interface TopScorerPersonResultItem {
+    person: Person;
+    rank: number;
+    value: number;
+}
+
+export interface TopScorersInfo {
+    competitions: Competition[];
+    ranking: TopScorerPersonResultItem[];
 }

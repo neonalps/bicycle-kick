@@ -1,1 +1,1 @@
-export type TacticalFormation = '442-diamond';
+export type TacticalFormation = '442-diamond' | '4231' | '433';

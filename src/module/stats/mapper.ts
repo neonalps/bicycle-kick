@@ -1,9 +1,9 @@
 import { Sql } from "@src/db";
-import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerPerformanceStatsDaoInterface } from "@src/model/internal/interface/stats-player";
+import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerPerformanceStatsDaoInterface, TopScorerResultItemDaoInterface } from "@src/model/internal/interface/stats-player";
 import { QueryOptions } from "@src/model/internal/query-options";
-import { PlayerGoalsAgainstClubStatsItem, PlayerSeasonCompetitionStats } from "@src/model/internal/stats-player";
+import { PlayerGoalsAgainstClubStatsItem, PlayerSeasonCompetitionStats, TopScorerResultItem } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
-import { CompetitionId, PersonId } from "@src/util/domain-types";
+import { CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 
 export class StatsMapper {
 
@@ -103,6 +103,61 @@ export class StatsMapper {
             }
             return accumulator;
         }, new Map());
+    }
+
+    async getTopScorers(queryOptions: QueryOptions, limit: number): Promise<ReadonlyArray<TopScorerResultItem>> {
+        const result = await this.sql<TopScorerResultItemDaoInterface[]>`
+            select
+                rank() over (
+                    order by sum(gp.goals_scored) desc
+                ) ranking_position,
+                p.id as person_id,
+                sum(gp.goals_scored) as value
+            from
+                game g left join
+                game_players gp on gp.game_id  = g.id left join
+                person p on gp.person_id = p.id
+            where
+                gp.goals_scored > 0
+                ${queryOptions.onlyForMain !== undefined ? this.sql` and gp.for_main = ${ queryOptions.onlyForMain }` : this.sql``}
+                ${queryOptions.onlyCompetitions ? this.sql` and g.competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
+                ${queryOptions.onlySeasons ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+            group by
+                p.id
+            having 
+                sum(gp.goals_scored) > 0
+            order by
+                sum(gp.goals_scored) desc
+            limit ${limit}
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => ({ rank: Number(item.rankingPosition), personId: item.personId, value: Number(item.value) }));
+    }
+
+    async getEffectiveGoalScoredCompetitionIds(queryOptions: QueryOptions): Promise<ReadonlyArray<CompetitionId>> {
+        const result = await this.sql<{ effectiveCompetitionId: CompetitionId; }[]>`
+            select distinct
+                case
+                    when c.parent_id is not null and c.combine_statistics_with_parent = true then c.parent_id else c.id end as effective_competition_id 
+            from
+                game g left join
+                competition c on g.competition_id  = c.id left join
+                game_players gp on gp.game_id = g.id
+            where
+                gp.goals_scored > 0
+                ${queryOptions.onlyForMain !== undefined ? this.sql` and gp.for_main = ${ queryOptions.onlyForMain }` : this.sql``}
+                ${queryOptions.onlySeasons ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => item.effectiveCompetitionId);
     }
 
     private convertPlayerPerformanceStatsToEntity(item: PlayerPerformanceStatsDaoInterface): PlayerSeasonCompetitionStats {

@@ -9,4 +9,5 @@ export interface QueryOptions {
     excludeNeutralGround?: boolean,
     onlyDomestic?: boolean,
     onlyInternational?: boolean,
+    onlyForMain?: boolean;
 }

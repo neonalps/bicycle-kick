@@ -3,8 +3,9 @@ import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types
 import { GetDashboardHandler } from "./handler";
 import { requireNonNull } from "@src/util/common";
 import { Capability } from "@src/model/internal/capabilities";
+import { DashboardRequestDto } from "@src/model/external/dto/dashboard-request";
 
-export class GetDashboardRouteProvider implements RouteProvider<void, DashboardResponseDto> {
+export class GetDashboardRouteProvider implements RouteProvider<DashboardRequestDto, DashboardResponseDto> {
 
     private readonly handler: GetDashboardHandler;
 
@@ -12,8 +13,18 @@ export class GetDashboardRouteProvider implements RouteProvider<void, DashboardR
         this.handler = requireNonNull(handler);
     }
 
-    provide(): RouteDefinition<void, DashboardResponseDto> {
-        const schema: RequestSchema = {};
+    provide(): RouteDefinition<DashboardRequestDto, DashboardResponseDto> {
+        const schema: RequestSchema = {
+            querystring: {
+                type: 'object',
+                required: [],
+                properties: {
+                    widgets: { type: 'string' },
+                    competition: { type: 'string' },
+                },
+                additionalProperties: false,
+            }
+        };
 
         return {
             name: 'GetDashboard',
@@ -24,6 +35,7 @@ export class GetDashboardRouteProvider implements RouteProvider<void, DashboardR
             authenticated: true,
             requiredCapabilities: [
                 Capability.ReadGame,
+                Capability.ReadPerson,
             ]
         }
     }

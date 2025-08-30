@@ -1,3 +1,5 @@
+import { ClubId, PersonId } from "@src/util/domain-types";
+
 export interface PlayerPerformanceStatsDaoInterface {
     seasonId: number;
     competitionId: number;
@@ -24,7 +26,13 @@ export interface PlayerPerformanceStatsDaoInterface {
 }
 
 export interface PlayerGoalsAgainstClubStatsDaoInterface {
-    personId: number;
-    clubId: number;
+    personId: PersonId;
+    clubId: ClubId;
     goalsScored: string;
+}
+
+export interface TopScorerResultItemDaoInterface {
+    personId: PersonId;
+    rankingPosition: string;
+    value: string;
 }

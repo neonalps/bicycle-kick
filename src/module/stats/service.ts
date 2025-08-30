@@ -3,7 +3,7 @@ import { SeasonService } from "@src/module/season/service";
 import { StatsMapper } from "./mapper";
 import { ArrayNonEmpty, getOrThrow, isDefined, isNotDefined, promiseAllObject, uniqueArrayElements } from "@src/util/common";
 import { validateNotNull } from "@src/util/validation";
-import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem } from "@src/model/internal/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, TopScorerResultItem } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 import { combinePlayerBaseStats, getEmptyPlayerBaseStats } from "./util";
 import { Competition } from "@src/model/internal/competition";
@@ -100,6 +100,14 @@ export class StatsService {
             seasons: seenSeasons,
             clubs: seenClubs,
         }
+    }
+
+    async getTopScorers(queryOptions: QueryOptions = {}, limit = 10): Promise<ReadonlyArray<TopScorerResultItem>> {
+        return await this.mapper.getTopScorers(queryOptions, limit);
+    }
+
+    async getEffectiveGoalScoredCompetitionIds(queryOptions: QueryOptions = {}): Promise<ReadonlyArray<CompetitionId>> {
+        return await this.mapper.getEffectiveGoalScoredCompetitionIds(queryOptions);
     }
 
     private resolveRequestedStatsItems(requestedItems: ReadonlyArray<PlayerStatsItem>): ReadonlyArray<PlayerStatsItem> {

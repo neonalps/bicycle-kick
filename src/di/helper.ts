@@ -179,7 +179,7 @@ export class DependencyHelper {
         const statsMapper = new StatsMapper(sqlInstance);
         const statsService = new StatsService(statsMapper, clubService, competitionService, seasonService);
 
-        const dashboardService = new DashboardService(gameService, seasonService, dateSource);
+        const dashboardService = new DashboardService(competitionService, dateSource, gameService, personService, seasonService, statsService);
 
         const advancedQueryConfig: AdvancedQueryConfig = {
             mainClubId: 1,

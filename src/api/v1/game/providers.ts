@@ -1,46 +1,32 @@
-import { Dependencies } from "@src/di/dependencies";
-import dependencyManager from "@src/di/manager";
 import { RouteProvider } from "@src/router/types";
-import { ApiHelperService } from "@src/module/api-helper/service";
-import { GameService } from "@src/module/game/service";
 import { DeleteGameByIdRouteProvider } from "./delete-by-id/route-provider";
 import { DeleteGameByIdRouteHandler } from "./delete-by-id/handler";
-import { PermissionService } from "@src/module/permission/service";
 import { GetGameByIdRouteHandler } from "./get-by-id/handler";
 import { GetGameByIdRouteProvider } from "./get-by-id/route-provider";
-import { GameStarService } from "@src/module/game-star/service";
 import { StarGameHandler } from "./star/handler";
 import { StarGameRouteProvider } from "./star/route-provider";
 import { UnstarGameHandler } from "./unstar/handler";
 import { UnstarGameRouteProvider } from "./unstar/route-provider";
 import { AttendGameHandler } from "./attend/handler";
-import { GameAttendedService } from "@src/module/game-attended/service";
 import { AttendGameRouteProvider } from "./attend/route-provider";
 import { UnattendGameHandler } from "./unattend/handler";
 import { UnattendGameRouteProvider } from "./unattend/route-provider";
 import { CreateGameRouteHandler } from "./create/handler";
 import { CreateGameRouteProvider } from "./create/route-provider";
-import { MatchdayDetailsService } from "@src/module/matchday-details/service";
 import { GetMatchdayDetailsRouteHandler } from "./matchday-details/handler";
 import { GetMatchdayDetailsRouteProvider } from "./matchday-details/route-provider";
+import { ApplicationServices } from "@src/di/services";
 
-export function getGameRouteProviders(): RouteProvider<any, any>[] {
+export function getGameRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
-    const apiHelperService = dependencyManager.get<ApiHelperService>(Dependencies.ApiHelperService);
-    const gameAttendService = dependencyManager.get<GameAttendedService>(Dependencies.GameAttendedService);
-    const gameService = dependencyManager.get<GameService>(Dependencies.GameService);
-    const gameStarService = dependencyManager.get<GameStarService>(Dependencies.GameStarService);
-    const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
-    const matchdayDetailsService = dependencyManager.get<MatchdayDetailsService>(Dependencies.MatchdayDetailsService);
-
-    const getGameByIdHandler = new GetGameByIdRouteHandler(apiHelperService, gameService, permissionService);
-    const createGameHandler = new CreateGameRouteHandler(apiHelperService, gameService);
-    const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(gameService, permissionService);
-    const starGameHandler = new StarGameHandler(gameStarService);
-    const unstarGameHandler = new UnstarGameHandler(gameStarService);
-    const attendGameHandler = new AttendGameHandler(gameAttendService);
-    const unattendGameHandler = new UnattendGameHandler(gameAttendService);
-    const loadExternalMatchdayDetailsHandler = new GetMatchdayDetailsRouteHandler(apiHelperService, matchdayDetailsService);
+    const getGameByIdHandler = new GetGameByIdRouteHandler(services.apiHelperService, services.gameService);
+    const createGameHandler = new CreateGameRouteHandler(services.apiHelperService, services.gameService);
+    const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(services.gameService);
+    const starGameHandler = new StarGameHandler(services.gameStarService);
+    const unstarGameHandler = new UnstarGameHandler(services.gameStarService);
+    const attendGameHandler = new AttendGameHandler(services.gameAttendedService);
+    const unattendGameHandler = new UnattendGameHandler(services.gameAttendedService);
+    const loadExternalMatchdayDetailsHandler = new GetMatchdayDetailsRouteHandler(services.apiHelperService, services.matchdayDetailsService);
 
     return [
         new GetGameByIdRouteProvider(getGameByIdHandler),

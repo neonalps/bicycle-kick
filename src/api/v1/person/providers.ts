@@ -1,30 +1,14 @@
-import { Dependencies } from "@src/di/dependencies";
-import dependencyManager from "@src/di/manager";
 import { RouteProvider } from "@src/router/types";
-import { ApiHelperService } from "@src/module/api-helper/service";
-import { PersonService } from "@src/module/person/service";
-import { StatsService } from "@src/module/stats/service";
 import { GetPersonByIdRouteHandler } from "./get-by-id/handler";
 import { GetPersonByIdRouteProvider } from "./get-by-id/route-provider";
-import { ExternalProviderService } from "@src/module/external-provider/service";
-import { GamePlayerService } from "@src/module/game-player/service";
 import { GetPersonGamesPlayedRouteHandler } from "./games-played/handler";
-import { PaginationService } from "@src/module/pagination/service";
 import { GetPersonGamesPlayedRouteProvider } from "./games-played/route-provider";
-import { GameService } from "@src/module/game/service";
+import { ApplicationServices } from "@src/di/services";
 
-export function getPersonRouteProviders(): RouteProvider<any, any>[] {
+export function getPersonRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
-    const apiHelperService = dependencyManager.get<ApiHelperService>(Dependencies.ApiHelperService);
-    const externalProviderService = dependencyManager.get<ExternalProviderService>(Dependencies.ExternalProviderService);
-    const gameService = dependencyManager.get<GameService>(Dependencies.GameService);
-    const gamePlayerService = dependencyManager.get<GamePlayerService>(Dependencies.GamePlayerService);
-    const paginationService = dependencyManager.get<PaginationService>(Dependencies.PaginationService);
-    const personService = dependencyManager.get<PersonService>(Dependencies.PersonService);
-    const statsService = dependencyManager.get<StatsService>(Dependencies.StatsService);
-
-    const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(apiHelperService, externalProviderService, gameService, personService, statsService);
-    const getPersonGamesPlayedRouteHandler = new GetPersonGamesPlayedRouteHandler(apiHelperService, gamePlayerService, paginationService);
+    const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(services.apiHelperService, services.externalProviderService, services.gameService, services.personService, services.statsService);
+    const getPersonGamesPlayedRouteHandler = new GetPersonGamesPlayedRouteHandler(services.apiHelperService, services.gamePlayerService, services.paginationService);
 
     return [
         new GetPersonByIdRouteProvider(getPlayerByIdRouteHandler),

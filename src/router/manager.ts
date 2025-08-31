@@ -3,13 +3,11 @@ import fastifyJwt from "@fastify/jwt";
 import { ApplicationHeader, AuthenticationContext, RequestSchema, ResponseSchema, RouteDefinition, RouteProvider } from "./types";
 import { HttpMethod } from "@src/http/constants";
 import logger from "@src/log";
-import dependencyManager from "@src/di/manager";
 import { IllegalStateError } from "@src/api/error/illegal-state";
 import { isDefined, requireNonNull } from "@src/util/common";
 import { AuthenticationError } from "@src/api/error/authentication";
-import { Dependencies } from "@src/di/dependencies";
 import { AccountService } from "@src/module/account/service";
-import { PermissionService } from "@src/module/permission/service";
+import { ApplicationServices } from "@src/di/services";
 
 export class RouteManager {
 
@@ -20,9 +18,9 @@ export class RouteManager {
 
     private constructor() {}
 
-    public static registerRoutes(server: FastifyInstance, providers: RouteProvider<unknown, unknown>[]): void {
+    public static registerRoutes(server: FastifyInstance, providers: RouteProvider<unknown, unknown>[], services: Pick<ApplicationServices, 'accountService' | 'permissionService'>): void {
         for (const provider of providers) {
-            this.registerRoute(server, provider.provide() as RouteDefinition<unknown, unknown>);
+            this.registerRoute(server, provider.provide() as RouteDefinition<unknown, unknown>, services);
         }
     }
 
@@ -37,7 +35,7 @@ export class RouteManager {
         });
     }
 
-    private static registerRoute(server: FastifyInstance, route: RouteDefinition<unknown, unknown>): void {
+    private static registerRoute(server: FastifyInstance, route: RouteDefinition<unknown, unknown>, services: Pick<ApplicationServices, 'accountService' | 'permissionService'>): void {
         server.route({
             method: route.method,
             url: route.path,
@@ -55,7 +53,7 @@ export class RouteManager {
                 }
             },
             preHandler: async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
-                const authenticationContext = await RouteManager.buildAuthenticationContext(route.authenticated, request.user as any);
+                const authenticationContext = await RouteManager.buildAuthenticationContext(route.authenticated, request.user as any, services.accountService);
                 
                 if (route.authenticated === true && !RouteManager.hasValidAuthenthicationContextForAuthenticatedRequest(authenticationContext)) {
                     this.sendErrorResponse(reply, route, 401, new Error("Unauthorized"));
@@ -64,9 +62,8 @@ export class RouteManager {
 
                 // validate whether the user has the correct capabilities required by the route
                 if (route.authenticated === true && route.requiredCapabilities && route.requiredCapabilities.length > 0) {
-                    const permissionService = dependencyManager.get<PermissionService>(Dependencies.PermissionService);
                     const accountRole = requireNonNull(authenticationContext.account).roles;
-                    const missingCapabilities = permissionService.determineMissingCapabilities(accountRole, route.requiredCapabilities);
+                    const missingCapabilities = services.permissionService.determineMissingCapabilities(accountRole, route.requiredCapabilities);
                     
                     if (missingCapabilities.length > 0) {
                         console.log(`Denying route access because of missing capabilities`, missingCapabilities);
@@ -108,7 +105,7 @@ export class RouteManager {
         })
     }
 
-    private static async buildAuthenticationContext(isRouteAuthenticated: boolean, publicUserId: string | null): Promise<AuthenticationContext> {
+    private static async buildAuthenticationContext(isRouteAuthenticated: boolean, publicUserId: string | null, accountService: AccountService): Promise<AuthenticationContext> {
         if (!isRouteAuthenticated) {
             return RouteManager.EMPTY_AUTHENTICATION;
         }
@@ -117,7 +114,7 @@ export class RouteManager {
             throw new Error("No user ID for authenticated route while building authentication context");
         }
 
-        const account = await dependencyManager.get<AccountService>(Dependencies.AccountService).getByPublicId(publicUserId);
+        const account = await accountService.getByPublicId(publicUserId);
         if (account === null) {
             throw new Error("No account with this user ID was found");
         }

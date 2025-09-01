@@ -1,7 +1,7 @@
 import { PersonService } from "@src/module/person/service";
 import { SearchEntity } from "./entities";
-import { SearchResultItemDto } from "@src/model/external/dto/search-result-item";
-import { isDefined } from "@src/util/common";
+import { GameResult, GameSearchResultContext, SearchResultItemDto } from "@src/model/external/dto/search-result-item";
+import { getOrThrow, isDefined } from "@src/util/common";
 import { Person } from "@src/model/internal/person";
 import { ClubService } from "@src/module/club/service";
 import { Club } from "@src/model/internal/club";
@@ -15,6 +15,9 @@ import { Competition } from "@src/model/internal/competition";
 import { ApiConfig } from "@src/api/v1/config";
 import { GameService } from "@src/module/game/service";
 import { Game } from "@src/model/internal/game";
+import { ClubId } from "@src/util/domain-types";
+import { BasicClubDto } from "@src/model/external/dto/basic-club";
+import { GameStatus } from "@src/model/type/game-status";
 
 export class SearchService {
 
@@ -85,7 +88,11 @@ export class SearchService {
 
     private async searchForGame(parts: string[]): Promise<SearchResultItemDto[]> {
         const gameResults = await this.gameService.search(parts);
-        return gameResults.map(item => this.convertGame(item));
+
+        const opponentIds: Set<ClubId> = new Set(gameResults.map(game => game.opponentId));
+        const opponents = await this.clubService.getMapByIds(Array.from(opponentIds));
+
+        return gameResults.map(item => this.convertGame(opponents, item));
     }
 
     private async searchForPerson(parts: string[]): Promise<SearchResultItemDto[]> {
@@ -131,14 +138,61 @@ export class SearchService {
         return result;
     }
 
-    private convertGame(item: Game): SearchResultItemDto {
+    private convertGame(opponentMap: Map<ClubId, Club>, item: Game): SearchResultItemDto {
+        const opponent = getOrThrow(opponentMap, item.opponentId, `opponent with ID ${item.opponentId} not found in map`);
+
+        const opponentDto: BasicClubDto = {
+            id: item.opponentId,
+            name: opponent.name,
+            shortName: opponent.shortName,
+            city: opponent.city,
+            countryCode: opponent.countryCode,
+        };
+
+        if (opponent.iconLarge) {
+            opponentDto.iconLarge = this.getMediaUrl(opponent.iconLarge);
+        }
+
+        if (opponent.iconSmall) {
+            opponentDto.iconSmall = this.getMediaUrl(opponent.iconSmall);
+        }
+
+        const context: GameSearchResultContext = {
+            kickoff: item.kickoff,
+            opponent: opponentDto,
+            isHomeGame: item.isHomeTeam,
+            result: this.getGameResult(item),
+        };
+
         const result: SearchResultItemDto = {
             type: SearchEntity.Game,
             entityId: item.id,
             title: `Game`,
+            context: context,
         }
 
         return result;
+    }
+
+    private getGameResult(game: Game): GameResult | undefined {
+        if (game.status !== GameStatus.Finished) {
+            return;
+        }
+
+        const baseResult: GameResult = {
+            fullTime: [game.fullTimeGoalsMain, game.fullTimeGoalsOpponent],
+            halfTime: [game.halfTimeGoalsMain, game.halfTimeGoalsOpponent],
+        };
+
+        if (isDefined(game.aetGoalsMain) && isDefined(game.aetGoalsOpponent)) {
+            baseResult.afterExtraTime = [game.aetGoalsMain, game.aetGoalsOpponent];
+        }
+
+        if (isDefined(game.psoGoalsMain) && isDefined(game.psoGoalsOpponent)) {
+            baseResult.penaltyShootOut = [game.psoGoalsMain, game.psoGoalsOpponent];
+        }
+
+        return baseResult;
     }
 
     private convertPerson(item: Person): SearchResultItemDto {

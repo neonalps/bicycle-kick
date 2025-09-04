@@ -6,6 +6,11 @@ import { AccountRole } from "@src/model/type/account-role";
 import { GetAccountPaginationParams } from "./service";
 import { SortOrder } from "@src/module/pagination/constants";
 import { isDefined } from "@src/util/common";
+import { AccountId } from "@src/util/domain-types";
+import { UpdateAccountProfileDto } from "@src/model/external/dto/update-account-profile";
+import { Language } from "@src/model/type/language";
+import { DateFormat } from "@src/model/type/date-format";
+import { ScoreFormat } from "@src/model/type/score-format";
 
 export class AccountMapper {
 
@@ -83,8 +88,20 @@ export class AccountMapper {
         return result.map(item => this.convertToEntity(item));
     }
 
+    async updateProfile(accountId: AccountId, update: UpdateAccountProfileDto): Promise<void> {
+        const updateAccount = {
+            firstName: update.firstName,
+            lastName: update.lastName,
+            language: update.language,
+            dateFormat: update.dateFormat,
+            scoreFormat: update.scoreFormat,
+        }
+
+        await this.sql`update account set ${ this.sql(updateAccount, 'firstName', 'lastName', 'language', 'dateFormat', 'scoreFormat') } where id = ${accountId}`;
+    }
+
     private commonAccountSelect() {
-        return this.sql`select id, public_id, email, first_name, last_name, enabled, created_at, roles from account`;
+        return this.sql`select id, public_id, email, first_name, last_name, enabled, has_profile_picture, language, date_format, score_format, created_at, roles from account`;
     }
 
     private convertToEntity(item: AccountDaoInterface): Account {
@@ -95,6 +112,10 @@ export class AccountMapper {
             firstName: item.firstName,
             lastName: item.lastName,
             roles: item.roles as AccountRole,
+            hasProfilePicture: item.hasProfilePicture,
+            language: item.language as Language,
+            dateFormat: item.dateFormat as DateFormat,
+            scoreFormat: item.scoreFormat as ScoreFormat,
             enabled: item.enabled,
             createdAt: item.createdAt,
         }

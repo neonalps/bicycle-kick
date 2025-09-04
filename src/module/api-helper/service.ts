@@ -73,6 +73,7 @@ import { GamePlayedDto } from "@src/model/external/dto/game-played";
 import { ExternalProviderClub } from "@src/model/internal/external-provider-club";
 import { Account } from "@src/model/internal/account";
 import { AccountDto } from "@src/model/external/dto/account";
+import { AccountProfileDto } from "@src/model/external/dto/account-profile";
 
 type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
@@ -775,6 +776,26 @@ export class ApiHelperService {
         }
 
         return smallPerson;
+    }
+
+    convertAccountToProfileDto(account: Account): AccountProfileDto {
+        const profile: AccountProfileDto = {
+            id: account.publicId,
+            email: account.email,
+            firstName: account.firstName,
+            lastName: account.lastName,
+            language: account.language,
+            dateFormat: account.dateFormat,
+            scoreFormat: account.scoreFormat,
+            role: account.roles,
+            createdAt: account.createdAt.toISOString(),
+        };
+
+        if (account.hasProfilePicture) {
+            profile.profilePicture = this.getMediaUrl(`u/${account.publicId}`);
+        }
+
+        return profile;
     }
 
     async convertClubToBasicDto(club: Club): Promise<BasicClubDto> {

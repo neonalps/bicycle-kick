@@ -7,4 +7,8 @@ export interface AccountDaoInterface {
     roles: string;
     firstName?: string;
     lastName?: string;
+    hasProfilePicture: boolean;
+    language: string;
+    dateFormat: string;
+    scoreFormat: string;
 }

@@ -25,10 +25,16 @@ export class OAuthService {
 
         return {
             publicId: account.publicId,
-            email: userInfo.email,
-            firstName: userInfo.firstName,
-            lastName: userInfo.lastName,
+            email: account.email,
             role: account.roles,
+            profileSettings: {
+                firstName: account.firstName,
+                lastName: account.lastName,
+                hasProfilePicture: account.hasProfilePicture,
+                language: account.language,
+                dateFormat: account.dateFormat,
+                scoreFormat: account.scoreFormat,
+            },
             accessToken: this.authService.createSignedAccessToken(account.publicId, [scope]),
             refreshToken: this.authService.createSignedRefreshToken(account.publicId, [scope]),
         }

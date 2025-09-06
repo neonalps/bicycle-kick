@@ -74,6 +74,8 @@ import { ExternalProviderClub } from "@src/model/internal/external-provider-club
 import { Account } from "@src/model/internal/account";
 import { AccountDto } from "@src/model/external/dto/account";
 import { AccountProfileDto } from "@src/model/external/dto/account-profile";
+import { ProfileSettings } from "@src/model/internal/profile-settings";
+import { ProfileSettingsDto } from "@src/model/external/dto/profile-settings";
 
 type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
@@ -779,23 +781,40 @@ export class ApiHelperService {
     }
 
     convertAccountToProfileDto(account: Account): AccountProfileDto {
-        const profile: AccountProfileDto = {
+        return {
             id: account.publicId,
             email: account.email,
-            firstName: account.firstName,
-            lastName: account.lastName,
-            language: account.language,
-            dateFormat: account.dateFormat,
-            scoreFormat: account.scoreFormat,
-            role: account.roles,
-            createdAt: account.createdAt.toISOString(),
+            profileSettings: this.convertProfileSettingsToDto(account.publicId, {
+                firstName: account.firstName,
+                lastName: account.lastName,
+                hasProfilePicture: account.hasProfilePicture,
+                language: account.language,
+                dateFormat: account.dateFormat,
+                scoreFormat: account.scoreFormat,
+            }),
+        };
+    }
+
+    convertProfileSettingsToDto(publicId: string, profileSettings: ProfileSettings): ProfileSettingsDto {
+        const settings: ProfileSettingsDto = {
+            language: profileSettings.language,
+            dateFormat: profileSettings.dateFormat,
+            scoreFormat: profileSettings.scoreFormat,
         };
 
-        if (account.hasProfilePicture) {
-            profile.profilePicture = this.getMediaUrl(`u/${account.publicId}`);
+        if (profileSettings.firstName) {
+            settings.firstName = profileSettings.firstName;
         }
 
-        return profile;
+        if (profileSettings.lastName) {
+            settings.lastName = profileSettings.lastName;
+        }
+
+        if (profileSettings.hasProfilePicture) {
+            settings.profilePicture = this.getMediaUrl(`u/${publicId}`);
+        }
+
+        return settings;
     }
 
     async convertClubToBasicDto(club: Club): Promise<BasicClubDto> {

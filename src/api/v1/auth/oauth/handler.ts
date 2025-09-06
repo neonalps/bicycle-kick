@@ -5,10 +5,11 @@ import { OAuthService } from "@src/module/auth/oauth/service";
 import { AuthProvider } from "@src/module/auth/oauth/constants";
 import { IdentityDto } from "@src/model/external/dto/identity";
 import { isDefined } from "@src/util/common";
+import { ApiHelperService } from "@src/module/api-helper/service";
 
 export class OAuthLoginHandler implements RouteHandler<OauthLoginRequestDto, AuthResponseDto> {
 
-    constructor(private readonly oAuthService: OAuthService) {}
+    constructor(private readonly apiHelperService: ApiHelperService, private readonly oAuthService: OAuthService) {}
 
     public async handle(_: AuthenticationContext, dto: OauthLoginRequestDto): Promise<AuthResponseDto> {
         const identity = await this.oAuthService.handleOAuthLogin(dto.provider as AuthProvider, dto.code);
@@ -19,16 +20,9 @@ export class OAuthLoginHandler implements RouteHandler<OauthLoginRequestDto, Aut
             role: identity.role,
         }
 
-        if (isDefined(identity.firstName)) {
-            identityDto.firstName = identity.firstName;
-        }
-
-        if (isDefined(identity.lastName)) {
-            identityDto.lastName = identity.lastName;
-        }
-
         return {
             identity: identityDto,
+            profileSettings: this.apiHelperService.convertProfileSettingsToDto(identity.publicId, identity.profileSettings),
             token: {
                 accessToken: identity.accessToken,
                 refreshToken: identity.refreshToken,

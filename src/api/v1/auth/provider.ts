@@ -7,7 +7,7 @@ import { getAuthTokenConfig } from "@src/config";
 import { ApplicationServices } from "@src/di/services";
 
 export function getAuthRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
-    const oAuthRouteHandler = new OAuthLoginHandler(services.oAuthService);
+    const oAuthRouteHandler = new OAuthLoginHandler(services.apiHelperService, services.oAuthService);
     const refreshTokenRouteHandler = new RefreshTokenRouteHandler(services.authService, services.dateSource, services.timeSource, getAuthTokenConfig());
 
     return [

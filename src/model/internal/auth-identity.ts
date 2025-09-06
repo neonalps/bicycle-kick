@@ -1,4 +1,5 @@
 import { AccountRole } from "@src/model/type/account-role";
+import { ProfileSettings } from "./profile-settings";
 
 export interface AuthIdentity {
     publicId: string;
@@ -6,6 +7,5 @@ export interface AuthIdentity {
     role: AccountRole;
     accessToken: string;
     refreshToken: string;
-    firstName?: string;
-    lastName?: string;
+    profileSettings: ProfileSettings;
 }

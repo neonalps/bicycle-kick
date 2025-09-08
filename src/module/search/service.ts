@@ -161,6 +161,8 @@ export class SearchService {
             kickoff: item.kickoff,
             opponent: opponentDto,
             isHomeGame: item.isHomeTeam,
+            resultTendency: item.resultTendency,
+            status: item.status,
             result: this.getGameResult(item),
         };
 

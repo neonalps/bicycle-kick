@@ -1,6 +1,8 @@
 import { SearchEntity } from "@src/module/search/entities";
 import { BasicClubDto } from "./basic-club";
 import { DateString } from "@src/util/domain-types";
+import { Tendency } from "@src/model/type/tendency";
+import { GameStatus } from "@src/model/type/game-status";
 
 export type GameResult = {
     fullTime: [number, number],
@@ -12,6 +14,8 @@ export type GameResult = {
 export type GameSearchResultContext = {
     opponent: BasicClubDto;
     kickoff: DateString;
+    resultTendency?: Tendency;
+    status: GameStatus;
     isHomeGame: boolean;
     result?: GameResult;
 };

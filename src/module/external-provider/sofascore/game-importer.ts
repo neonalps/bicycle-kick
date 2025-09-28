@@ -43,7 +43,7 @@ export class SofascoreGameImporter {
     private async findSofascoreGameId(kickoffUnix: number): Promise<number> {
         const results = await this.fetchResponseJsonFromSofascore(SofascoreGameImporter.SOFASCORE_CLUB_RESULTS_BASE_URL.replace(':clubId', this.sofascoreMainClubId.toString()));
 
-        const sofascoreGame = (results as any).events.find((item: any) => {
+        const sofascoreGame = (results as any).events?.find((item: any) => {
             return item.startTimestamp === kickoffUnix;
         });
 

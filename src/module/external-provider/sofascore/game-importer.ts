@@ -48,6 +48,7 @@ export class SofascoreGameImporter {
         });
 
         if (!sofascoreGame) {
+            console.error(`sofascore club results response`, results);
             throw new Error(`Failed to find Sofascore game`);
         }
 

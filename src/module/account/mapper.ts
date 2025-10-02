@@ -11,6 +11,7 @@ import { UpdateAccountProfileDto } from "@src/model/external/dto/update-account-
 import { Language } from "@src/model/type/language";
 import { DateFormat } from "@src/model/type/date-format";
 import { ScoreFormat } from "@src/model/type/score-format";
+import { GameMinuteFormat } from "@src/model/type/game-minute-format";
 
 export class AccountMapper {
 
@@ -95,13 +96,14 @@ export class AccountMapper {
             language: update.language,
             dateFormat: update.dateFormat,
             scoreFormat: update.scoreFormat,
+            gameMinuteFormat: update.gameMinuteFormat,
         }
 
-        await this.sql`update account set ${ this.sql(updateAccount, 'firstName', 'lastName', 'language', 'dateFormat', 'scoreFormat') } where id = ${accountId}`;
+        await this.sql`update account set ${ this.sql(updateAccount, 'firstName', 'lastName', 'language', 'dateFormat', 'scoreFormat', 'gameMinuteFormat') } where id = ${accountId}`;
     }
 
     private commonAccountSelect() {
-        return this.sql`select id, public_id, email, first_name, last_name, enabled, has_profile_picture, language, date_format, score_format, created_at, roles from account`;
+        return this.sql`select id, public_id, email, first_name, last_name, enabled, has_profile_picture, language, date_format, score_format, game_minute_format, created_at, roles from account`;
     }
 
     private convertToEntity(item: AccountDaoInterface): Account {
@@ -116,6 +118,7 @@ export class AccountMapper {
             language: item.language as Language,
             dateFormat: item.dateFormat as DateFormat,
             scoreFormat: item.scoreFormat as ScoreFormat,
+            gameMinuteFormat: item.gameMinuteFormat as GameMinuteFormat,
             enabled: item.enabled,
             createdAt: item.createdAt,
         }

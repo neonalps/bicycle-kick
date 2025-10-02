@@ -34,6 +34,7 @@ export class OAuthService {
                 language: account.language,
                 dateFormat: account.dateFormat,
                 scoreFormat: account.scoreFormat,
+                gameMinuteFormat: account.gameMinuteFormat,
             },
             accessToken: this.authService.createSignedAccessToken(account.publicId, [scope]),
             refreshToken: this.authService.createSignedRefreshToken(account.publicId, [scope]),

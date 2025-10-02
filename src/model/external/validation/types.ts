@@ -17,7 +17,7 @@ export interface NumberEnumType extends EnumType<number> {
 export type ObjectType = {
     type: 'object',
     required: string[];
-    properties: Record<string, PrimitiveType | ObjectType | ArrayType>;
+    properties: Record<string, PrimitiveType | ObjectType | ArrayType | StringEnumType>;
     additionalProperties: boolean;
 }
 

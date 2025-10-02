@@ -11,4 +11,5 @@ export interface AccountDaoInterface {
     language: string;
     dateFormat: string;
     scoreFormat: string;
+    gameMinuteFormat: string;
 }

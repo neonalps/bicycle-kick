@@ -791,6 +791,7 @@ export class ApiHelperService {
                 language: account.language,
                 dateFormat: account.dateFormat,
                 scoreFormat: account.scoreFormat,
+                gameMinuteFormat: account.gameMinuteFormat,
             }),
         };
     }
@@ -800,6 +801,7 @@ export class ApiHelperService {
             language: profileSettings.language,
             dateFormat: profileSettings.dateFormat,
             scoreFormat: profileSettings.scoreFormat,
+            gameMinuteFormat: profileSettings.gameMinuteFormat,
         };
 
         if (profileSettings.firstName) {

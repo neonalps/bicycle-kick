@@ -77,6 +77,7 @@ export class AccountService {
         validateNotBlank(update.language, "update.language");
         validateNotBlank(update.dateFormat, "update.dateFormat");
         validateNotBlank(update.scoreFormat, "update.scoreFormat");
+        validateNotBlank(update.gameMinuteFormat, "update.gameMinuteFormat");
 
         await this.mapper.updateProfile(id, update);
     }

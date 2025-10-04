@@ -3,6 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { GetSeasonSquadRouteHandler } from "./handler";
 import { GetSeasonSquadRequestDto } from "@src/model/external/dto/get-season-squad-request";
 import { GetSeasonSquadResponseDto } from "@src/model/external/dto/get-season-squad-response";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetSeasonSquadRouteProvider implements RouteProvider<GetSeasonSquadRequestDto, GetSeasonSquadResponseDto> {
 
@@ -30,7 +31,11 @@ export class GetSeasonSquadRouteProvider implements RouteProvider<GetSeasonSquad
             path: '/api/v1/seasons/:seasonId/squad',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadSeason,
+                Capability.ReadPerson,
+            ]
         }
     }
 

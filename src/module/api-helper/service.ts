@@ -740,6 +740,10 @@ export class ApiHelperService {
             dto.to = member.to;
         }
 
+        if (isDefined(member.loan)) {
+            dto.loan = member.loan;
+        }
+
         return dto;
     }
 

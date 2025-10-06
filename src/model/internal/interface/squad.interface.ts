@@ -9,4 +9,5 @@ export interface SquadDaoInterface {
     shirt?: number;
     start?: DateString;
     end?: DateString;
+    loan?: boolean;
 }

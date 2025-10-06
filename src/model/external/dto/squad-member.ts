@@ -6,4 +6,5 @@ export interface SquadMemberDto {
     shirt?: number;
     from?: string;
     to?: string;
+    loan?: boolean;
 }

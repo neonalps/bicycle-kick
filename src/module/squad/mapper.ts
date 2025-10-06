@@ -24,6 +24,7 @@ export class SquadMapper {
             overallPosition: item.overallPosition,
             from: item.start,
             to: item.end,
+            loan: item.loan,
         }
     }
 

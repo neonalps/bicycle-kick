@@ -8,4 +8,5 @@ export interface SquadMember {
     shirt?: number;
     from?: string;
     to?: string;
+    loan?: boolean;
 }

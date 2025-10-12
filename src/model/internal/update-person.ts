@@ -1,4 +1,4 @@
-export interface CreatePerson {
+export interface UpdatePerson {
     firstName?: string;
     lastName: string;
     avatar?: string;

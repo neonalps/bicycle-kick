@@ -1,5 +1,7 @@
-export interface BasicPersonDto {
-    id: number;
+import { PersonId } from "@src/util/domain-types";
+
+export interface UpdatePersonRequestDto {
+    personId: PersonId;
     lastName: string;
     firstName?: string;
     avatar?: string;

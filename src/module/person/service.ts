@@ -3,6 +3,8 @@ import { PersonMapper } from "./mapper";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { CreatePerson } from "@src/model/internal/create-person";
 import { normalizeForSearch } from "@src/util/search";
+import { UpdatePerson } from "@src/model/internal/update-person";
+import { PersonId } from "@src/util/domain-types";
 
 export class PersonService {
 
@@ -10,7 +12,6 @@ export class PersonService {
 
     async create(createPerson: Omit<CreatePerson, 'normalizedSearch'>): Promise<Person> {
         validateNotNull(createPerson, "createPerson");
-        validateNotBlank(createPerson.firstName, "createPerson.firstName");
         validateNotBlank(createPerson.lastName, "createPerson.lastName");
 
         const createdPersonId = await this.mapper.create({
@@ -22,6 +23,19 @@ export class PersonService {
             throw new Error(`Something went wrong while creating person`);
         }
         return createdPerson;
+    }
+
+    async updateById(personId: PersonId, updatePerson: Omit<UpdatePerson, 'normalizedSearch'>): Promise<Person> {
+        validateNotNull(personId, "personId");
+        validateNotNull(updatePerson, "updatePerson");
+        validateNotBlank(updatePerson.lastName, "updatePerson.lastName");
+
+        await this.mapper.updateById(personId, {
+            ...updatePerson,
+            normalizedSearch: normalizeForSearch([updatePerson.firstName, updatePerson.lastName].join(" ")),
+        });
+        
+        return await this.requireById(personId);
     }
 
     async getById(id: number): Promise<Person | null> {

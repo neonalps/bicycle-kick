@@ -750,17 +750,23 @@ export class ApiHelperService {
     convertPersonToBasicDto(item: Person): BasicPersonDto {
         const person: BasicPersonDto = {
             id: item.id,
-            firstName: item.firstName,
             lastName: item.lastName,
-            birthday: item.birthday,
         };
+
+        if (isDefined(item.firstName)) {
+            person.firstName = item.firstName;
+        }
 
         if (isDefined(item.avatar)) {
             person.avatar = this.getMediaUrl(item.avatar);
         }
 
+        if (isDefined(item.birthday)) {
+            person.birthday = item.birthday;
+        }
+
         if (isDefined(item.deathday)) {
-            person.deathday = item.deathday
+            person.deathday = item.deathday;
         }
 
         if (isDefined(item.nationalities) && item.nationalities.length > 0) {
@@ -773,9 +779,12 @@ export class ApiHelperService {
     private convertPersonToSmallDto(person: Person): SmallPersonDto {
         const smallPerson: SmallPersonDto = {
             id: person.id,
-            firstName: person.firstName,
             lastName: person.lastName,
         };
+
+        if (isDefined(person.firstName)) {
+            smallPerson.firstName = person.firstName;
+        }
 
         if (isDefined(person.avatar)) {
             smallPerson.avatar = this.getMediaUrl(person.avatar);

@@ -3,6 +3,8 @@ import { CreatePerson } from "@src/model/internal/create-person";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { PersonDaoInterface } from "@src/model/internal/interface/person.interface";
 import { Person } from "@src/model/internal/person";
+import { UpdatePerson } from "@src/model/internal/update-person";
+import { PersonId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
 
@@ -15,6 +17,16 @@ export class PersonMapper {
         const result = await query`insert into person ${ query(createPerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'nationalities', 'normalizedSearch') } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to insert person`);
+        }
+
+        return result[0].id;
+    }
+
+    async updateById(personId: PersonId, updatePerson: UpdatePerson, tx?: postgres.TransactionSql): Promise<number> {
+        const query = tx || this.sql;
+        const result = await query`update person set ${ query(updatePerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'nationalities', 'normalizedSearch') } where id = ${ personId } returning id`;
+        if (result.length !== 1) {
+            throw new Error(`Failed to update person`);
         }
 
         return result[0].id;

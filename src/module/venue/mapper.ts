@@ -2,7 +2,10 @@ import { Sql } from "@src/db";
 import { CreateVenue } from "@src/model/internal/create-venue";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { VenueDaoInterface } from "@src/model/internal/interface/venue.interface";
+import { UpdateVenue } from "@src/model/internal/update-venue";
 import { Venue } from "@src/model/internal/venue";
+import { isDefined } from "@src/util/common";
+import { VenueId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
 
@@ -16,6 +19,16 @@ export class VenueMapper {
         if (result.length !== 1) {
             throw new Error(`Failed to create venue`);
         }
+        return result[0].id;
+    }
+
+    async updateById(venuId: VenueId, updateVenue: UpdateVenue, tx?: postgres.TransactionSql): Promise<number> {
+        const query = tx || this.sql;
+        const result = await query`update venue set ${ query(updateVenue, 'name', 'shortName', 'capacity', 'city', 'countryCode', 'district', 'latitude', 'longitude', 'normalizedSearch') } where id = ${ venuId } returning id`;
+        if (result.length !== 1) {
+            throw new Error(`Failed to update venue`);
+        }
+
         return result[0].id;
     }
 
@@ -64,6 +77,8 @@ export class VenueMapper {
     private convertToEntity(item: VenueDaoInterface): Venue {
         return {
             ...item,
+            latitude: isDefined(item.latitude) ? Number(item.latitude) : item.latitude,
+            longitude: isDefined(item.longitude) ? Number(item.longitude) : item.longitude,
         }
     }
 

@@ -9,6 +9,7 @@ import { getPersonRouteProviders } from "./v1/person/providers";
 import { getDashboardRouteProviders } from "./v1/dashboard/providers";
 import { getAccountRouteProviders } from "./v1/account/provider";
 import { ApplicationServices } from "@src/di/services";
+import { getVenueRouteProviders } from "./v1/venue/providers";
 
 export function getRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
@@ -22,6 +23,7 @@ export function getRouteProviders(services: ApplicationServices): RouteProvider<
         ...getPersonRouteProviders(services),
         ...getSearchRouteProviders(services),
         ...getSeasonRouteProviders(services),
+        ...getVenueRouteProviders(services),
     ];
     
 }

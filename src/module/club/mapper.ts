@@ -3,6 +3,8 @@ import { Club } from "@src/model/internal/club";
 import { CreateClub } from "@src/model/internal/create-club";
 import { ClubDaoInterface } from "@src/model/internal/interface/club.interface";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
+import { UpdateClub } from "@src/model/internal/update-club";
+import { ClubId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
 
@@ -17,7 +19,16 @@ export class ClubMapper {
             throw new Error(`Failed to create club`);
         }
         return result[0].id;
-    } 
+    }
+    
+    async updateById(clubId: ClubId, update: UpdateClub, tx?: postgres.TransactionSql): Promise<number> {
+        const query = tx || this.sql;
+        const result = await query`update club set ${ query(update, 'name', 'shortName', 'city', 'countryCode', 'district', 'homeVenueId', 'iconLarge', 'iconSmall', 'primaryColour', 'secondaryColour', 'normalizedSearch') } where id = ${ clubId } returning id`;
+        if (result.length !== 1) {
+            throw new Error(`Failed to update club`);
+        }
+        return result[0].id;
+    }
 
     async getById(id: number): Promise<Club | null> {
         const result = await this.sql<ClubDaoInterface[]>`select * from club where id = ${ id }`;

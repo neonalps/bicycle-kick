@@ -30,6 +30,8 @@ export class PersonService {
         validateNotNull(updatePerson, "updatePerson");
         validateNotBlank(updatePerson.lastName, "updatePerson.lastName");
 
+        await this.requireById(personId);
+
         await this.mapper.updateById(personId, {
             ...updatePerson,
             normalizedSearch: normalizeForSearch([updatePerson.firstName, updatePerson.lastName].join(" ")),
@@ -38,13 +40,13 @@ export class PersonService {
         return await this.requireById(personId);
     }
 
-    async getById(id: number): Promise<Person | null> {
+    async getById(id: PersonId): Promise<Person | null> {
         validateNotNull(id, "id");
 
         return await this.mapper.getById(id);
     }
 
-    async requireById(id: number): Promise<Person> {
+    async requireById(id: PersonId): Promise<Person> {
         const person = await this.getById(id);
         if (person === null) {
             throw new Error(`No person with ID ${id} exists`);
@@ -52,7 +54,7 @@ export class PersonService {
         return person;
     }
 
-    async getMapByIds(ids: number[]): Promise<Map<number, Person>> {
+    async getMapByIds(ids: PersonId[]): Promise<Map<number, Person>> {
         validateNotNull(ids, "ids");
         if (ids.length === 0) {
             return new Map();

@@ -1129,7 +1129,7 @@ export class ApiHelperService {
         return dto;
     }
 
-    private convertVenueToBasicDto(venue: Venue): BasicVenueDto {
+    convertVenueToBasicDto(venue: Venue): BasicVenueDto {
         const dto: BasicVenueDto = {
             id: venue.id,
             name: venue.name,

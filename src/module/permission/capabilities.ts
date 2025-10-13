@@ -7,6 +7,7 @@ const substituteCapabilities: ReadonlyArray<Capability> = [
     Capability.ReadPerson,
     Capability.ReadSeason,
     Capability.ReadStats,
+    Capability.ReadVenue,
 ];
 
 const playerCapabilities: ReadonlyArray<Capability> = [
@@ -23,6 +24,7 @@ const managerCapabilities: ReadonlyArray<Capability> = [
     Capability.WriteGame,
     Capability.WritePerson,
     Capability.WriteUser,
+    Capability.WriteVenue,
 ];
 
 

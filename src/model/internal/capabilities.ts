@@ -17,4 +17,7 @@ export enum Capability {
     // management: user
     ReadUser = "user.read",
     WriteUser = "user.write",
+    // venue
+    ReadVenue = "venue.read",
+    WriteVenue = "venue.write",
 }

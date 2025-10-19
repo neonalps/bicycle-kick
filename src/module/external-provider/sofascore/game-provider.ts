@@ -131,7 +131,7 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
                 id: id.toString(),
                 firstName: personName.firstName,
                 lastName: personName.lastName,
-                birthday: dateOfBirthTimestamp !== undefined ? this.timeSource.unixTimestampToDate(dateOfBirthTimestamp) : undefined,
+                birthday: dateOfBirthTimestamp !== undefined ? this.timeSource.unixTimestampToDate(dateOfBirthTimestamp).toISOString() : undefined,
             }
         }
     }

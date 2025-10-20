@@ -58,7 +58,7 @@ export class BundesligaClient implements MatchdayDetailsProvider {
         const result: ExternalFixture[] = [];
 
         // find fixture content
-        const fixtureMain = main.childNodes[1].childNodes[1].childNodes[0].childNodes[2];
+        const fixtureMain = main.childNodes[1].childNodes[2].childNodes[0].childNodes[2];
 
         for (const dayNode of fixtureMain.childNodes) {
             const day = dayNode.childNodes[0].textContent;

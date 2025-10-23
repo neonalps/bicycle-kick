@@ -6,6 +6,7 @@ import { GamePlayerService, GetPlayerGamesPlayedPaginationParams } from "@src/mo
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
 import { MAX_DATE, MIN_DATE, SortOrder } from "@src/module/pagination/constants";
 import { PaginationService } from "@src/module/pagination/service";
+import { isDefined } from "@src/util/common";
 
 export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPlayedRequestDto, PaginatedResponseDto<GamePlayedDto>> {
 
@@ -40,39 +41,39 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
                 lastSeen: lastSeen.toISOString(),
             };
 
-            if (dto.opponentId) {
+            if (isDefined(dto.opponentId)) {
                 params.opponentId = dto.opponentId;
             }
 
-            if (dto.competitionId) {
+            if (isDefined(dto.competitionId)) {
                 params.competitionId = dto.competitionId;
             }
 
-            if (dto.seasonId) {
+            if (isDefined(dto.seasonId)) {
                 params.seasonId = dto.seasonId;
             }
 
-            if (dto.minutesPlayed) {
+            if (isDefined(dto.minutesPlayed)) {
                 params.minutesPlayed = dto.minutesPlayed;
             }
 
-            if (dto.goalsScored) {
+            if (isDefined(dto.goalsScored)) {
                 params.goalsScored = dto.goalsScored;
             }
 
-            if (dto.assists) {
+            if (isDefined(dto.assists)) {
                 params.assists = dto.assists;
             }
 
-            if (dto.yellowCard) {
+            if (isDefined(dto.yellowCard)) {
                 params.yellowCard = dto.yellowCard;
             }
 
-            if (dto.yellowRedCard) {
+            if (isDefined(dto.yellowRedCard)) {
                 params.yellowRedCard = dto.yellowRedCard;
             }
 
-            if (dto.redCard) {
+            if (isDefined(dto.redCard)) {
                 params.redCard = dto.redCard;
             }
 
@@ -92,6 +93,42 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
             order: oldParams.order,
             lastSeen: this.paginationService.getLastElement(items).game.kickoff,
         };
+
+        if (isDefined(oldParams.opponentId)) {
+            newParams.opponentId = oldParams.opponentId;
+        }
+
+        if (isDefined(oldParams.competitionId)) {
+            newParams.competitionId = oldParams.competitionId;
+        }
+
+        if (isDefined(oldParams.seasonId)) {
+            newParams.seasonId = oldParams.seasonId;
+        }
+
+        if (isDefined(oldParams.minutesPlayed)) {
+            newParams.minutesPlayed = oldParams.minutesPlayed;
+        }
+
+        if (isDefined(oldParams.goalsScored)) {
+            newParams.goalsScored = oldParams.goalsScored;
+        }
+
+        if (isDefined(oldParams.assists)) {
+            newParams.assists = oldParams.assists;
+        }
+
+        if (isDefined(oldParams.yellowCard)) {
+            newParams.yellowCard = oldParams.yellowCard;
+        }
+
+        if (isDefined(oldParams.yellowRedCard)) {
+            newParams.yellowRedCard = oldParams.yellowRedCard;
+        }
+
+        if (isDefined(oldParams.redCard)) {
+            newParams.redCard = oldParams.redCard;
+        }
 
         return this.paginationService.encode(newParams);
     }

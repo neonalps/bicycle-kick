@@ -64,6 +64,9 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
             });
         }
 
+        // if no venue was set on the event, try to grab it from the home team
+        const gameVenue = input.event.venue ?? isHomeGame ? input.event.homeTeam.venue : input.event.awayTeam.venue;
+
         return {
             kickoff: this.timeSource.unixTimestampToDate(input.event.startTimestamp).toISOString(),
             status: GameStatus.Finished,
@@ -82,14 +85,14 @@ export class SofascoreGameProvider implements ExternalGameProvider<SofascoreGame
             venue: {
                 externalVenue: {
                     provider: this.type,
-                    id: input.event.venue.id.toString(),
-                    name: input.event.venue.name,
-                    shortName: input.event.venue.name,
-                    city: input.event.venue.city.name,
-                    countryCode: input.event.venue.country.alpha2.toLocaleLowerCase(),
-                    capacity: input.event.venue.capacity ?? 0,
-                    latitude: input.event.venue?.venueCoordinates?.latitude,
-                    longitude: input.event.venue?.venueCoordinates?.longitude,
+                    id: gameVenue.id.toString(),
+                    name: gameVenue.name,
+                    shortName: gameVenue.name,
+                    city: gameVenue.city.name,
+                    countryCode: gameVenue.country.alpha2.toLocaleLowerCase(),
+                    capacity: gameVenue.capacity ?? 0,
+                    latitude: gameVenue.venueCoordinates?.latitude,
+                    longitude: gameVenue.venueCoordinates?.longitude,
                 }
             },
             referees,

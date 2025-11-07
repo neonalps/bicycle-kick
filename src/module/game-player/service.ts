@@ -11,10 +11,19 @@ export interface GetPlayerGamesPlayedPaginationParams extends PaginationParams<D
     minutesPlayed?: string;
     goalsScored?: string;
     assists?: string;
+    goalsConceded?: string;
     ownGoals?: number;
     yellowCard?: boolean;
     yellowRedCard?: boolean;
     redCard?: boolean;
+    regulationPenaltiesTaken?: string;
+    regulationPenaltiesScored?: string;
+    regulationPenaltiesFaced?: string;
+    regulationPenaltiesSaved?: string;
+    psoPenaltiesTaken?: string;
+    psoPenaltiesScored?: string;
+    psoPenaltiesFaced?: string;
+    psoPenaltiesSaved?: string;
     forMain?: boolean;
 }
 

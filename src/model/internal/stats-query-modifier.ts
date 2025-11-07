@@ -1,4 +1,6 @@
+export type QueryComparator = '>' | '>=' | '<' | '<=' | '=';
+
 export type ValueWithModifier = {
-    modifier: '>' | '>=' | '<' | '<=' | '=';
+    modifier: QueryComparator;
     value: number;
 }

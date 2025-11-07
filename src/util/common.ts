@@ -30,7 +30,7 @@ export function isDefined<T>(toCheck: T): toCheck is NonNullable<T> {
     return toCheck !== null && toCheck !== undefined;
 }
 
-export function isNotDefined(toCheck: unknown) {
+export function isNotDefined(toCheck: unknown): toCheck is null | undefined {
     return !isDefined(toCheck);
 }
 

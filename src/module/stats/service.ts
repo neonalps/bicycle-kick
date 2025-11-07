@@ -27,6 +27,7 @@ interface PlayerPerformanceStatsItemResult {
     competitionIds?: Set<CompetitionId>;
     seasonIds?: Set<SeasonId>;
     playerStats: Map<PersonId, Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>>;
+    playerOpponentStats?: Map<PersonId, PlayerBaseStats>;
 }
 
 interface PlayerGoalsAgainstClubStatsItemResult {
@@ -39,6 +40,7 @@ export interface PlayerStatsResult {
     clubs?: Map<ClubId, Club>;
     seasons?: Map<SeasonId, Season>;
     playerStats?: Map<PersonId, Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>>;
+    playerOpponentStats?: Map<PersonId, PlayerBaseStats>;
     goalsAgainstClub?: Map<PersonId, ReadonlyArray<PlayerGoalsAgainstClubStatsItem>>;
 }
 
@@ -70,12 +72,13 @@ export class StatsService {
         const result: PlayerStatsResult = {};
 
         if (requestedStatsItems.includes(PlayerStatsItem.Performance)) {
-            const playerPerformance = await this.getPlayerPerformanceStats(playerIds, statsContext);
+            const playerPerformance = await this.getPlayerPerformanceStats(playerIds);
 
             playerPerformance.competitionIds?.forEach(item => seenCompetitionIds.add(item));
             playerPerformance.seasonIds?.forEach(item => seenSeasonIds.add(item));
 
             result.playerStats = playerPerformance.playerStats;
+            result.playerOpponentStats = playerPerformance.playerOpponentStats;
         }
 
         if (requestedStatsItems.includes(PlayerStatsItem.GoalsAgainstClub)) {
@@ -125,7 +128,7 @@ export class StatsService {
         return requestedItems;
     }
 
-    private async getPlayerPerformanceStats(playerIds: ArrayNonEmpty<number>, context: StatsContext): Promise<PlayerPerformanceStatsItemResult> {
+    private async getPlayerPerformanceStats(playerIds: ArrayNonEmpty<number>): Promise<PlayerPerformanceStatsItemResult> {
         validateNotNull(playerIds, "playerIds");
 
         const uniqueIds = uniqueArrayElements(playerIds);
@@ -144,7 +147,12 @@ export class StatsService {
         const seenCompetitionIds = new Set<CompetitionId>();
 
         const result: Map<PersonId, Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>> = new Map();
-        const playerStats = await this.mapper.getPlayerPerformanceStats(uniqueIds as ArrayNonEmpty<number>);
+
+        const { playerStats, playerOpponentStats } = await promiseAllObject({
+            playerStats: this.mapper.getPlayerPerformanceStats(uniqueIds as ArrayNonEmpty<number>, true),
+            playerOpponentStats: this.mapper.getPlayerPerformanceStats(uniqueIds as ArrayNonEmpty<number>, false),
+        });
+
         for (const personId of playerStats.keys()) {
             const playerEntries = playerStats.get(personId) ?? [];
 
@@ -184,10 +192,22 @@ export class StatsService {
             result.set(personId, playerSeasonCompetitionMap);
         }
 
+        const opponentResult: Map<PersonId, PlayerBaseStats> = new Map();
+        for (const personId of playerOpponentStats.keys()) {
+            const playerOpponentEntries = playerOpponentStats.get(personId) ?? [];
+
+            let opponentStatsTotal = getEmptyPlayerBaseStats();
+            playerOpponentEntries.forEach(competitionStats => {
+                opponentStatsTotal = combinePlayerBaseStats(opponentStatsTotal, competitionStats);
+            });
+            opponentResult.set(personId, opponentStatsTotal);
+        }
+
         return {
             seasonIds: seenSeasonIds,
             competitionIds: seenCompetitionIds, 
             playerStats: result,
+            playerOpponentStats: opponentResult,
         }
     }
 

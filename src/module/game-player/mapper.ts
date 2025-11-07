@@ -3,9 +3,9 @@ import { GamePlayer } from "@src/model/internal/game-player";
 import { GamePlayerDaoInterface } from "@src/model/internal/interface/game-player.interface";
 import { SortOrder } from "@src/module/pagination/constants";
 import { GetPlayerGamesPlayedPaginationParams } from "./service";
-import { isDefined, isNotDefined } from "@src/util/common";
+import { assertUnreachable, isDefined, isNotDefined } from "@src/util/common";
 import { CompetitionId, PersonId } from "@src/util/domain-types";
-import { ValueWithModifier } from "@src/model/internal/stats-query-modifier";
+import { QueryComparator, ValueWithModifier } from "@src/model/internal/stats-query-modifier";
 import { parseValueWithModifier } from "@src/util/stats";
 import { CompetitionService } from "@src/module/competition/service";
 
@@ -52,6 +52,15 @@ export class GamePlayerMapper {
         const assistsWithModifier: ValueWithModifier | undefined = params.assists ? parseValueWithModifier(params.assists) : undefined;
         const goalsScoredWithModifier: ValueWithModifier | undefined = params.goalsScored ? parseValueWithModifier(params.goalsScored) : undefined;
         const minutesPlayedWithModifier: ValueWithModifier | undefined = params.minutesPlayed ? parseValueWithModifier(params.minutesPlayed) : undefined;
+        const goalsConcededWithModifier: ValueWithModifier | undefined = params.goalsConceded ? parseValueWithModifier(params.goalsConceded) : undefined;
+        const regulationPenaltiesFacedWithModifier: ValueWithModifier | undefined = params.regulationPenaltiesFaced ? parseValueWithModifier(params.regulationPenaltiesFaced) : undefined;
+        const regulationPenaltiesSavedWithModifier: ValueWithModifier | undefined = params.regulationPenaltiesSaved ? parseValueWithModifier(params.regulationPenaltiesSaved) : undefined;
+        const regulationPenaltiesTakenWithModifier: ValueWithModifier | undefined = params.regulationPenaltiesTaken ? parseValueWithModifier(params.regulationPenaltiesTaken) : undefined;
+        const regulationPenaltiesScoredWithModifier: ValueWithModifier | undefined = params.regulationPenaltiesScored ? parseValueWithModifier(params.regulationPenaltiesScored) : undefined;
+        const psoPenaltiesFacedWithModifier: ValueWithModifier | undefined = params.psoPenaltiesFaced ? parseValueWithModifier(params.psoPenaltiesFaced) : undefined;
+        const psoPenaltiesSavedWithModifier: ValueWithModifier | undefined = params.psoPenaltiesSaved ? parseValueWithModifier(params.psoPenaltiesSaved) : undefined;
+        const psoPenaltiesTakenWithModifier: ValueWithModifier | undefined = params.psoPenaltiesTaken ? parseValueWithModifier(params.psoPenaltiesTaken) : undefined;
+        const psoPenaltiesScoredWithModifier: ValueWithModifier | undefined = params.psoPenaltiesScored ? parseValueWithModifier(params.psoPenaltiesScored) : undefined;
 
         const effectiveCompetitionIds = await this.getEffectiveCompetitionIds(competitionIds);
 
@@ -68,9 +77,18 @@ export class GamePlayerMapper {
                 ${effectiveCompetitionIds.length > 0 ? this.sql` and g.competition_id in ${ this.sql(effectiveCompetitionIds) }` : this.sql``}
                 ${opponentIds ? this.sql` and g.opponent_id in ${ this.sql(opponentIds) }` : this.sql``}
                 ${seasonIds ? this.sql` and g.season_id in ${ this.sql(seasonIds) }` : this.sql``}
-                ${minutesPlayedWithModifier ? this.sql` and gp.minutes_played >= ${minutesPlayedWithModifier.value}` : this.sql``}
-                ${assistsWithModifier ? this.sql` and gp.assists >= ${assistsWithModifier.value}` : this.sql``}
-                ${goalsScoredWithModifier ? this.sql` and gp.goals_scored >= ${goalsScoredWithModifier.value}` : this.sql``}
+                ${ this.resolveValueWithModifier(minutesPlayedWithModifier, 'gp.minutes_played') }
+                ${ this.resolveValueWithModifier(assistsWithModifier, 'gp.assists') }
+                ${ this.resolveValueWithModifier(goalsScoredWithModifier, 'gp.goals_scored') }
+                ${ this.resolveValueWithModifier(goalsConcededWithModifier, 'gp.goals_conceded') }
+                ${ this.resolveValueWithModifier(regulationPenaltiesFacedWithModifier, 'gp.regulation_penalties_faced') }
+                ${ this.resolveValueWithModifier(regulationPenaltiesSavedWithModifier, 'gp.regulation_penalties_saved') }
+                ${ this.resolveValueWithModifier(regulationPenaltiesTakenWithModifier, 'gp.regulation_penalties_taken') }
+                ${ this.resolveValueWithModifier(regulationPenaltiesScoredWithModifier, 'gp.regulation_penalties_scored') }
+                ${ this.resolveValueWithModifier(psoPenaltiesFacedWithModifier, 'gp.pso_penalties_faced') }
+                ${ this.resolveValueWithModifier(psoPenaltiesSavedWithModifier, 'gp.pso_penalties_saved') }
+                ${ this.resolveValueWithModifier(psoPenaltiesTakenWithModifier, 'gp.pso_penalties_taken') }
+                ${ this.resolveValueWithModifier(psoPenaltiesScoredWithModifier, 'gp.pso_penalties_scored') }
                 ${isDefined(params.yellowCard) ? this.sql` and gp.yellow_card = ${params.yellowCard}` : this.sql``}
                 ${isDefined(params.yellowRedCard) ? this.sql` and gp.yellow_red_card = ${params.yellowRedCard}` : this.sql``}
                 ${isDefined(params.redCard) ? this.sql` and gp.red_card = ${params.redCard}` : this.sql``}
@@ -120,6 +138,31 @@ export class GamePlayerMapper {
 
     private determineSortOrder(order: SortOrder) {
         return order === SortOrder.Descending ? this.sql`desc` : this.sql`asc`;
+    }
+
+    private resolveValueWithModifier(valueWithModifier: ValueWithModifier | undefined, columnAccessor: string) {
+        if (isNotDefined(valueWithModifier)) {
+            return this.sql``;
+        }
+
+        return this.sql` and ${ this.sql(columnAccessor) } ${ this.convertValueModifier(valueWithModifier.modifier) } ${valueWithModifier.value}`;
+    }
+
+    private convertValueModifier(comparator: QueryComparator) {
+        switch (comparator) {
+            case '<':
+                return this.sql`<`;
+            case '<=':
+                return this.sql`<=`;
+            case '=':
+                return this.sql`=`;
+            case '>':
+                return this.sql`>`;
+            case '>=':
+                return this.sql`>=`;
+            default:
+                assertUnreachable(comparator);
+        }
     }
 
     private async getEffectiveCompetitionIds(competitionIds?: string[]): Promise<ReadonlyArray<CompetitionId>> {

@@ -44,6 +44,11 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
                 goalsAgainstClubs: this.apiHelper.convertGoalsAgainstClubsStatsItems(goalsAgainstClubsStatsDetails, performanceStatsDetailsContext.clubs!),
             }
 
+            const opponentPerformanceStats = performanceStatsDetailsContext.playerOpponentStats?.get(person.id);
+            if (opponentPerformanceStats) {
+                response.stats.opponent = this.apiHelper.convertToPlayerStatsItemDto(opponentPerformanceStats);
+            }
+
             if (refereeGames.length > 0) {
                 isReferee = true;
                 response.stats.refereeGames = await this.apiHelper.getOrderedBasicGameDtos(refereeGames);

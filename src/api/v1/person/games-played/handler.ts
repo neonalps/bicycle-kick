@@ -65,6 +65,10 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
                 params.assists = dto.assists;
             }
 
+            if (isDefined(dto.goalsConceded)) {
+                params.goalsConceded = dto.goalsConceded;
+            }
+
             if (isDefined(dto.yellowCard)) {
                 params.yellowCard = dto.yellowCard;
             }
@@ -75,6 +79,38 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
 
             if (isDefined(dto.redCard)) {
                 params.redCard = dto.redCard;
+            }
+
+            if (isDefined(dto.regulationPenaltiesTaken)) {
+                params.regulationPenaltiesTaken = dto.regulationPenaltiesTaken;
+            }
+
+            if (isDefined(dto.regulationPenaltiesScored)) {
+                params.regulationPenaltiesScored = dto.regulationPenaltiesScored;
+            }
+
+            if (isDefined(dto.regulationPenaltiesFaced)) {
+                params.regulationPenaltiesFaced = dto.regulationPenaltiesFaced;
+            }
+
+            if (isDefined(dto.regulationPenaltiesSaved)) {
+                params.regulationPenaltiesSaved = dto.regulationPenaltiesSaved;
+            }
+
+            if (isDefined(dto.psoPenaltiesTaken)) {
+                params.psoPenaltiesTaken = dto.psoPenaltiesTaken;
+            }
+
+            if (isDefined(dto.psoPenaltiesScored)) {
+                params.psoPenaltiesScored = dto.psoPenaltiesScored;
+            }
+
+            if (isDefined(dto.psoPenaltiesFaced)) {
+                params.psoPenaltiesFaced = dto.psoPenaltiesFaced;
+            }
+
+            if (isDefined(dto.psoPenaltiesSaved)) {
+                params.psoPenaltiesSaved = dto.psoPenaltiesSaved;
             }
 
             return params;
@@ -118,6 +154,10 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
             newParams.assists = oldParams.assists;
         }
 
+        if (isDefined(oldParams.goalsConceded)) {
+            newParams.goalsConceded = oldParams.goalsConceded;
+        }
+
         if (isDefined(oldParams.yellowCard)) {
             newParams.yellowCard = oldParams.yellowCard;
         }
@@ -128,6 +168,38 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
 
         if (isDefined(oldParams.redCard)) {
             newParams.redCard = oldParams.redCard;
+        }
+
+        if (isDefined(oldParams.regulationPenaltiesFaced)) {
+            newParams.regulationPenaltiesFaced = oldParams.regulationPenaltiesFaced;
+        }
+
+        if (isDefined(oldParams.regulationPenaltiesSaved)) {
+            newParams.regulationPenaltiesSaved = oldParams.regulationPenaltiesSaved;
+        }
+
+        if (isDefined(oldParams.regulationPenaltiesTaken)) {
+            newParams.regulationPenaltiesTaken = oldParams.regulationPenaltiesTaken;
+        }
+
+        if (isDefined(oldParams.regulationPenaltiesScored)) {
+            newParams.regulationPenaltiesScored = oldParams.regulationPenaltiesScored;
+        }
+
+        if (isDefined(oldParams.psoPenaltiesFaced)) {
+            newParams.psoPenaltiesFaced = oldParams.psoPenaltiesFaced;
+        }
+
+        if (isDefined(oldParams.psoPenaltiesSaved)) {
+            newParams.psoPenaltiesSaved = oldParams.psoPenaltiesSaved;
+        }
+
+        if (isDefined(oldParams.psoPenaltiesTaken)) {
+            newParams.psoPenaltiesTaken = oldParams.psoPenaltiesTaken;
+        }
+
+        if (isDefined(oldParams.psoPenaltiesScored)) {
+            newParams.psoPenaltiesScored = oldParams.psoPenaltiesScored;
         }
 
         return this.paginationService.encode(newParams);

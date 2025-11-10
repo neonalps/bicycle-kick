@@ -86,6 +86,7 @@ import { ExternalProvider } from "@src/model/type/external-provider";
 import { MatchdayDetailsProvider } from "@src/module/matchday-details/provider";
 import { SofascoreGameImporter } from "@src/module/external-provider/sofascore/game-importer";
 import { ApplicationServices } from "./services";
+import { TeamPenaltyMissedFilterProvider } from "@src/module/advanced-query/provider/team-penalty-missed";
 
 export class DependencyManager {
 
@@ -244,6 +245,7 @@ export class DependencyManager {
         filterProviders.set(FilterName.PlayerSentOffGameEventFilter, new PlayerSentOffGameEventFilterProvider());
         filterProviders.set(FilterName.TablePositionAfter, new TablePositionAfterFilterProvider());
         filterProviders.set(FilterName.TeamPenaltyConceded, new TeamPenaltyConcededFilterProvider());
+        filterProviders.set(FilterName.TeamPenaltyMissed, new TeamPenaltyMissedFilterProvider());
         filterProviders.set(FilterName.Turnaround, new TurnaroundFilterProvider());
 
         const advancedQueryService = new AdvancedQueryService(advancedQueryConfig, idResolvers, filterProviders, gameService, sqlInstance, uuidSource);

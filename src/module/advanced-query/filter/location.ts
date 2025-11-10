@@ -16,15 +16,15 @@ export class LocationFilter implements Filter {
         addFromIfNotExists(context.from, `game g`);
 
         if (this.payload.atHome !== undefined) {
-            context.where.push(`g.is_home_team = ${this.payload.atHome === true ? '1' : '0'}`);
+            context.where.push(`g.is_home_team = ${this.payload.atHome}`);
         }
 
         if (this.payload.away !== undefined) {
-            context.where.push(`g.is_home_team = ${this.payload.away === true ? '0' : '1'}`);
+            context.where.push(`g.is_home_team = ${this.payload.away}`);
         }
 
         if (this.payload.neutralGround !== undefined) {
-            context.where.push(`g.is_neutral_ground = ${this.payload.neutralGround === true ? '1' : '0'}`);
+            context.where.push(`g.is_neutral_ground = ${this.payload.neutralGround}`);
         }
     }
     

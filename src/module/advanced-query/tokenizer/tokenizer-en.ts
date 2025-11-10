@@ -256,6 +256,7 @@ export class EnglishTokenizer implements Tokenizer {
             ...this.getGoalScoredDescriptors(raw, parts, targets),
             ...this.getLocationDescriptors(parts),
             ...this.getOpponentDescriptors(parts),
+            ...this.getPenaltyMissedDescriptors(raw),
             ...this.getResultTendencyDescriptors(parts),
             ...this.getSentOffDescriptors(raw, subject),
             ...this.getTimeDescriptors(raw, parts),
@@ -418,6 +419,31 @@ export class EnglishTokenizer implements Tokenizer {
                 this.createParameter(ParameterName.To, [to]),
             ]
         };
+    }
+
+    private getPenaltyMissedDescriptors(raw: string): FilterDescriptor[] {
+        const descriptors: FilterDescriptor[] = [];
+
+        // TODO properly get subject
+        if (raw.indexOf("save a penalty") >= 0) {
+            const subjectParameter = ParameterName.Opponent;        // TODO fix
+            const quantity = 1;         // TODO implement support for more detailed quantity queries
+            const comparisonParameter = ParameterName.AtLeast;
+
+            const parameters = [this.createParameter(subjectParameter, [`${quantity}`]), this.createParameter(comparisonParameter, [])];
+
+            descriptors.push({ name: FilterName.TeamPenaltyMissed, parameters, });
+        } else if (raw.indexOf("miss a penalty") >= 0) {
+            const subjectParameter = ParameterName.Main;        // TODO fix
+            const quantity = 1;         // TODO implement support for more detailed quantity queries
+            const comparisonParameter = ParameterName.AtLeast;
+
+            const parameters = [this.createParameter(subjectParameter, [`${quantity}`]), this.createParameter(comparisonParameter, [])];
+
+            descriptors.push({ name: FilterName.TeamPenaltyMissed, parameters, });
+        }
+
+        return descriptors;
     }
 
     private getResultTendencyDescriptors(parts: string[]): FilterDescriptor[] {

@@ -3,6 +3,7 @@ import { Competition } from "./competition";
 import { Season } from "./season";
 import { Club } from "./club";
 import { Person } from "./person";
+import { GoalType } from "@src/model/type/goal-type";
 
 export type PlayerStatsResult = {
     clubs: Map<ClubId, Club>;
@@ -56,6 +57,11 @@ export interface PlayerStatsDetails {
 
 export interface PlayerGoalsAgainstClubStatsItem {
     clubId: number;
+    goalsScored: number;
+}
+
+export interface PlayerGoalTypeStatsItem {
+    goalType: GoalType;
     goalsScored: number;
 }
 

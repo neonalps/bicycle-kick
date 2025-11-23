@@ -3,7 +3,7 @@ import { SeasonService } from "@src/module/season/service";
 import { StatsMapper } from "./mapper";
 import { ArrayNonEmpty, getOrThrow, isDefined, isNotDefined, promiseAllObject, uniqueArrayElements } from "@src/util/common";
 import { validateNotNull } from "@src/util/validation";
-import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, TopScorerResultItem } from "@src/model/internal/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, TopScorerResultItem } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 import { combinePlayerBaseStats, getEmptyPlayerBaseStats } from "./util";
 import { Competition } from "@src/model/internal/competition";
@@ -11,9 +11,11 @@ import { Season } from "@src/model/internal/season";
 import { QueryOptions } from "@src/model/internal/query-options";
 import { Club } from "@src/model/internal/club";
 import { ClubService } from "@src/module/club/service";
+import { GoalType } from "@src/model/type/goal-type";
 
 export enum PlayerStatsItem {
     All = 'all',
+    GoalTypes = 'goalTypes',
     GoalsAgainstClub = 'goalsAgainstClub',
     Performance = 'performance',
 }
@@ -34,6 +36,8 @@ interface PlayerGoalsAgainstClubStatsItemResult {
     clubIds?: Set<ClubId>;
     goalsAgainstClub: Map<PersonId, ReadonlyArray<PlayerGoalsAgainstClubStatsItem>>;
 }
+
+type PlayerGoalTypesStatsItemResult = Map<PersonId, PlayerGoalTypeStatsItem[]>;
 
 export interface PlayerStatsResult {
     competitions?: Map<CompetitionId, Competition>;
@@ -87,6 +91,10 @@ export class StatsService {
             goalsAgainstClub.clubIds?.forEach(item => seenClubIds.add(item));
 
             result.goalsAgainstClub = goalsAgainstClub.goalsAgainstClub;
+        }
+
+        if (requestedStatsItems.includes(PlayerStatsItem.GoalTypes)) {
+            const playerGoalTypes = await this.getPlayerGoalTypes(playerIds);
         }
 
         const seenCompetitions = new Map<CompetitionId, Competition>();
@@ -228,6 +236,10 @@ export class StatsService {
             clubIds: seenClubIds,
             goalsAgainstClub: resultMap,
         }
+    }
+
+    private async getPlayerGoalTypes(playerIds: ArrayNonEmpty<PersonId>, queryOptions: QueryOptions = {}): Promise<PlayerGoalTypesStatsItemResult> {
+        return await this.mapper.getPlayerGoalTypeStats(playerIds, queryOptions);
     }
 
 }

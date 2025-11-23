@@ -1,9 +1,9 @@
 import { Sql } from "@src/db";
-import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerPerformanceStatsDaoInterface, TopScorerResultItemDaoInterface } from "@src/model/internal/interface/stats-player";
+import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerGoalTypeStatsDaoInterface, PlayerPerformanceStatsDaoInterface, TopScorerResultItemDaoInterface } from "@src/model/internal/interface/stats-player";
 import { QueryOptions } from "@src/model/internal/query-options";
-import { PlayerGoalsAgainstClubStatsItem, PlayerSeasonCompetitionStats, TopScorerResultItem } from "@src/model/internal/stats-player";
+import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, TopScorerResultItem } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
-import { CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
+import { CompetitionId, PersonId } from "@src/util/domain-types";
 
 export class StatsMapper {
 
@@ -59,6 +59,42 @@ export class StatsMapper {
         return result.reduce((accumulator: Map<number, PlayerSeasonCompetitionStats[]>, current: PlayerPerformanceStatsDaoInterface) => {
             const existing = accumulator.get(current.personId);
             const convertedItem = this.convertPlayerPerformanceStatsToEntity(current);
+            if (isDefined(existing)) {
+                existing.push(convertedItem);
+            } else {
+                accumulator.set(current.personId, [convertedItem]);
+            }
+            return accumulator;
+        }, new Map());
+    }
+
+    async getPlayerGoalTypeStats(playerIds: ArrayNonEmpty<PersonId>, queryOptions: QueryOptions = {}, forMain = true): Promise<Map<PersonId, PlayerGoalTypeStatsItem[]>> {
+        // TODO implement query options
+        const result = await this.sql<PlayerGoalTypeStatsDaoInterface[]>`
+            select 
+                gp.person_id as person_id,
+                ge.goal_type as goal_type,
+                sum(gp.goals_scored) as goals_scored
+            from 
+                game_players gp left join
+                game_events ge on gp.scored_by = ge.id
+            where
+                gp.person_id in ${ this.sql(playerIds) } and
+                gp.goals_scored > 0 and
+                gp.for_main = ${ forMain }
+            group by
+                gp.person_id, ge.goal_type
+            order by
+                sum(gp.goals_scored) desc
+        `;
+
+        if (result.length === 0) {
+            return new Map();
+        }
+
+        return result.reduce((accumulator: Map<PersonId, PlayerGoalTypeStatsItem[]>, current: PlayerGoalTypeStatsDaoInterface) => {
+            const existing = accumulator.get(current.personId);
+            const convertedItem: PlayerGoalTypeStatsItem = { goalType: current.goalType, goalsScored: Number(current.goalsScored) }
             if (isDefined(existing)) {
                 existing.push(convertedItem);
             } else {

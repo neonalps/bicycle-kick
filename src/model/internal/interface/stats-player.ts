@@ -1,3 +1,4 @@
+import { GoalType } from "@src/model/type/goal-type";
 import { ClubId, PersonId } from "@src/util/domain-types";
 
 export interface PlayerPerformanceStatsDaoInterface {
@@ -28,6 +29,12 @@ export interface PlayerPerformanceStatsDaoInterface {
 export interface PlayerGoalsAgainstClubStatsDaoInterface {
     personId: PersonId;
     clubId: ClubId;
+    goalsScored: string;
+}
+
+export interface PlayerGoalTypeStatsDaoInterface {
+    personId: PersonId;
+    goalType: GoalType;
     goalsScored: string;
 }
 

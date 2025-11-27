@@ -1,3 +1,3 @@
 export interface GameIdRequestDto {
-    gameId: number;
+    gameId: string;
 }

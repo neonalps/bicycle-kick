@@ -28,7 +28,7 @@ export class GameAttendedMapper {
     }
 
     async getGameAttendedForAccount(accountId: AccountId): Promise<GameId[]> {
-        const result = await this.sql<{ gameId: GameId }[]>`select game_id from game_attended where account_id = ${accountId}`;
+        const result = await this.sql<{ gameId: GameId }[]>`select game_id from game_attended where account_id = ${accountId} order by game_id`;
         if (result.length === 0) {
             return [];
         }

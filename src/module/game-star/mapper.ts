@@ -28,7 +28,7 @@ export class GameStarMapper {
     }
 
     async getGameStarsForAccount(accountId: AccountId): Promise<GameId[]> {
-        const result = await this.sql<{ gameId: number }[]>`select game_id from game_stars where account_id = ${accountId}`;
+        const result = await this.sql<{ gameId: number }[]>`select game_id from game_stars where account_id = ${accountId} order by game_id`;
         if (result.length === 0) {
             return [];
         }

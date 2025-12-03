@@ -41,6 +41,10 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
                 lastSeen: lastSeen.toISOString(),
             };
 
+            if (isDefined(dto.forMain)) {
+                params.forMain = dto.forMain;
+            }
+
             if (isDefined(dto.opponentId)) {
                 params.opponentId = dto.opponentId;
             }
@@ -129,6 +133,10 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
             order: oldParams.order,
             lastSeen: this.paginationService.getLastElement(items).game.kickoff,
         };
+
+        if (isDefined(oldParams.forMain)) {
+            newParams.forMain = oldParams.forMain;
+        }
 
         if (isDefined(oldParams.opponentId)) {
             newParams.opponentId = oldParams.opponentId;

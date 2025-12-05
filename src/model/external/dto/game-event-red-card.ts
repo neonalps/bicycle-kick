@@ -5,4 +5,5 @@ export interface RedCardGameEventDto extends GameEventDto {
     affectedPlayer?: number;
     affectedManager?: number;
     reason?: ExpulsionReason;
+    var?: boolean;
 }

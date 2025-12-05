@@ -6,4 +6,5 @@ export interface RedCardGameEvent extends GameEvent {
     affectedManager?: number;
     reason: ExpulsionReason;
     notOnPitch?: boolean;
+    var?: boolean;
 }

@@ -76,6 +76,8 @@ import { AccountDto } from "@src/model/external/dto/account";
 import { AccountProfileDto } from "@src/model/external/dto/account-profile";
 import { ProfileSettings } from "@src/model/internal/profile-settings";
 import { ProfileSettingsDto } from "@src/model/external/dto/profile-settings";
+import { RedCardGameEventDto } from "@src/model/external/dto/game-event-red-card";
+import { RedCardGameEvent } from "@src/model/internal/game-event-red-card";
 
 type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
 
@@ -350,6 +352,9 @@ export class ApiHelperService {
                                     yellowRedCardPlayerMinuteMap.set(cardEvent.affectedPlayer, gameEvent.minute.toString());
                                     yellowCardPlayerMinuteMap.delete(cardEvent.affectedPlayer);
                                 } else if (gameEvent.eventType === GameEventType.RedCard) {
+                                    if ((gameEvent as any).var === true) {
+                                        (cardGameEvent as any).var = true;
+                                    }
                                     redCardPlayerMinuteMap.set(cardEvent.affectedPlayer, gameEvent.minute.toString());
                                 }
                             } else if (isDefined(cardEvent.affectedManager)) {

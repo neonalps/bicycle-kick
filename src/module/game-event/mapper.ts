@@ -141,6 +141,7 @@ export class GameEventMapper {
             affectedManager: item.affectedManager,
             reason: item.reason as ExpulsionReason,
             notOnPitch: item.notOnPitch,
+            var: item.decision === 'var',
         }
     }
 

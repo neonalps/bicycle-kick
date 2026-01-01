@@ -16,12 +16,15 @@ import { CreateGameRouteProvider } from "./create/route-provider";
 import { GetMatchdayDetailsRouteHandler } from "./matchday-details/handler";
 import { GetMatchdayDetailsRouteProvider } from "./matchday-details/route-provider";
 import { ApplicationServices } from "@src/di/services";
+import { UpdateGameByIdRouteHandler } from "./update-by-id/handler";
+import { UpdateGameByIdRouteProvider } from "./update-by-id/route-provider";
 
 export function getGameRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
     const getGameByIdHandler = new GetGameByIdRouteHandler(services.apiHelperService, services.gameService);
     const createGameHandler = new CreateGameRouteHandler(services.apiHelperService, services.gameService);
     const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(services.gameService);
+    const updateGameByIdHandler = new UpdateGameByIdRouteHandler(services.apiHelperService, services.gameService);
     const starGameHandler = new StarGameHandler(services.gameStarService);
     const unstarGameHandler = new UnstarGameHandler(services.gameStarService);
     const attendGameHandler = new AttendGameHandler(services.gameAttendedService);
@@ -32,6 +35,7 @@ export function getGameRouteProviders(services: ApplicationServices): RouteProvi
         new GetGameByIdRouteProvider(getGameByIdHandler),
         new CreateGameRouteProvider(createGameHandler),
         new DeleteGameByIdRouteProvider(deleteGameByIdHandler),
+        new UpdateGameByIdRouteProvider(updateGameByIdHandler),
         new StarGameRouteProvider(starGameHandler),
         new UnstarGameRouteProvider(unstarGameHandler),
         new AttendGameRouteProvider(attendGameHandler),

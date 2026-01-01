@@ -44,6 +44,7 @@ import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import { ScoreTuple } from "@src/model/internal/score";
 import { RefereeRole } from "@src/model/external/dto/referee-role";
 import { ExternalProvider } from "@src/model/type/external-provider";
+import { UpdateGameDto } from "@src/model/internal/update-game";
 
 export class GameMapper {
 
@@ -113,6 +114,42 @@ export class GameMapper {
         }
 
         return this.getMultipleByIds(result.map(item => item.id));
+    }
+
+    async updateById(gameId: GameId, dto: UpdateGameDto): Promise<void> {
+        return await this.sql.begin(async tx => {
+            const [opponentId, competitionId] = await Promise.all([
+                this.resolveClubId(tx, dto.opponent),
+                this.resolveCompetitionId(tx, dto.competition),
+            ]);
+
+            // we resolve the venue ID separately because if a new club needs to be created above it will also resolve the venue, which could lead to duplicate database entries
+            const venueId = await this.resolveVenueId(tx, dto.venue);
+
+            const existingGameUpdate = {
+                kickoff: dto.kickoff,
+                seasonId: dto.seasonId,
+                opponentId: opponentId,
+                competitionId: competitionId,
+                venueId: venueId,
+                competitionRound: dto.competitionRound,
+                competitionStage: dto.competitionStage,
+                status: dto.status,
+                attendance: dto.attendance,
+                isHomeTeam: dto.isHomeGame,
+                isNeutralGround: dto.isNeutralGround,
+                isPractice: dto.isPractice,
+                tablePositionMainBefore: dto.tablePositionMainBefore,
+                tablePositionMainAfter: dto.tablePositionMainAfter,
+                tablePositionOpponentBefore: dto.tablePositionOpponentBefore,
+                tablePositionOpponentAfter: dto.tablePositionOpponentAfter,
+                tablePositionOffset: dto.tablePositionOffset,
+                leg: dto.leg,
+                previousLeg: dto.previousLeg?.gameId,
+            }
+
+            await tx`update game set ${ tx(existingGameUpdate, 'kickoff', 'seasonId', 'opponentId', 'venueId', 'competitionRound', 'competitionStage', 'attendance', 'status', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset', 'leg', 'previousLeg') } where id = ${gameId}`;
+        });
     }
 
     async createOrUpdatedScheduled(dto: CreateGameDto): Promise<number> {

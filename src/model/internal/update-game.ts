@@ -2,14 +2,10 @@ import { GameStatus } from "@src/model/type/game-status";
 import { ClubInputDto } from "@src/model/external/dto/club-input";
 import { CompetitionInputDto } from "@src/model/external/dto/competition-input";
 import { VenueInputDto } from "@src/model/external/dto/venue-input";
-import { CreateGamePlayerDto } from "@src/model/external/dto/create-game-player";
-import { CreateGameManagerDto } from "@src/model/external/dto/create-game-manager";
-import { CreateGameRefereeDto } from "@src/model/external/dto/create-game-referee";
-import { CreateGameEventDto } from "@src/model/external/dto/create-game-event";
 import { GameInputDto } from "@src/model/external/dto/game-input";
 import { DateString, SeasonId } from "@src/util/domain-types";
 
-export interface CreateGameDto {
+export interface UpdateGameDto {
     kickoff: DateString;
     seasonId: SeasonId;
     opponent: ClubInputDto;
@@ -32,10 +28,4 @@ export interface CreateGameDto {
     leg?: number;
     previousLeg?: GameInputDto;
     isPractice: boolean;
-    lineupMain: CreateGamePlayerDto[];
-    lineupOpponent: CreateGamePlayerDto[];
-    managersMain: CreateGameManagerDto[];
-    managersOpponent: CreateGameManagerDto[];
-    referees: CreateGameRefereeDto[];
-    events: CreateGameEventDto[];
 }

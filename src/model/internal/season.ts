@@ -1,5 +1,7 @@
+import { SeasonId } from "@src/util/domain-types";
+
 export interface Season {
-    id: number;
+    id: SeasonId;
     name: string;
     shortName: string;
     start: Date;

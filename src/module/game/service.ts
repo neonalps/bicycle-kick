@@ -7,6 +7,7 @@ import { QueryOptions } from "@src/model/internal/query-options";
 import { ClubId, GameId, PersonId } from "@src/util/domain-types";
 import { SortOrder } from "../pagination/constants";
 import { RefereeRole } from "@src/model/external/dto/referee-role";
+import { UpdateGameRequestDto } from "@src/model/external/dto/update-game-request";
 
 export class GameService {
 
@@ -74,6 +75,33 @@ export class GameService {
             throw new Error(`Failed to create new game`);
         }
         return createdGame;
+    }
+
+    async update(id: GameId, dto: UpdateGameRequestDto): Promise<Game> {
+        validateNotNull(id, "id");
+        validateNotNull(dto, "dto");
+        validateNotNull(dto.kickoff, "dto.kickoff");
+
+        // will throw if no game with this ID exists
+        this.requireById(id);
+
+        const season = await this.seasonService.getForDate(dto.kickoff);
+        if (season === null) {
+            throw new Error(`No season found for kickoff date ${dto.kickoff}`);
+        }
+
+        await this.mapper.updateById(id, {
+            ...dto,
+            seasonId: season.id,
+            isPractice: dto.isPractice ?? false,
+            isNeutralGround: dto.isNeutralGround ?? false,
+        });
+
+        const updatedGame = await this.getById(id);
+        if (updatedGame === null) {
+            throw new Error(`Failed to update game`);
+        }
+        return updatedGame;
     }
 
     async deleteById(gameId: number): Promise<void> {

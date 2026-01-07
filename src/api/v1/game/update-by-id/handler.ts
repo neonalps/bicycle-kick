@@ -13,7 +13,7 @@ export class UpdateGameByIdRouteHandler implements RouteHandler<UpdateGameReques
     ) {}
 
     public async handle(_: AuthenticationContext, dto: UpdateGameRequestDto): Promise<DetailedGameDto> {
-        const updatedGame = await this.gameService.update(dto.id, dto);
+        const updatedGame = await this.gameService.update(dto.gameId, dto);
         const gameDetails = await this.apiHelperService.getOrderedDetailedGameDtos([updatedGame.id]);
         return requireSingleArrayElement(gameDetails);
     }

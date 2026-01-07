@@ -4,6 +4,7 @@ import { CompetitionInputDto } from "@src/model/external/dto/competition-input";
 import { VenueInputDto } from "@src/model/external/dto/venue-input";
 import { GameInputDto } from "@src/model/external/dto/game-input";
 import { DateString, SeasonId } from "@src/util/domain-types";
+import { CreateGameRefereeDto } from "@src/model/external/dto/create-game-referee";
 
 export interface UpdateGameDto {
     kickoff: DateString;
@@ -28,4 +29,5 @@ export interface UpdateGameDto {
     leg?: number;
     previousLeg?: GameInputDto;
     isPractice: boolean;
+    referees?: CreateGameRefereeDto[];
 }

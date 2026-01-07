@@ -1,5 +1,6 @@
 import { clubInputValidation } from "./club-input";
 import { competitionInputValidation } from "./competition-input";
+import { createGameRefereeValidation } from "./create-game-referee";
 import { gameInputValidation } from "./game-input";
 import { gameStatusValidation } from "./game-status";
 import { ObjectType } from "./types";
@@ -30,6 +31,10 @@ export const updateGameRequestSchema: ObjectType = {
         isPractice: { type: 'boolean' },
         leg: { type: 'number' },
         previousLeg: gameInputValidation,
+        referees: {
+            type: 'array',
+            items: createGameRefereeValidation,
+        },
     },
     additionalProperties: false,
 }

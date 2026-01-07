@@ -5,7 +5,7 @@ import { GameStatus } from "@src/model/type/game-status";
 import { Tendency } from "@src/model/type/tendency";
 import { SortOrder } from "@src/module/pagination/constants";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
-import { getOrThrow, isDefined, requireSingleArrayElement } from "@src/util/common";
+import { ensureNotNullish, getOrThrow, isDefined, requireSingleArrayElement } from "@src/util/common";
 import { CreateGameDto } from "@src/model/internal/create-game";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { ClubInputDto } from "@src/model/external/dto/club-input";
@@ -45,6 +45,7 @@ import { ScoreTuple } from "@src/model/internal/score";
 import { RefereeRole } from "@src/model/external/dto/referee-role";
 import { ExternalProvider } from "@src/model/type/external-provider";
 import { UpdateGameDto } from "@src/model/internal/update-game";
+import { GameRefereeDaoInterface } from "@src/model/internal/interface/game-referee.interface";
 
 export class GameMapper {
 
@@ -149,7 +150,36 @@ export class GameMapper {
             }
 
             await tx`update game set ${ tx(existingGameUpdate, 'kickoff', 'seasonId', 'opponentId', 'venueId', 'competitionRound', 'competitionStage', 'attendance', 'status', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset', 'leg', 'previousLeg') } where id = ${gameId}`;
+
+            const existingGameReferees: GameRefereeDaoInterface[] = await tx`select * from game_referees where game_id = ${gameId} order by sort_order asc`;
+            // note: here we currently only support existing persons
+            const dtoGameReferees = dto.referees ? dto.referees.map(item => ({ gameId: gameId, role: item.role, sortOrder: item.sortOrder, personId: ensureNotNullish(item.person.personId) })) : [];
+            if (!this.areGamePersonArraysEqual(existingGameReferees, dtoGameReferees)) {
+                // if they were not equal we simply delete the original ones and create them new
+                await tx`delete from game_referees where game_id = ${gameId}`;
+
+                if (dtoGameReferees.length > 0) {
+                    await tx`insert into game_referees ${ tx(dtoGameReferees, 'gameId', 'personId', 'sortOrder', 'role') }`;
+                }
+            }
         });
+    }
+
+    private areGamePersonArraysEqual(first: Array<Pick<GameRefereeDaoInterface, 'personId' | 'role' | 'sortOrder'>>, second: Array<Pick<GameRefereeDaoInterface, 'personId' | 'role' | 'sortOrder'>>): boolean {
+        if (first.length !== second.length) {
+            return false;
+        }
+
+        for (let i = 0; i < first.length; i++) {
+            const itemFirst = first[i];
+            const itemSecond = second[i];
+
+            if (itemFirst.personId !== itemSecond.personId || itemFirst.role !== itemSecond.role || itemFirst.sortOrder !== itemSecond.sortOrder) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     async createOrUpdatedScheduled(dto: CreateGameDto): Promise<number> {

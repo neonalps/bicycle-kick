@@ -4,9 +4,10 @@ import { CompetitionInputDto } from "./competition-input";
 import { VenueInputDto } from "./venue-input";
 import { GameInputDto } from "./game-input";
 import { DateString, GameId } from "@src/util/domain-types";
+import { CreateGameRefereeDto } from "./create-game-referee";
 
 export interface UpdateGameRequestDto {
-    id: GameId;
+    gameId: GameId;
     kickoff: DateString;
     opponent: ClubInputDto;
     competition: CompetitionInputDto;
@@ -21,4 +22,5 @@ export interface UpdateGameRequestDto {
     isSoldOut?: boolean;
     leg?: number;
     previousLeg?: GameInputDto;
+    referees?: CreateGameRefereeDto[];
 }

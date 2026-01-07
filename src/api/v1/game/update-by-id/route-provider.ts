@@ -38,7 +38,10 @@ export class UpdateGameByIdRouteProvider implements RouteProvider<UpdateGameRequ
             authenticated: true,
             requiredCapabilities: [
                 Capability.WriteGame,
-            ]
+            ],
+            response: {
+                statusCode: 200,
+            },
         }
     }
 

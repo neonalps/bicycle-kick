@@ -370,6 +370,10 @@ export class ApiHelperService {
                                 }
                             }
 
+                            if (cardEvent.notOnPitch === true) {
+                                cardGameEvent.notOnPitch = cardEvent.notOnPitch;
+                            }
+
                             gameEventDtos.push(cardGameEvent);
                             break;
 

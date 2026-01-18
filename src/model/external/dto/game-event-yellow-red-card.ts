@@ -5,4 +5,5 @@ export interface YellowRedCardGameEventDto extends GameEventDto {
     affectedPlayer?: number;
     affectedManager?: number;
     reason?: BookableOffence;
+    notOnPitch?: boolean;
 }

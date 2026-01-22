@@ -4,6 +4,7 @@ import { SearchEntity } from "@src/module/search/entities";
 import { RegularSearchRouteHandler } from "./handler";
 import { RegularSearchRequestDto } from "@src/model/external/dto/regular-search-request";
 import { RegularSearchResponseDto } from "@src/model/external/dto/regular-search-response";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class RegularSearchRouteProvider implements RouteProvider<RegularSearchRequestDto, RegularSearchResponseDto> {
 
@@ -38,10 +39,17 @@ export class RegularSearchRouteProvider implements RouteProvider<RegularSearchRe
             path: '/api/v1/search/regular',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
             response: {
                 statusCode: 200,
-            }
+            },
+            requiredCapabilities: [
+                Capability.ReadPerson,
+                Capability.ReadClub,
+                Capability.ReadGame,
+                Capability.ReadSeason,
+                Capability.ReadVenue,
+            ]
         }
     }
 

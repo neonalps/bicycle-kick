@@ -3,6 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { MagicSearchRouteHandler } from "@src/api/v1/search/magic/handler";
 import { MagicSearchRequestDto } from "@src/model/external/dto/magic-search-request";
 import { MagicSearchResponseDto } from "@src/model/external/dto/magic-search-response";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class MagicSearchRouteProvider implements RouteProvider<MagicSearchRequestDto, MagicSearchResponseDto> {
 
@@ -31,7 +32,15 @@ export class MagicSearchRouteProvider implements RouteProvider<MagicSearchReques
             path: '/api/v1/search/magic',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadPerson,
+                Capability.ReadClub,
+                Capability.ReadGame,
+                Capability.ReadSeason,
+                Capability.ReadVenue,
+                Capability.ReadStats,
+            ],
         }
     }
 

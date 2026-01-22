@@ -4,6 +4,7 @@ import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { PersonDaoInterface } from "@src/model/internal/interface/person.interface";
 import { Person } from "@src/model/internal/person";
 import { UpdatePerson } from "@src/model/internal/update-person";
+import { getOrThrow } from "@src/util/common";
 import { PersonId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
@@ -58,8 +59,43 @@ export class PersonMapper {
 
     async search(parts: string[]): Promise<Person[]> {
         const results = await Promise.all(parts.map(part => this.findByNormalizedSearchValue(part)));
-        const matchedIds = results.flat().map(item => item.id);    
-        return await this.getMultipleByIds(groupByOccurrenceAndGetLargest(matchedIds));
+        const matchedIds = results.flat().map(item => item.id);
+
+        const groupedPersonIds = groupByOccurrenceAndGetLargest(matchedIds);
+        const orderedPersonIds = await this.orderPersonIdsByPopularity(groupedPersonIds);
+
+        const personDetailsMap = await this.getMapByIds(orderedPersonIds);
+        return orderedPersonIds.map(personId => getOrThrow(personDetailsMap, personId, `failed to find person ${personId} in details map`));
+    }
+
+    private async orderPersonIdsByPopularity(personIds: PersonId[]): Promise<PersonId[]> {
+        const result = await this.sql<IdInterface[]>`
+            select
+                sub.id
+            from (
+                select 
+                    p.id,
+                    case when gp.minutes_played is not null then 2 else 0 end as score_played,
+                    case when gp.shirt is not null and gp.minutes_played is null then 1 else 0 end as score_sub,
+                    case when gp.goals_scored is not null then gp.goals_scored else 0 end as score_goals_scored,
+                    case when gp.assists is not null then gp.assists else 0 end as score_assists,
+                    case when gr.role is not null then 2 else 0 end as score_referee,
+                    case when gm.role is not null then 2 else 0 end as score_manager
+                from
+                    person p left join	
+                    game_players gp on gp.person_id = p.id left join
+                    game_managers gm on gm.person_id = p.id left join
+                    game_referees gr on gr.person_id = p.id
+                where
+                    p.id in ${ this.sql(personIds) }
+            ) sub 
+            group by
+                sub.id
+            order by
+                sum(sub.score_played + sub.score_sub + sub.score_goals_scored + sub.score_assists + sub.score_referee + sub.score_manager) desc
+        `;
+
+        return result.map(item => item.id);
     }
 
     private async findByNormalizedSearchValue(search: string): Promise<IdInterface[]> {

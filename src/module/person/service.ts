@@ -5,6 +5,7 @@ import { CreatePerson } from "@src/model/internal/create-person";
 import { normalizeForSearch } from "@src/util/search";
 import { UpdatePerson } from "@src/model/internal/update-person";
 import { PersonId } from "@src/util/domain-types";
+import { ArrayNonEmpty } from "@src/util/common";
 
 export class PersonService {
 
@@ -67,6 +68,16 @@ export class PersonService {
         validateNotNull(parts, "parts");
 
         return await this.mapper.search(parts);
+    }
+
+    async mergePersons(personIdsToMerge: PersonId[]): Promise<void> {
+        // check that all personst exist
+        const existingPersonIds = await this.mapper.getMultipleByIds(personIdsToMerge);
+        if (personIdsToMerge.length !== existingPersonIds.length) {
+            throw new Error(`Not all passed persons exist`);
+        }
+
+        
     }
 
 }

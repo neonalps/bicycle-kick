@@ -5,5 +5,6 @@ export function normalizeForSearch(input: string): string {
         .replaceAll('ł', 'l')
         .replaceAll('ø', 'o')
         .replaceAll('æ', 'ae')
+        .replaceAll('đ', 'd')
         .toLocaleLowerCase();
 }

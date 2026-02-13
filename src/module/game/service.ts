@@ -67,6 +67,7 @@ export class GameService {
             ...dto,
             seasonId: season.id,
             isPractice: dto.isPractice ?? false,
+            isSoldOut: dto.isSoldOut ?? false,
             isNeutralGround: dto.isNeutralGround ?? false,
         });
 

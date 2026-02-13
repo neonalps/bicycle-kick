@@ -138,6 +138,7 @@ export class GameMapper {
                 status: dto.status,
                 attendance: dto.attendance,
                 isHomeTeam: dto.isHomeGame,
+                isSoldOut: dto.isSoldOut,
                 isNeutralGround: dto.isNeutralGround,
                 isPractice: dto.isPractice,
                 tablePositionMainBefore: dto.tablePositionMainBefore,
@@ -149,7 +150,7 @@ export class GameMapper {
                 previousLeg: dto.previousLeg?.gameId,
             }
 
-            await tx`update game set ${ tx(existingGameUpdate, 'kickoff', 'seasonId', 'opponentId', 'venueId', 'competitionRound', 'competitionStage', 'attendance', 'status', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset', 'leg', 'previousLeg') } where id = ${gameId}`;
+            await tx`update game set ${ tx(existingGameUpdate, 'kickoff', 'seasonId', 'opponentId', 'venueId', 'competitionRound', 'competitionStage', 'attendance', 'status', 'isHomeTeam', 'isSoldOut', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset', 'leg', 'previousLeg') } where id = ${gameId}`;
 
             const existingGameReferees: GameRefereeDaoInterface[] = await tx`select * from game_referees where game_id = ${gameId} order by sort_order asc`;
             // note: here we currently only support existing persons
@@ -208,6 +209,7 @@ export class GameMapper {
                     status: dto.status,
                     attendance: dto.attendance,
                     isHomeTeam: dto.isHomeGame,
+                    isSoldOut: dto.isSoldOut,
                     isNeutralGround: dto.isNeutralGround,
                     isPractice: dto.isPractice,
                     tablePositionMainBefore: dto.tablePositionMainBefore,
@@ -217,7 +219,7 @@ export class GameMapper {
                     tablePositionOffset: dto.tablePositionOffset,
                 };
 
-                const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'competitionStage', 'venueId', 'status', 'attendance', 'isHomeTeam', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
+                const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'competitionStage', 'venueId', 'status', 'attendance', 'isHomeTeam', 'isSoldOut', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
                 gameId = temporaryGameResult[0].id;
             } else {
                 // we update the existing scheduled game entry

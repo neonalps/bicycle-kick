@@ -4,16 +4,17 @@ import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { PersonDaoInterface } from "@src/model/internal/interface/person.interface";
 import { Person } from "@src/model/internal/person";
 import { UpdatePerson } from "@src/model/internal/update-person";
-import { getOrThrow } from "@src/util/common";
+import { ArrayNonEmpty, getOrThrow, isDefined, isNotDefined, requireSingleArrayElement } from "@src/util/common";
 import { PersonId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
+import { normalizeForSearch } from "@src/util/search";
 import postgres from "postgres";
 
 export class PersonMapper {
 
     constructor(private readonly sql: Sql) {}
 
-    async create(createPerson: CreatePerson, tx?: postgres.TransactionSql): Promise<number> {
+    async create(createPerson: CreatePerson, tx?: postgres.TransactionSql): Promise<PersonId> {
         const query = tx || this.sql;
         const result = await query`insert into person ${ query(createPerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'nationalities', 'normalizedSearch') } returning id`;
         if (result.length !== 1) {
@@ -23,7 +24,7 @@ export class PersonMapper {
         return result[0].id;
     }
 
-    async updateById(personId: PersonId, updatePerson: UpdatePerson, tx?: postgres.TransactionSql): Promise<number> {
+    async updateById(personId: PersonId, updatePerson: UpdatePerson, tx?: postgres.TransactionSql): Promise<PersonId> {
         const query = tx || this.sql;
         const result = await query`update person set ${ query(updatePerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'nationalities', 'normalizedSearch') } where id = ${ personId } returning id`;
         if (result.length !== 1) {
@@ -42,14 +43,14 @@ export class PersonMapper {
         return this.convertToEntity(result[0]);
     }
 
-    async getMultipleByIds(ids: number[]): Promise<Person[]> {
+    async getMultipleByIds(ids: PersonId[]): Promise<Person[]> {
         return (await this.getMultipleByIdsResult(ids)).map(item => this.convertToEntity(item));
     }
 
-    async getMapByIds(ids: number[]): Promise<Map<number, Person>> {
+    async getMapByIds(ids: PersonId[]): Promise<Map<PersonId, Person>> {
         const result = await this.getMultipleByIdsResult(ids);
 
-        const resultMap = new Map<number, Person>();
+        const resultMap = new Map<PersonId, Person>();
         result.forEach(resultItem => {
             const entityItem = this.convertToEntity(resultItem);
             resultMap.set(entityItem.id, entityItem);
@@ -96,6 +97,61 @@ export class PersonMapper {
         `;
 
         return result.map(item => item.id);
+    }
+
+    async mergePersons(personIdsToMerge: ArrayNonEmpty<PersonId>): Promise<void> {
+        await this.sql.begin(async tx => {
+            const mainPersonId = personIdsToMerge[0];
+            for (let i = 1; i < personIdsToMerge.length; i++) {
+                await this.mergePersonPair(mainPersonId, personIdsToMerge[i], tx);
+            }
+
+            // update search props for the main person
+            const updatedMainPerson = requireSingleArrayElement(await tx<PersonDaoInterface[]>`select * from person where id = ${mainPersonId}`);
+            await tx`update person set normalized_search = ${ normalizeForSearch([updatedMainPerson.firstName, updatedMainPerson.lastName].join(' ')) } where id = ${mainPersonId};`;
+        });
+    }
+
+    private async mergePersonPair(mainId: PersonId, secondaryId: PersonId, tx?: postgres.TransactionSql): Promise<void> {
+        console.log(`merging person ${mainId} with person ${secondaryId}`);
+
+        const query = tx || this.sql;
+
+        const mainPerson = requireSingleArrayElement(await query<PersonDaoInterface[]>`select * from person where id = ${mainId};`);
+        const secondaryPerson = requireSingleArrayElement(await query<PersonDaoInterface[]>`select * from person where id = ${secondaryId};`);
+
+        // compare properties and look for differences
+        const propertiesToCompare: Array<keyof PersonDaoInterface> = ['firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'nationalities'];
+        const updatePerson: Partial<PersonDaoInterface> = {};
+
+        for (const propertyToCompare of propertiesToCompare) {
+            const mainProperty = mainPerson[propertyToCompare];
+            const secondaryProperty = secondaryPerson[propertyToCompare];
+
+            // we only set the main property if it did not exist when the secondary property did exist
+            if (isNotDefined(mainProperty) && isDefined(secondaryProperty)) {
+                updatePerson[propertyToCompare] = secondaryProperty as any;
+            }
+        }
+
+        const propsToUpdate = Object.keys(updatePerson) as any;
+        if (propsToUpdate.length > 0) {
+            console.log('updating main props', updatePerson);
+            await query`update person set ${ query(updatePerson, propsToUpdate) } where id = ${mainId}`;
+        }
+
+        // update all game players entries
+        // game events need not be updated because they will use game player ID as a reference
+        await query `update game_players set person_id = ${mainId} where person_id = ${secondaryId};`;
+
+        // update all game managers entries
+        await query `update game_managers set person_id = ${mainId} where person_id = ${secondaryId};`;
+
+        // update all game referees entries
+        await query `update game_referees set person_id = ${mainId} where person_id = ${secondaryId};`;
+
+        // delete secondary person
+        await query`delete from person where id = ${secondaryId};`;
     }
 
     private async findByNormalizedSearchValue(search: string): Promise<IdInterface[]> {

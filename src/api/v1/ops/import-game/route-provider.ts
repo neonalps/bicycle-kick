@@ -31,7 +31,7 @@ export class ImportGameRouteProvider implements RouteProvider<ImportGameRequestD
             path: '/api/v1/ops/import-game',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
             requiredCapabilities: [
                 Capability.ImportGame,
             ]

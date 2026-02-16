@@ -25,6 +25,7 @@ const managerCapabilities: ReadonlyArray<Capability> = [
     Capability.WritePerson,
     Capability.WriteUser,
     Capability.WriteVenue,
+    Capability.ReadApplicationStats,
 ];
 
 

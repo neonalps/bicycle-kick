@@ -20,4 +20,6 @@ export enum Capability {
     // venue
     ReadVenue = "venue.read",
     WriteVenue = "venue.write",
+    // application
+    ReadApplicationStats = "applicationStats.read",
 }

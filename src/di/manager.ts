@@ -87,6 +87,8 @@ import { MatchdayDetailsProvider } from "@src/module/matchday-details/provider";
 import { SofascoreGameImporter } from "@src/module/external-provider/sofascore/game-importer";
 import { ApplicationServices } from "./services";
 import { TeamPenaltyMissedFilterProvider } from "@src/module/advanced-query/provider/team-penalty-missed";
+import { ApplicationStatsMapper } from "@src/module/application/stats.mapper";
+import { ApplicationStatsService } from "@src/module/application/stats.service";
 
 export class DependencyManager {
 
@@ -174,6 +176,9 @@ export class DependencyManager {
             venueService
         );
 
+        const applicationStatsMapper = new ApplicationStatsMapper(sqlInstance);
+        const applicationStatsService = new ApplicationStatsService(applicationStatsMapper);
+
         const searchService = new SearchService(apiConfig, clubService, competitionService, gameService, personService, seasonService, venueService);
 
         const paginationService = new PaginationService(base64Utils);
@@ -254,6 +259,7 @@ export class DependencyManager {
             accountService: accountService,
             advancedQueryService: advancedQueryService,
             apiHelperService: apiHelperService,
+            applicationStatsService: applicationStatsService,
             authService: authService,
             cacheService: cacheService,
             clubService: clubService,

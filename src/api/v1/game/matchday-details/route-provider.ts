@@ -3,6 +3,7 @@ import { requireNonNull } from "@src/util/common";
 import { GetMatchdayDetailsRouteHandler } from "./handler";
 import { MatchdayDetailsResponseDto } from "@src/model/external/dto/matchday-details-response";
 import { GetMatchdayDetailsRequestDto } from "@src/model/external/dto/get-matchday-details-request";
+import { Capability } from "@src/model/internal/capabilities";
 
 export class GetMatchdayDetailsRouteProvider implements RouteProvider<GetMatchdayDetailsRequestDto, MatchdayDetailsResponseDto> {
 
@@ -13,9 +14,7 @@ export class GetMatchdayDetailsRouteProvider implements RouteProvider<GetMatchda
     }
 
     provide(): RouteDefinition<GetMatchdayDetailsRequestDto, MatchdayDetailsResponseDto> {
-        const schema: RequestSchema = {
-            
-        };
+        const schema: RequestSchema = {};
 
         return {
             name: 'GetMatchdayDetails',
@@ -23,7 +22,10 @@ export class GetMatchdayDetailsRouteProvider implements RouteProvider<GetMatchda
             path: '/api/v1/games/:gameId/matchday-details',
             schema,
             handler: this.handler,
-            authenticated: false,
+            authenticated: true,
+            requiredCapabilities: [
+                Capability.ReadGame,
+            ]
         }
     }
 

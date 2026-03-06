@@ -52,7 +52,7 @@ export interface Game {
     psoGoalsMain?: number;
     psoGoalsOpponent?: number;
     isPractice: boolean;
-    scheduled?: Date;
+    scheduled?: DateString;
     isNeutralGround: boolean;
     titleWinningGame: boolean;
     titleCount?: number;

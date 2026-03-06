@@ -89,6 +89,8 @@ import { ApplicationServices } from "./services";
 import { TeamPenaltyMissedFilterProvider } from "@src/module/advanced-query/provider/team-penalty-missed";
 import { ApplicationStatsMapper } from "@src/module/application/stats.mapper";
 import { ApplicationStatsService } from "@src/module/application/stats.service";
+import { ManagerPeriodMapper } from "@src/module/manager-period/mapper";
+import { ManagerPeriodService } from "@src/module/manager-period/service";
 
 export class DependencyManager {
 
@@ -204,6 +206,9 @@ export class DependencyManager {
         const externalProviderMapper = new ExternalProviderMapper(sqlInstance);
         const externalProviderService = new ExternalProviderService(externalProviderMapper, personService);
 
+        const managerPeriodMapper = new ManagerPeriodMapper(sqlInstance);
+        const managerPeriodService = new ManagerPeriodService(managerPeriodMapper);
+
         const matchdayProviders = new Map<ExternalProvider, MatchdayDetailsProvider>([
             [ExternalProvider.Bundesliga, new BundesligaClient(httpClient)],
             [ExternalProvider.Weltfussball, new WeltfussballClient(httpClient)],
@@ -275,6 +280,7 @@ export class DependencyManager {
             gamePlayerService: gamePlayerService,
             gameRefereeService: gameRefereeService,
             gameStarService: gameStarService,
+            managerPeriodService: managerPeriodService,
             matchdayDetailsService: matchdayDetailsService,
             oAuthService: oAuthService,
             paginationService: paginationService,

@@ -28,7 +28,7 @@ export interface BasicGameDto {
     previousLeg?: number;
     isSoldOut?: boolean;
     isNeutralGround?: boolean;
-    scheduled?: Date;
+    scheduled?: DateString;
     titleWinningGame?: boolean;
     titleCount?: number;
     victoryGameText?: string;

@@ -773,7 +773,8 @@ export class GameMapper {
                 const gamePlayerOn = getOrThrow(personGamePlayerIdMap, playerOnPersonId, `failed to find game player on with ID ${substitution.playerOn}`);
                 const gamePlayerOff = getOrThrow(personGamePlayerIdMap, playerOffPersonId, `failed to find game player off with ID ${substitution.playerOff}`);
                 const minutesPlayedValue = gameMinute.getMinutesPlayedValue();
-                gamePlayerOff.minutesPlayed = minutesPlayedValue;
+                // if the player already has minutes played it means they were subbed on before, so we must account for that
+                gamePlayerOff.minutesPlayed = isDefined(gamePlayerOff.minutesPlayed) ? (minutesPlayedValue - gameMinutes + gamePlayerOff.minutesPlayed) : minutesPlayedValue;
                 gamePlayerOn.minutesPlayed = gameMinutes - minutesPlayedValue;
             }
 
@@ -1027,8 +1028,10 @@ export class GameMapper {
     private convertToEntity(item: GameDaoInterface): Game {
         return {
             ...item,
+            kickoff: item.kickoff.toISOString(),
             resultTendency: item.resultTendency as Tendency,
             status: item.status as GameStatus,
+            scheduled: isDefined(item.scheduled) ? item.scheduled.toISOString() : undefined,
         }
     }
 

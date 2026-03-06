@@ -1,8 +1,6 @@
-import { DateString } from "@src/util/domain-types";
-
 export interface GameDaoInterface {
     id: number;
-    kickoff: DateString;
+    kickoff: Date;
     resultTendency: string;
     opponentId: number;
     competitionId: number;

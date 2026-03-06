@@ -76,10 +76,8 @@ import { AccountDto } from "@src/model/external/dto/account";
 import { AccountProfileDto } from "@src/model/external/dto/account-profile";
 import { ProfileSettings } from "@src/model/internal/profile-settings";
 import { ProfileSettingsDto } from "@src/model/external/dto/profile-settings";
-import { RedCardGameEventDto } from "@src/model/external/dto/game-event-red-card";
-import { RedCardGameEvent } from "@src/model/internal/game-event-red-card";
-
-type SquadMemberDtoWithOverallPosition = SquadMemberDto & { position: OverallPosition };
+import { ManagerPeriod } from "@src/model/internal/manager-period";
+import { ManagerPeriodDto } from "@src/model/external/dto/manager-period";
 
 export class ApiHelperService {
 
@@ -170,6 +168,10 @@ export class ApiHelperService {
 
             if (game.isSoldOut === true) {
                 basicGame.isSoldOut = game.isSoldOut;
+            }
+
+            if (game.scheduled) {
+                basicGame.scheduled = game.scheduled;
             }
 
             return basicGame;
@@ -586,6 +588,10 @@ export class ApiHelperService {
                 detailedGameDto.isSoldOut = game.isSoldOut;
             }
 
+            if (isDefined(game.scheduled)) {
+                detailedGameDto.scheduled = game.scheduled;
+            }
+
             if (game.titleWinningGame === true) {
                 detailedGameDto.titleWinningGame = game.titleWinningGame;
                 detailedGameDto.titleCount = game.titleCount;                
@@ -689,6 +695,33 @@ export class ApiHelperService {
             }
 
             return dto;
+        });
+    }
+
+    async convertManagerPeriodsToDtos(periods: ManagerPeriod[]): Promise<ManagerPeriodDto[]> {
+        if (periods.length === 0) {
+            return [];
+        }
+        
+        const personIds = uniqueArrayElements(periods.map(item => item.personId));
+        const personMap = await this.personService.getMapByIds(personIds);
+
+        return periods.map(period => {
+            const converted: ManagerPeriodDto = {
+                id: period.id,
+                person: this.convertPersonToBasicDto(getOrThrow(personMap, period.personId, `Failed to find person ${period.personId} in map`)),
+                start: period.start.toISOString(),
+            };
+
+            if (isDefined(period.end)) {
+                converted.end = period.end.toISOString();
+            }
+
+            if (period.interim === true) {
+                converted.interim = period.interim;
+            }
+
+            return converted;
         });
     }
 

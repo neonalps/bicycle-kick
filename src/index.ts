@@ -18,13 +18,13 @@ const start = async () =>  {
   RouteManager.registerRoutes(server, getRouteProviders(applicationServices), { accountService: applicationServices.accountService, permissionService: applicationServices.permissionService });
   await CorsManager.registerCorsConfig(server, getCorsConfig());
 
-  server.listen({ host: getServerHost(), port: getServerPort() }, async (err, address) => {
-    if (err) {
-      logger.error(err);
-      process.exit(1);
-    }
+  try {
+    const address = await server.listen({ host: getServerHost(), port: getServerPort() });
     logger.info(`Server listening at ${address}, environment: ${getNodeEnv()}`);
-  });
+  } catch (err) {
+    logger.error(err);
+    process.exit(1);
+  }
 };
 
 start();

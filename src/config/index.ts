@@ -2,6 +2,7 @@ import { CorsConfig } from "@src/cors/manager";
 import { HttpMethod } from "@src/http/constants";
 import { GoogleOAuthClientConfig } from "@src/module/auth/oauth/google/client";
 import { TokenConfig } from "@src/module/auth/service";
+import { MailServiceConfig } from "@src/module/mail/service";
 import { checkValidHttpMethod, getAllowedHttpMethods } from "@src/util/common";
 import dotenv from "dotenv";
 import * as env from "env-var";
@@ -19,6 +20,11 @@ const cdnBaseUrl = env.get("CDN_BASE_URL").required().asString();
 const frontendBaseUrl = env.get("FRONTEND_BASE_URL").required().asString();
 const mainClubId = env.get("MAIN_CLUB_ID").required().asIntPositive();
 const sofascoreMainClubId = env.get("SOFASCORE_MAIN_CLUB_ID").required().asIntPositive();
+
+const mailConfigSmtpHost = env.get("MAIL_CONFIG_SMTP_HOST").required().asString();
+const mailConfigSmtpPort = env.get('MAIL_CONFIG_SMTP_PORT').required().asPortNumber();
+const mailConfigSmtpUsername = env.get("MAIL_CONFIG_SMTP_USERNAME").required().asString();
+const mailConfigSmtpPassword = env.get("MAIL_CONFIG_SMTP_PASSWORD").required().asString();
 
 const authTokenAudience = env.get("AUTH_TOKEN_AUDIENCE").required().asString();
 const authTokenIssuer = env.get("AUTH_TOKEN_ISSUER").required().asString();
@@ -49,6 +55,15 @@ const corsConfig: CorsConfig = {
     allowedMethods: parseAllowedMethods(corsAllowedMethods),
 };
 
+const mailConfig: MailServiceConfig = {
+    smtp: {
+        host: mailConfigSmtpHost,
+        port: mailConfigSmtpPort,
+        username: mailConfigSmtpUsername,
+        password: mailConfigSmtpPassword,
+    },
+};
+
 const googleOAuthConfig: GoogleOAuthClientConfig = {
     clientId: env.get("OAUTH_GOOGLE_CLIENT_ID").required().asString(),
     clientSecret: env.get("OAUTH_GOOGLE_CLIENT_SECRET").required().asString(),
@@ -69,3 +84,4 @@ export const getSofascoreMainClubId = () => sofascoreMainClubId;
 export const getServerHost = () => serverHost;
 export const getServerPort = () => serverPort;
 export const getGoogleOAuthConfig = () => googleOAuthConfig;
+export const getMailServiceConfig = () => mailConfig;

@@ -48,7 +48,7 @@ import { PersonMapper } from "@src/module/person/mapper";
 import { SeasonMapper } from "@src/module/season/mapper";
 import { DateSource } from "@src/util/date";
 import { ApiConfig } from "@src/api/v1/config";
-import { getAuthTokenConfig, getCdnBaseUrl, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig, getSofascoreMainClubId } from "@src/config";
+import { getAuthTokenConfig, getCdnBaseUrl, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig, getMailServiceConfig, getSofascoreMainClubId } from "@src/config";
 import { CryptoService } from "@src/module/crypto/service";
 import { AccountService } from "@src/module/account/service";
 import { AccountMapper } from "@src/module/account/mapper";
@@ -91,6 +91,7 @@ import { ApplicationStatsMapper } from "@src/module/application/stats.mapper";
 import { ApplicationStatsService } from "@src/module/application/stats.service";
 import { ManagerPeriodMapper } from "@src/module/manager-period/mapper";
 import { ManagerPeriodService } from "@src/module/manager-period/service";
+import { MailService } from "@src/module/mail/service";
 
 export class DependencyManager {
 
@@ -260,6 +261,8 @@ export class DependencyManager {
 
         const advancedQueryService = new AdvancedQueryService(advancedQueryConfig, idResolvers, filterProviders, gameService, sqlInstance, uuidSource);
 
+        const mailService = new MailService(getMailServiceConfig());
+
         return {
             accountService: accountService,
             advancedQueryService: advancedQueryService,
@@ -281,6 +284,7 @@ export class DependencyManager {
             gameRefereeService: gameRefereeService,
             gameStarService: gameStarService,
             managerPeriodService: managerPeriodService,
+            mailService: mailService,
             matchdayDetailsService: matchdayDetailsService,
             oAuthService: oAuthService,
             paginationService: paginationService,

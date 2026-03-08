@@ -19,6 +19,7 @@ import { GamePlayerService } from "@src/module/game-player/service";
 import { GameRefereeService } from "@src/module/game-referee/service";
 import { GameStarService } from "@src/module/game-star/service";
 import { GameService } from "@src/module/game/service";
+import { MailService } from "@src/module/mail/service";
 import { ManagerPeriodService } from "@src/module/manager-period/service";
 import { MatchdayDetailsService } from "@src/module/matchday-details/service";
 import { PaginationService } from "@src/module/pagination/service";
@@ -54,6 +55,7 @@ export interface ApplicationServices {
     gameRefereeService: GameRefereeService,
     gameStarService: GameStarService,
     managerPeriodService: ManagerPeriodService,
+    mailService: MailService,
     matchdayDetailsService: MatchdayDetailsService,
     oAuthService: OAuthService,
     paginationService: PaginationService,

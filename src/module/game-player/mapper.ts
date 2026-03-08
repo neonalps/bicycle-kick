@@ -177,7 +177,10 @@ export class GamePlayerMapper {
             result.add(realCompetitionId);
 
             const childCompetitions = await this.competitionService.getChildCompetitions(realCompetitionId);
-            childCompetitions.map(item => item.id).forEach(competitionId => result.add(competitionId));
+            childCompetitions
+                .filter(item => item.combineStatisticsWithParent === true)
+                .map(item => item.id)
+                .forEach(competitionId => result.add(competitionId));
         }
 
         return Array.from(result);

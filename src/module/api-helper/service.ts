@@ -78,6 +78,8 @@ import { ProfileSettings } from "@src/model/internal/profile-settings";
 import { ProfileSettingsDto } from "@src/model/external/dto/profile-settings";
 import { ManagerPeriod } from "@src/model/internal/manager-period";
 import { ManagerPeriodDto } from "@src/model/external/dto/manager-period";
+import { DateSource } from "@src/util/date";
+import { Nullish } from "@src/util/types";
 
 export class ApiHelperService {
 
@@ -85,6 +87,7 @@ export class ApiHelperService {
         private readonly apiConfig: ApiConfig,
         private readonly clubService: ClubService,
         private readonly competitionService: CompetitionService,
+        private readonly dateSource: DateSource,
         private readonly gameService: GameService,
         private readonly gameAttendedService: GameAttendedService,
         private readonly gameEventService: GameEventService,
@@ -244,6 +247,9 @@ export class ApiHelperService {
             if (isDefined(game.tacticalFormationOpponent)) {
                 opponentTeamGameReport.tacticalFormation = game.tacticalFormationOpponent as TacticalFormation;
             }
+
+            const mainStartingBirthdays: Array<Nullish<Date>> = [];
+            const opponentStartingBirthdays: Array<Nullish<Date>> = [];
             
             const gamePlayerPersonDtoMap = new Map<number, SmallPersonDto>();
             for (const gamePlayer of gamePlayers) {
@@ -253,9 +259,30 @@ export class ApiHelperService {
                 gamePlayerPersonDtoMap.set(gamePlayer.id, personDto);
                 if (gamePlayer.forMain) {
                     mainTeamGameReport.lineup.push(playerDto);
+
+                    if (gamePlayer.isStarting) {
+                        mainStartingBirthdays.push(person.birthday);
+                    }
                 } else {
                     opponentTeamGameReport.lineup.push(playerDto);
+
+                    if (gamePlayer.isStarting) {
+                        opponentStartingBirthdays.push(person.birthday);
+                    }
                 }
+            }
+
+            // try to calculate average age; will only work if all starting players have a birthday saved
+            const kickoffDate = new Date(game.kickoff);
+            const mainStartingAverageAge = this.dateSource.getAverageApproximateAgeOnDate(mainStartingBirthdays, kickoffDate);
+            const opponentStartingAverageAge = this.dateSource.getAverageApproximateAgeOnDate(opponentStartingBirthdays, kickoffDate);
+
+            if (isDefined(mainStartingAverageAge)) {
+                mainTeamGameReport.startingFormationAverageAge = mainStartingAverageAge.toFixed(3);
+            }
+
+            if (isDefined(opponentStartingAverageAge)) {
+                opponentTeamGameReport.startingFormationAverageAge = opponentStartingAverageAge.toFixed(3);
             }
 
             const yellowCardPlayerMinuteMap = new Map<number, string>();

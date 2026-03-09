@@ -3,7 +3,7 @@ export interface Person {
     lastName: string;
     firstName: string;
     avatar: string;
-    birthday: Date;
-    deathday: Date;
+    birthday?: Date;
+    deathday?: Date;
     nationalities?: string[];
 }

@@ -6,4 +6,5 @@ export interface TeamGameReportDto {
     lineup: GamePlayerDto[];
     managers: GameManagerDto[];
     tacticalFormation?: TacticalFormation;
+    startingFormationAverageAge?: string;
 }

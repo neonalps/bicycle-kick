@@ -167,6 +167,7 @@ export class DependencyManager {
             apiConfig, 
             clubService, 
             competitionService, 
+            dateSource,
             gameService, 
             gameAttendedService,
             gameEventService, 

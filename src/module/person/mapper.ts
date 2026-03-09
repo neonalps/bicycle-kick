@@ -169,8 +169,8 @@ export class PersonMapper {
             firstName: item.firstName,
             lastName: item.lastName,
             avatar: item.avatar,
-            birthday: item.birthday,
-            deathday: item.deathday,
+            birthday: isDefined(item.birthday) ? new Date(item.birthday) : undefined,
+            deathday: isDefined(item.deathday) ? new Date(item.deathday) : undefined,
             nationalities: item.nationalities,
         }
     }

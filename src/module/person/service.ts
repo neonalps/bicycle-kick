@@ -5,7 +5,6 @@ import { CreatePerson } from "@src/model/internal/create-person";
 import { normalizeForSearch } from "@src/util/search";
 import { UpdatePerson } from "@src/model/internal/update-person";
 import { PersonId } from "@src/util/domain-types";
-import { ArrayNonEmpty } from "@src/util/common";
 
 export class PersonService {
 
@@ -45,6 +44,12 @@ export class PersonService {
         validateNotNull(id, "id");
 
         return await this.mapper.getById(id);
+    }
+
+    async getMultipleByIds(ids: PersonId[]): Promise<Person[]> {
+        validateNotNull(ids, "ids");
+
+        return await this.mapper.getMultipleByIds(ids);
     }
 
     async requireById(id: PersonId): Promise<Person> {

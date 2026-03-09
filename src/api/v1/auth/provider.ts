@@ -5,13 +5,17 @@ import { RefreshTokenRouteHandler } from "./refresh-token/handler";
 import { RefreshTokenRouteProvider } from "./refresh-token/route-provider";
 import { getAuthTokenConfig } from "@src/config";
 import { ApplicationServices } from "@src/di/services";
+import { SendMagicLinkHandler } from "./send-magic-link/handler";
+import { SendMagicLinkRouteProvider } from "./send-magic-link/route-provider";
 
 export function getAuthRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
     const oAuthRouteHandler = new OAuthLoginHandler(services.apiHelperService, services.oAuthService);
     const refreshTokenRouteHandler = new RefreshTokenRouteHandler(services.authService, services.dateSource, services.timeSource, getAuthTokenConfig());
+    const sendMagicLinkRouteHandler = new SendMagicLinkHandler(services.magicLinkService, services.mailService);
 
     return [
         new OAuthLoginRouteProvider(oAuthRouteHandler),
         new RefreshTokenRouteProvider(refreshTokenRouteHandler),
+        new SendMagicLinkRouteProvider(sendMagicLinkRouteHandler),
     ];
 }

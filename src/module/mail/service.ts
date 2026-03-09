@@ -1,6 +1,9 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import hbs from "nodemailer-express-handlebars"
+import { Account } from '@src/model/internal/account';
+
+export type MailTemplate = 'magicLinkLogin';
 
 export type SmtpConfig = {
     host: string;
@@ -10,31 +13,45 @@ export type SmtpConfig = {
 }
 
 export interface MailServiceConfig {
+    from: string;
     smtp: SmtpConfig;
 }
 
-export interface Mail {
+export type MagicLinkLoginMailContext = {
+    loginLink: string;
+}
 
+export interface Mail {
+    to: string;
+    fromOverride?: string;
+    subject: string;
+    templateName: MailTemplate;
+    context: Record<string, unknown>;
 }
 
 export class MailService {
 
     constructor(private readonly config: MailServiceConfig) {}
 
-    async sendMail(mail: Mail): Promise<void> {
+    async sendMagicLinkLoginMail(to: string, payload: MagicLinkLoginMailContext): Promise<void> {
+        await this.sendMail({
+            to: to,
+            subject: '1909 - Login',
+            templateName: 'magicLinkLogin',
+            context: payload,
+        })
+    }
+
+    private async sendMail(mail: Mail): Promise<void> {
         const transporter = this.createPooledTransporter();
 
         const messageInfo = await transporter.sendMail({
-            from: "no-reply@neonalps.at",
-            to: "michael.stifter1@gmail.com",
-            subject: "Welcome",
-            template: "welcome",
-            context: {
-                name: "Michael"
-            }
+            from: this.config.from,
+            to: mail.to,
+            subject: mail.subject,
+            template: mail.templateName,
+            context: mail.context,
         } as any);
-
-        console.log('message info', messageInfo);
     }
 
     private createPooledTransporter() {

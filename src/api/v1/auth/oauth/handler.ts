@@ -4,7 +4,6 @@ import { AuthenticationContext, RouteHandler } from "@src/router/types";
 import { OAuthService } from "@src/module/auth/oauth/service";
 import { AuthProvider } from "@src/module/auth/oauth/constants";
 import { IdentityDto } from "@src/model/external/dto/identity";
-import { isDefined } from "@src/util/common";
 import { ApiHelperService } from "@src/module/api-helper/service";
 
 export class OAuthLoginHandler implements RouteHandler<OauthLoginRequestDto, AuthResponseDto> {

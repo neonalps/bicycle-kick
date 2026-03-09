@@ -21,6 +21,7 @@ const frontendBaseUrl = env.get("FRONTEND_BASE_URL").required().asString();
 const mainClubId = env.get("MAIN_CLUB_ID").required().asIntPositive();
 const sofascoreMainClubId = env.get("SOFASCORE_MAIN_CLUB_ID").required().asIntPositive();
 
+const mailConfigFromAddress = env.get("MAIL_CONFIG_FROM_ADDRESS").required().asString();
 const mailConfigSmtpHost = env.get("MAIL_CONFIG_SMTP_HOST").required().asString();
 const mailConfigSmtpPort = env.get('MAIL_CONFIG_SMTP_PORT').required().asPortNumber();
 const mailConfigSmtpUsername = env.get("MAIL_CONFIG_SMTP_USERNAME").required().asString();
@@ -56,6 +57,7 @@ const corsConfig: CorsConfig = {
 };
 
 const mailConfig: MailServiceConfig = {
+    from: mailConfigFromAddress,
     smtp: {
         host: mailConfigSmtpHost,
         port: mailConfigSmtpPort,

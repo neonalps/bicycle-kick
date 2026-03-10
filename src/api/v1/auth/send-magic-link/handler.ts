@@ -1,20 +1,32 @@
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
-import { MagicLinkService } from "@src/module/auth/magic-link.service";
 import { MailService } from "@src/module/mail/service";
-import { ensureNotNullish } from "@src/util/common";
+import { SendMagicLinkMailRequestDto } from "@src/model/external/dto/send-magic-link-request";
+import { AccountService } from "@src/module/account/service";
+import { unawaited } from "@src/util/promise";
+import { Account } from "@src/model/internal/account";
+import { AuthService } from "@src/module/auth/service";
 
-export class SendMagicLinkHandler implements RouteHandler<void, void> {
+export class SendMagicLinkHandler implements RouteHandler<SendMagicLinkMailRequestDto, void> {
 
     constructor(
-        private readonly magicLinkService: MagicLinkService,
+        private readonly accountService: AccountService,
+        private readonly authService: AuthService,
         private readonly mailService: MailService,
     ) {}
 
-    public async handle(authContext: AuthenticationContext): Promise<void> {
-        const { id: accountId, email } = ensureNotNullish(authContext.account);
+    public async handle(_: AuthenticationContext, dto: SendMagicLinkMailRequestDto): Promise<void> {
+        const account = await this.accountService.getByEmail(dto.email);
+        if (account === null) {
+            // we don't want to throw an error
+            return;
+        }
 
-        const magicLink = await this.magicLinkService.createMagicLink(accountId);
-        await this.mailService.sendMagicLinkLoginMail(email, { loginLink: magicLink });
+        unawaited(this.createAndSendMagicLoginLinkMail(account));
+    }
+
+    private async createAndSendMagicLoginLinkMail(account: Account): Promise<void> {
+        const magicLink = this.authService.createSignedLoginToken(account.publicId);
+        await this.mailService.sendMagicLinkLoginMail(account.email, { loginLink: magicLink });
     }
 
 }

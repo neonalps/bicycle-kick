@@ -11,7 +11,7 @@ import { SendMagicLinkRouteProvider } from "./send-magic-link/route-provider";
 export function getAuthRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
     const oAuthRouteHandler = new OAuthLoginHandler(services.apiHelperService, services.oAuthService);
     const refreshTokenRouteHandler = new RefreshTokenRouteHandler(services.authService, services.dateSource, services.timeSource, getAuthTokenConfig());
-    const sendMagicLinkRouteHandler = new SendMagicLinkHandler(services.magicLinkService, services.mailService);
+    const sendMagicLinkRouteHandler = new SendMagicLinkHandler(services.accountService, services.authService, services.mailService);
 
     return [
         new OAuthLoginRouteProvider(oAuthRouteHandler),

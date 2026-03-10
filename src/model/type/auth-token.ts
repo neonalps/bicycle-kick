@@ -5,16 +5,26 @@ export interface AuthToken {
     issuer: string;
     audience: string;
     subject: string;
-    scopes: string[];
-    issuedAt: number;
+    scopes: string[] | null;
+    issuedAt: number | null;
     expiresAt: number;
-    notBefore: number;
+    notBefore: number | null;
 }
 
 export interface AccessToken extends AuthToken {
     type: AuthTokenType.Access;
+    scopes: string[];
+    issuedAt: number;
+    notBefore: number;
 }
 
 export interface RefreshToken extends AuthToken {
     type: AuthTokenType.Refresh;
+    scopes: string[];
+    issuedAt: number;
+    notBefore: number;
+}
+
+export interface LoginToken extends AuthToken {
+    type: AuthTokenType.Login;
 }

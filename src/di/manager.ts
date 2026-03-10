@@ -92,7 +92,6 @@ import { ApplicationStatsService } from "@src/module/application/stats.service";
 import { ManagerPeriodMapper } from "@src/module/manager-period/mapper";
 import { ManagerPeriodService } from "@src/module/manager-period/service";
 import { MailService } from "@src/module/mail/service";
-import { MagicLinkService } from "@src/module/auth/magic-link.service";
 
 export class DependencyManager {
 
@@ -263,8 +262,6 @@ export class DependencyManager {
 
         const advancedQueryService = new AdvancedQueryService(advancedQueryConfig, idResolvers, filterProviders, gameService, sqlInstance, uuidSource);
 
-        const magicLinkService = new MagicLinkService();
-
         const mailService = new MailService(getMailServiceConfig());
 
         return {
@@ -289,7 +286,6 @@ export class DependencyManager {
             gameStarService: gameStarService,
             managerPeriodService: managerPeriodService,
             mailService: mailService,
-            magicLinkService: magicLinkService,
             matchdayDetailsService: matchdayDetailsService,
             oAuthService: oAuthService,
             paginationService: paginationService,

@@ -3,8 +3,8 @@ export type Jwt = {
     iss: string;
     aud: string;
     sub: string;
-    scp: string[];
-    iat: number;
+    scp?: string[];
+    iat?: number;
     exp: number;
-    nbf: number;
+    nbf?: number;
 }

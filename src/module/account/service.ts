@@ -69,6 +69,12 @@ export class AccountService {
         return await this.mapper.getByPublicId(publicId);
     }
 
+    async getByEmail(email: string): Promise<Account | null> {
+        validateNotBlank(email, "email");
+
+        return await this.mapper.getByEmail(email);
+    }
+
     async updateProfile(id: AccountId, update: UpdateAccountProfileDto): Promise<void> {
         validateNotNull(id, "id");
         validateNotNull(update, "update");

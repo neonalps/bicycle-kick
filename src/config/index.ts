@@ -32,6 +32,7 @@ const authTokenIssuer = env.get("AUTH_TOKEN_ISSUER").required().asString();
 const authTokenSigningKey = env.get("AUTH_TOKEN_SIGNING_KEY").required().asString();
 const accessTokenValiditySeconds = env.get("ACCESS_TOKEN_VALIDITY_SECONDS").required().asIntPositive();
 const refreshTokenValiditySeconds = env.get("REFRESH_TOKEN_VALIDITY_SECONDS").required().asIntPositive();
+const loginTokenValiditySeconds = env.get("LOGIN_TOKEN_VALIDITY_SECONDS").required().asIntPositive();
 
 const parseAllowedMethods = (methods: string): HttpMethod[] => {
     const methodStrings = methods.split(",");
@@ -47,8 +48,9 @@ const authTokenConfig: TokenConfig = {
     audience: authTokenAudience,
     issuer: authTokenIssuer,
     signingKey: authTokenSigningKey,
-    accessTokenValiditySeconds,
-    refreshTokenValiditySeconds,
+    accessTokenValiditySeconds: accessTokenValiditySeconds,
+    refreshTokenValiditySeconds: refreshTokenValiditySeconds,
+    loginTokenValiditySeconds: loginTokenValiditySeconds,
 }
 
 const corsConfig: CorsConfig = {

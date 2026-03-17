@@ -58,10 +58,11 @@ export class DashboardService {
         return dashboard;
     }
 
-    private async resolveTopScorers(currentSeasonId: SeasonId, competitionId?: CompetitionId): Promise<TopScorersInfo> {
-        const topScorerQueryOptions: QueryOptions = { onlyForMain: true, onlySeasons: [currentSeasonId] };
+    private async resolveTopScorers(seasonId: SeasonId, competitionId?: CompetitionId): Promise<TopScorersInfo> {
+        const topScorerQueryOptions: QueryOptions = { onlyForMain: true, onlySeasons: [seasonId] };
         if (competitionId) {
-            topScorerQueryOptions.onlyCompetitions = [competitionId];
+            const childCompetitionIds = await this.competitionService.getChildCompetitions(competitionId, true);
+            topScorerQueryOptions.onlyCompetitions = [competitionId, ...childCompetitionIds.map(item => item.id)];
         }
 
         const { topScorers, effectiveCompetitionsIds } = await promiseAllObject({

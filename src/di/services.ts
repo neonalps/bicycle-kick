@@ -2,6 +2,7 @@ import { AccountService } from "@src/module/account/service";
 import { AdvancedQueryService } from "@src/module/advanced-query/service";
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { ApplicationStatsService } from "@src/module/application/stats.service";
+import { MagicLinkService } from "@src/module/auth/magic-link.service";
 import { OAuthService } from "@src/module/auth/oauth/service";
 import { AuthService } from "@src/module/auth/service";
 import { CacheService } from "@src/module/cache/service";
@@ -19,6 +20,7 @@ import { GamePlayerService } from "@src/module/game-player/service";
 import { GameRefereeService } from "@src/module/game-referee/service";
 import { GameStarService } from "@src/module/game-star/service";
 import { GameService } from "@src/module/game/service";
+import { LinkTokenService } from "@src/module/link-token/service";
 import { MailService } from "@src/module/mail/service";
 import { ManagerPeriodService } from "@src/module/manager-period/service";
 import { MatchdayDetailsService } from "@src/module/matchday-details/service";
@@ -54,8 +56,10 @@ export interface ApplicationServices {
     gamePlayerService: GamePlayerService,
     gameRefereeService: GameRefereeService,
     gameStarService: GameStarService,
+    linkTokenService: LinkTokenService,
     managerPeriodService: ManagerPeriodService,
     mailService: MailService,
+    magicLinkService: MagicLinkService,
     matchdayDetailsService: MatchdayDetailsService,
     oAuthService: OAuthService,
     paginationService: PaginationService,

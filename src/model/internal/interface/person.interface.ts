@@ -1,7 +1,7 @@
-import { DateString } from "@src/util/domain-types";
+import { DateString, PersonId } from "@src/util/domain-types";
 
 export interface PersonDaoInterface {
-    id: number;
+    id: PersonId;
     lastName: string;
     firstName: string;
     avatar: string;

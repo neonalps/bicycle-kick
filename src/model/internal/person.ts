@@ -1,5 +1,7 @@
+import { PersonId } from "@src/util/domain-types";
+
 export interface Person {
-    id: number;
+    id: PersonId;
     lastName: string;
     firstName: string;
     avatar: string;

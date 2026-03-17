@@ -24,7 +24,3 @@ export interface RefreshToken extends AuthToken {
     issuedAt: number;
     notBefore: number;
 }
-
-export interface LoginToken extends AuthToken {
-    type: AuthTokenType.Login;
-}

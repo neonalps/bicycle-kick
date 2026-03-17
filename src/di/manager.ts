@@ -92,6 +92,9 @@ import { ApplicationStatsService } from "@src/module/application/stats.service";
 import { ManagerPeriodMapper } from "@src/module/manager-period/mapper";
 import { ManagerPeriodService } from "@src/module/manager-period/service";
 import { MailService } from "@src/module/mail/service";
+import { MagicLinkService } from "@src/module/auth/magic-link.service";
+import { LinkTokenMapper } from "@src/module/link-token/mapper";
+import { LinkTokenService } from "@src/module/link-token/service";
 
 export class DependencyManager {
 
@@ -123,7 +126,7 @@ export class DependencyManager {
 
         const httpClient = new HttpClient();
 
-        const authService = new AuthService(getAuthTokenConfig(), timeSource);
+        const tokenConfig = getAuthTokenConfig();   
 
         const googleOAuthClient = new GoogleOAuthClient(getGoogleOAuthConfig(), httpClient);
 
@@ -146,6 +149,12 @@ export class DependencyManager {
         const gameRefereeService = new GameRefereeService(gameRefereeMapper);
         const gameStarMapper = new GameStarMapper(sqlInstance);
         const gameStarService = new GameStarService(gameStarMapper);
+
+        const linkTokenMapper = new LinkTokenMapper(sqlInstance);
+        const linkTokenService = new LinkTokenService(linkTokenMapper, timeSource, tokenConfig, uuidSource);
+
+        const authService = new AuthService(accountService, linkTokenService, tokenConfig, timeSource);
+
         const oAuthService = new OAuthService(accountService, authService, googleOAuthClient);
         const personMapper = new PersonMapper(sqlInstance);
         const personService = new PersonService(personMapper);
@@ -264,6 +273,8 @@ export class DependencyManager {
 
         const mailService = new MailService(getMailServiceConfig());
 
+        const magicLinkService = new MagicLinkService(linkTokenService, mailService, { frontendBaseUrl: apiConfig.baseUrl });
+
         return {
             accountService: accountService,
             advancedQueryService: advancedQueryService,
@@ -284,8 +295,10 @@ export class DependencyManager {
             gamePlayerService: gamePlayerService,
             gameRefereeService: gameRefereeService,
             gameStarService: gameStarService,
-            managerPeriodService: managerPeriodService,
+            linkTokenService: linkTokenService,
+            magicLinkService: magicLinkService,
             mailService: mailService,
+            managerPeriodService: managerPeriodService,
             matchdayDetailsService: matchdayDetailsService,
             oAuthService: oAuthService,
             paginationService: paginationService,

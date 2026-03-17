@@ -2,9 +2,16 @@ import jwt from "jsonwebtoken";
 import { isDefined, requireNonNull } from "@src/util/common";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { TimeSource } from "@src/util/time";
-import { AccessToken, AuthToken, LoginToken, RefreshToken } from "@src/model/type/auth-token";
+import { AccessToken, AuthToken, RefreshToken } from "@src/model/type/auth-token";
 import { AuthTokenType } from "@src/model/type/auth-token-type";
 import { Jwt } from "@src/model/type/jwt";
+import { Account } from "@src/model/internal/account";
+import { AuthIdentity } from "@src/model/internal/auth-identity";
+import { LinkTokenService } from "@src/module/link-token/service";
+import { LinkTokenType } from "@src/model/type/link-token";
+import { unawaited } from "@src/util/promise";
+import { AccountService } from "@src/module/account/service";
+import { IllegalStateError } from "@src/api/error/illegal-state";
 
 export interface TokenConfig {
     accessTokenValiditySeconds: number;
@@ -17,10 +24,19 @@ export interface TokenConfig {
 
 export class AuthService {
 
+    private readonly accountService: AccountService;
+    private readonly linkTokenService: LinkTokenService;
     private readonly tokenConfig: TokenConfig;
     private readonly timeSource: TimeSource;
 
-    constructor(tokenConfig: TokenConfig, timeSource: TimeSource) {
+    constructor(
+        accountService: AccountService,
+        linkTokenService: LinkTokenService,
+        tokenConfig: TokenConfig,
+        timeSource: TimeSource
+    ) {
+        this.accountService = requireNonNull(accountService);
+        this.linkTokenService = requireNonNull(linkTokenService);
         this.tokenConfig = requireNonNull(tokenConfig);
         this.timeSource = requireNonNull(timeSource);
 
@@ -37,9 +53,48 @@ export class AuthService {
         return this.signToken(refreshToken);
     }
 
-    public createSignedLoginToken(subject: string): string {
-        const loginToken = this.issueLoginToken(subject);
-        return this.signToken(loginToken);
+    async handleLoginWithToken(token: string): Promise<AuthIdentity> {
+        validateNotBlank(token, "token");
+
+        const linkToken = await this.linkTokenService.getValidByTokenValue(token);
+        if (linkToken === null) {
+            throw new IllegalStateError(`Invalid token`);
+        }
+
+        if (linkToken.tokenType !== LinkTokenType.Login) {
+            unawaited(this.linkTokenService.deleteById(linkToken.id));
+            throw new IllegalStateError(`Invalid token`);
+        }
+
+        const resolvedAccount = await this.accountService.getById(linkToken.accountId);
+        if (resolvedAccount === null || resolvedAccount.enabled !== true) {
+            unawaited(this.linkTokenService.deleteById(linkToken.id));
+            throw new IllegalStateError(`Invalid token`);
+        }
+
+        unawaited(this.linkTokenService.deleteById(linkToken.id));
+        return this.getAuthIdentity(resolvedAccount);
+    }
+
+    public getAuthIdentity(account: Account): AuthIdentity {
+        const scope = account.roles;
+
+        return {
+            publicId: account.publicId,
+            email: account.email,
+            role: account.roles,
+            profileSettings: {
+                firstName: account.firstName,
+                lastName: account.lastName,
+                hasProfilePicture: account.hasProfilePicture,
+                language: account.language,
+                dateFormat: account.dateFormat,
+                scoreFormat: account.scoreFormat,
+                gameMinuteFormat: account.gameMinuteFormat,
+            },
+            accessToken: this.createSignedAccessToken(account.publicId, [scope]),
+            refreshToken: this.createSignedRefreshToken(account.publicId, [scope]),
+        }
     }
     
     private issueAccessToken(subject: string, scopes: string[]): AccessToken {
@@ -71,22 +126,6 @@ export class AuthService {
             issuedAt: now,
             notBefore: now,
             expiresAt,
-        }
-    }
-
-    private issueLoginToken(subject: string): LoginToken {
-        const now = this.timeSource.getCurrentUnixTimestamp();
-        const expiresAt = now + this.tokenConfig.loginTokenValiditySeconds;
-
-        return {
-            type: AuthTokenType.Login,
-            issuer: this.tokenConfig.issuer,
-            audience: this.tokenConfig.audience,
-            subject,
-            expiresAt,
-            scopes: null,
-            issuedAt: null,
-            notBefore: null,
         }
     }
     

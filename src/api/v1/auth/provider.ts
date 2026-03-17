@@ -7,13 +7,17 @@ import { getAuthTokenConfig } from "@src/config";
 import { ApplicationServices } from "@src/di/services";
 import { SendMagicLinkHandler } from "./send-magic-link/handler";
 import { SendMagicLinkRouteProvider } from "./send-magic-link/route-provider";
+import { LoginWithTokenHandler } from "./login-with-token/handler";
+import { LoginWithTokenRouteProvider } from "./login-with-token/route-provider";
 
 export function getAuthRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
+    const loginWithTokenHandler = new LoginWithTokenHandler(services.apiHelperService, services.authService);
     const oAuthRouteHandler = new OAuthLoginHandler(services.apiHelperService, services.oAuthService);
     const refreshTokenRouteHandler = new RefreshTokenRouteHandler(services.authService, services.dateSource, services.timeSource, getAuthTokenConfig());
-    const sendMagicLinkRouteHandler = new SendMagicLinkHandler(services.accountService, services.authService, services.mailService);
+    const sendMagicLinkRouteHandler = new SendMagicLinkHandler(services.accountService, services.magicLinkService);
 
     return [
+        new LoginWithTokenRouteProvider(loginWithTokenHandler),
         new OAuthLoginRouteProvider(oAuthRouteHandler),
         new RefreshTokenRouteProvider(refreshTokenRouteHandler),
         new SendMagicLinkRouteProvider(sendMagicLinkRouteHandler),

@@ -18,4 +18,5 @@ export interface Account {
     scoreFormat: ScoreFormat;
     gameMinuteFormat: GameMinuteFormat;
     createdAt: Date;
+    latestLogin?: Date;
 }

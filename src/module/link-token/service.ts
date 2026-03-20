@@ -16,11 +16,11 @@ export class LinkTokenService {
         private readonly uuidSource: UuidSource,
     ) {}
 
-    async createLoginToken(accountId: AccountId): Promise<LinkToken> {
+    async createLoginToken(accountId: AccountId, overrideValiditySeconds?: number): Promise<LinkToken> {
         validateNotNull(accountId, "accountId");
 
         const tokenValue = this.uuidSource.getRandom();
-        const validUntil = this.timeSource.getNowPlusSeconds(this.tokenConfig.loginTokenValiditySeconds);
+        const validUntil = this.timeSource.getNowPlusSeconds(overrideValiditySeconds ?? this.tokenConfig.loginTokenValiditySeconds);
 
         const createdTokenId = await this.mapper.create({
             accountId: accountId,

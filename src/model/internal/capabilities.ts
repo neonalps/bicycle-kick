@@ -1,4 +1,7 @@
 export enum Capability {
+    // account
+    ReadAccount = "account.read",
+    WriteAccount = "account.write",
     // club
     ReadClub = "club.read",
     WriteClub = "club.write",
@@ -14,9 +17,6 @@ export enum Capability {
     WriteSeason = "season.write",
     // stats
     ReadStats = "stats.read",
-    // management: user
-    ReadUser = "user.read",
-    WriteUser = "user.write",
     // venue
     ReadVenue = "venue.read",
     WriteVenue = "venue.write",

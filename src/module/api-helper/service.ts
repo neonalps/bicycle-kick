@@ -1021,6 +1021,7 @@ export class ApiHelperService {
             role: account.roles,
             enabled: account.enabled,
             createdAt: account.createdAt.toISOString(),
+            latestLogin: account.latestLogin?.toISOString() ?? null,
         };
 
         if (account.firstName) {

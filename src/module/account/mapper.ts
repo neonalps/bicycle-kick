@@ -12,22 +12,28 @@ import { Language } from "@src/model/type/language";
 import { DateFormat } from "@src/model/type/date-format";
 import { ScoreFormat } from "@src/model/type/score-format";
 import { GameMinuteFormat } from "@src/model/type/game-minute-format";
+import { Nullish } from "@src/util/types";
+
+export type InsertAccount = {
+    publicId: string;
+    email: string;
+    firstName: Nullish<string>;
+    lastName: Nullish<string>;
+    enabled: boolean;
+    roles: string[];
+    hasProfilePicture: boolean;
+    language: Nullish<Language>;
+    dateFormat: Nullish<DateFormat>;
+    scoreFormat: Nullish<ScoreFormat>;
+    gameMinuteFormat: Nullish<GameMinuteFormat>;
+}
 
 export class AccountMapper {
 
     constructor(private readonly sql: Sql) {}
 
-    async create(publicId: string, email: string, firstName: string | undefined, lastName: string | undefined, enabled: boolean, role: AccountRole): Promise<Account> {
-        const insertInput = {
-            publicId,
-            email,
-            firstName,
-            lastName,
-            enabled,
-            roles: role,
-        };
-
-        const result = await this.sql<IdInterface[]>`insert into account ${ this.sql(insertInput) } returning id`;
+    async create(insert: InsertAccount): Promise<Account> {
+        const result = await this.sql<IdInterface[]>`insert into account ${ this.sql(insert) } returning id`;
         if (result.length !== 1) {
             this.throwCreateError();
         }
@@ -102,8 +108,12 @@ export class AccountMapper {
         await this.sql`update account set ${ this.sql(updateAccount, 'firstName', 'lastName', 'language', 'dateFormat', 'scoreFormat', 'gameMinuteFormat') } where id = ${accountId}`;
     }
 
+    async updateLatestLogin(accountId: AccountId, loginAt: Date): Promise<void> {
+        await this.sql`update account set latest_login = ${loginAt} where id = ${accountId}`;
+    }
+
     private commonAccountSelect() {
-        return this.sql`select id, public_id, email, first_name, last_name, enabled, has_profile_picture, language, date_format, score_format, game_minute_format, created_at, roles from account`;
+        return this.sql`select id, public_id, email, first_name, last_name, enabled, has_profile_picture, language, date_format, score_format, game_minute_format, created_at, roles, latest_login from account`;
     }
 
     private convertToEntity(item: AccountDaoInterface): Account {
@@ -120,7 +130,8 @@ export class AccountMapper {
             scoreFormat: item.scoreFormat as ScoreFormat,
             gameMinuteFormat: item.gameMinuteFormat as GameMinuteFormat,
             enabled: item.enabled,
-            createdAt: item.createdAt,
+            createdAt: new Date(item.createdAt),
+            latestLogin: isDefined(item.latestLogin) ? new Date(item.latestLogin) : undefined,
         }
     }
 

@@ -5,6 +5,8 @@ import { AuthProvider } from "./constants";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { AuthIdentity } from "@src/model/internal/auth-identity";
 import { AuthService } from "@src/module/auth/service";
+import { unawaited } from "@src/util/promise";
+import { IllegalStateError } from "@src/api/error/illegal-state";
 
 export class OAuthService {
 
@@ -19,9 +21,14 @@ export class OAuthService {
         validateNotNull(userInfo, "userInfo");
         validateNotBlank(userInfo.email, "userInfo.email");
 
-        const account = await this.accountService.getOrCreate(userInfo.email, userInfo.firstName, userInfo.lastName);
+        const account = await this.accountService.getByEmail(userInfo.email);
+        if (account === null) {
+            throw new IllegalStateError(`No account with this email address exists`);
+        }
 
         const scope = account.roles;
+
+        unawaited(this.accountService.updateLatestLogin(account.id));
 
         return {
             publicId: account.publicId,

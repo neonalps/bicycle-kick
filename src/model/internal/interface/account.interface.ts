@@ -1,9 +1,11 @@
+import { DateString } from "@src/util/domain-types";
+
 export interface AccountDaoInterface {
     id: number;
     publicId: string;
     email: string;
     enabled: boolean;
-    createdAt: Date;
+    createdAt: DateString;
     roles: string;
     firstName?: string;
     lastName?: string;
@@ -12,4 +14,5 @@ export interface AccountDaoInterface {
     dateFormat: string;
     scoreFormat: string;
     gameMinuteFormat: string;
+    latestLogin?: DateString;
 }

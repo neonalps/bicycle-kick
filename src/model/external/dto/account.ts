@@ -10,4 +10,5 @@ export interface AccountDto {
     lastName?: string;
     role: AccountRole;
     createdAt: DateString;
+    latestLogin: DateString | null;
 }

@@ -37,7 +37,7 @@ export class GetAllAccountsRouteProvider implements RouteProvider<GetAccountsReq
             handler: this.handler,
             authenticated: true,
             requiredCapabilities: [
-                Capability.ReadUser,
+                Capability.ReadAccount,
             ]
         }
     }

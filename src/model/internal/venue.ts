@@ -1,5 +1,7 @@
+import { VenueId } from "@src/util/domain-types";
+
 export interface Venue {
-    id: number;
+    id: VenueId;
     name: string;
     shortName: string;
     city: string;

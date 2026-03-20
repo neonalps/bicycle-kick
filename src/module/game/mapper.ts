@@ -39,7 +39,7 @@ import { CreateGameEventDaoInterface } from "@src/model/internal/interface/game-
 import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
 import { PsoResult } from "@src/model/type/pso-result";
 import { normalizeForSearch } from "@src/util/search";
-import { ClubId, CompetitionId, DateString, GameId, PersonId, SeasonId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, DateString, GameId, PersonId, SeasonId, VenueFlavorId, VenueId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import { ScoreTuple } from "@src/model/internal/score";
 import { RefereeRole } from "@src/model/external/dto/referee-role";
@@ -125,14 +125,14 @@ export class GameMapper {
             ]);
 
             // we resolve the venue ID separately because if a new club needs to be created above it will also resolve the venue, which could lead to duplicate database entries
-            const venueId = await this.resolveVenueId(tx, dto.venue);
+            const venueFlavorId = await this.resolveVenueFlavorId(tx, dto.venue);
 
             const existingGameUpdate = {
                 kickoff: dto.kickoff,
                 seasonId: dto.seasonId,
                 opponentId: opponentId,
                 competitionId: competitionId,
-                venueId: venueId,
+                venueFlavorId: venueFlavorId,
                 competitionRound: dto.competitionRound,
                 competitionStage: dto.competitionStage,
                 status: dto.status,
@@ -150,7 +150,7 @@ export class GameMapper {
                 previousLeg: dto.previousLeg?.gameId,
             }
 
-            await tx`update game set ${ tx(existingGameUpdate, 'kickoff', 'seasonId', 'opponentId', 'venueId', 'competitionRound', 'competitionStage', 'attendance', 'status', 'isHomeTeam', 'isSoldOut', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset', 'leg', 'previousLeg') } where id = ${gameId}`;
+            await tx`update game set ${ tx(existingGameUpdate, 'kickoff', 'seasonId', 'opponentId', 'venueFlavorId', 'competitionRound', 'competitionStage', 'attendance', 'status', 'isHomeTeam', 'isSoldOut', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset', 'leg', 'previousLeg') } where id = ${gameId}`;
 
             const existingGameReferees: GameRefereeDaoInterface[] = await tx`select * from game_referees where game_id = ${gameId} order by sort_order asc`;
             // note: here we currently only support existing persons
@@ -196,7 +196,7 @@ export class GameMapper {
                 ]);
 
                 // we resolve the venue ID separately because if a new club needs to be created above it will also resolve the venue, which could lead to duplicate database entries
-                const venueId = await this.resolveVenueId(tx, dto.venue);
+                const venueFlavorId = await this.resolveVenueFlavorId(tx, dto.venue);
                 
                 const temporaryGame = {
                     seasonId: dto.seasonId,
@@ -205,7 +205,7 @@ export class GameMapper {
                     competitionId,
                     competitionRound: dto.competitionRound,
                     competitionStage: dto.competitionStage,
-                    venueId,
+                    venueFlavorId,
                     status: dto.status,
                     attendance: dto.attendance,
                     isHomeTeam: dto.isHomeGame,
@@ -219,7 +219,7 @@ export class GameMapper {
                     tablePositionOffset: dto.tablePositionOffset,
                 };
 
-                const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'competitionStage', 'venueId', 'status', 'attendance', 'isHomeTeam', 'isSoldOut', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
+                const temporaryGameResult = await tx`insert into game ${ tx(temporaryGame, 'seasonId', 'kickoff', 'opponentId', 'competitionId', 'competitionRound', 'competitionStage', 'venueFlavorId', 'status', 'attendance', 'isHomeTeam', 'isSoldOut', 'isNeutralGround', 'isPractice', 'tablePositionMainBefore', 'tablePositionMainAfter', 'tablePositionOpponentBefore', 'tablePositionOpponentAfter', 'tablePositionOffset') } returning id`;
                 gameId = temporaryGameResult[0].id;
             } else {
                 // we update the existing scheduled game entry
@@ -1170,17 +1170,36 @@ export class GameMapper {
         return createdCompetitionId;
     }
 
-    private async resolveVenueId(tx: postgres.TransactionSql, venue: VenueInputDto): Promise<number> {
+    private async resolveVenueId(tx: postgres.TransactionSql, venue: VenueInputDto): Promise<VenueId> {
         if (venue.venueId !== undefined) {
             return venue.venueId;
         }
 
-        const venueId = await this.getVenueIdViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);        
+        const venueId = await this.getVenueIdViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);
         if (venueId !== null) {
             return venueId;
         }
 
-        return await this.createVenueViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);
+        const createResult = await this.createVenueAndFlavorViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);
+        return createResult.venueId;
+    }
+
+    private async resolveVenueFlavorId(tx: postgres.TransactionSql, venue: VenueInputDto): Promise<VenueFlavorId> {
+        if (venue.venueId !== undefined) {
+            return venue.venueId;
+        }
+
+        const venueId = await this.getVenueIdViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);
+        if (venueId !== null) {
+            const venueFlavors = await this.venueMapper.getFlavorsForVenue(venueId);
+            if (venueFlavors.length === 0) {
+                throw new Error(`No flavors found for venue ${venueId}`);
+            }
+            return venueFlavors[0].id;
+        }
+
+        const createResult = await this.createVenueAndFlavorViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);
+        return createResult.venueFlavorId;
     }
 
     private async getVenueIdViaExternalProvider(tx: postgres.TransactionSql, externalVenue: ExternalVenueDto): Promise<number | null> {
@@ -1192,7 +1211,7 @@ export class GameMapper {
         return result[0].venueId;
     }
 
-    private async createVenueViaExternalProvider(tx: postgres.TransactionSql, externalVenue: ExternalVenueDto): Promise<number> {
+    private async createVenueAndFlavorViaExternalProvider(tx: postgres.TransactionSql, externalVenue: ExternalVenueDto): Promise<{ venueId: VenueId, venueFlavorId: VenueFlavorId }> {
         const createdVenueId = await this.venueMapper.create({
             name: externalVenue.name,
             shortName: externalVenue.shortName,
@@ -1205,11 +1224,17 @@ export class GameMapper {
             normalizedSearch: normalizeForSearch([externalVenue.name, externalVenue.city].join(" ")),
         }, tx);
 
+        const createVenueFlavorResult = await tx<IdInterface[]>`insert into venue_flavor (venue_id, name) values (${createdVenueId}, ${externalVenue.name}) returning id;`;
+        const createdVenueFlavorId: VenueFlavorId = requireSingleArrayElement(createVenueFlavorResult).id;
+
         if (externalVenue.provider !== ExternalProvider.User) {
             await tx`insert into external_provider_venue (external_provider, external_id, venue_id) values (${externalVenue.provider}, ${externalVenue.id}, ${createdVenueId});`;
         }
 
-        return createdVenueId;
+        return {
+            venueId: createdVenueId,
+            venueFlavorId: createdVenueFlavorId,
+        };
     }
 
     private async resolveGamePlayers(tx: postgres.TransactionSql, gameId: number, lineups: CreateGamePlayerDto[]): Promise<CreateGamePlayer[]> {

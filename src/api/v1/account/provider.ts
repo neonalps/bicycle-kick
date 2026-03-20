@@ -8,8 +8,11 @@ import { UpdateAccountProfileRouteHandler } from "./update-profile/handler";
 import { UpdateAccountProfileRouteProvider } from "./update-profile/route-provider";
 import { GetAccountGameInformationRouteHandler } from "./get-game-information/handler";
 import { GetAccountGameInformationRouteProvider } from "./get-game-information/route-provider";
+import { CreateAccountRouteHandler } from "./create/handler";
+import { CreateAccountRouteProvider } from "./create/route-provider";
 
 export function getAccountRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
+    const createAccountHandler = new CreateAccountRouteHandler(services.accountService, services.apiHelperService, services.magicLinkService);
     const getAccountInformationHandler = new GetAccountGameInformationRouteHandler(services.cacheService, services.gameAttendedService, services.gameStarService);
     const getAccountProfileHandler = new GetAccountProfileRouteHandler(services.apiHelperService);
     const getAllAccountsHandler = new GetAllAccountsRouteHandler(
@@ -20,6 +23,7 @@ export function getAccountRouteProviders(services: ApplicationServices): RoutePr
     const updateAccountProfileHandler = new UpdateAccountProfileRouteHandler(services.accountService, services.apiHelperService);
 
     return [
+        new CreateAccountRouteProvider(createAccountHandler),
         new GetAccountProfileRouteProvider(getAccountProfileHandler),
         new GetAccountGameInformationRouteProvider(getAccountInformationHandler),
         new GetAllAccountsRouteProvider(getAllAccountsHandler),

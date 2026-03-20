@@ -1,9 +1,11 @@
 import { Sql } from "@src/db";
 import { CreateVenue } from "@src/model/internal/create-venue";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
+import { VenueFlavorDaoInterface } from "@src/model/internal/interface/venue-flavor.interface";
 import { VenueDaoInterface } from "@src/model/internal/interface/venue.interface";
 import { UpdateVenue } from "@src/model/internal/update-venue";
 import { Venue } from "@src/model/internal/venue";
+import { VenueFlavor } from "@src/model/internal/venue-flavor";
 import { isDefined } from "@src/util/common";
 import { VenueId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
@@ -13,7 +15,7 @@ export class VenueMapper {
 
     constructor(private readonly sql: Sql) {}
 
-    async create(create: CreateVenue, tx?: postgres.TransactionSql): Promise<number> {
+    async create(create: CreateVenue, tx?: postgres.TransactionSql): Promise<VenueId> {
         const query = tx || this.sql;
         const result = await query`insert into venue ${ query(create, 'name', 'shortName', 'capacity', 'city', 'countryCode', 'district', 'latitude', 'longitude', 'normalizedSearch') } returning id`;
         if (result.length !== 1) {
@@ -22,7 +24,7 @@ export class VenueMapper {
         return result[0].id;
     }
 
-    async updateById(venuId: VenueId, updateVenue: UpdateVenue, tx?: postgres.TransactionSql): Promise<number> {
+    async updateById(venuId: VenueId, updateVenue: UpdateVenue, tx?: postgres.TransactionSql): Promise<VenueId> {
         const query = tx || this.sql;
         const result = await query`update venue set ${ query(updateVenue, 'name', 'shortName', 'capacity', 'city', 'countryCode', 'district', 'latitude', 'longitude', 'normalizedSearch') } where id = ${ venuId } returning id`;
         if (result.length !== 1) {
@@ -39,6 +41,15 @@ export class VenueMapper {
         }
 
         return this.convertToEntity(result[0]);
+    }
+
+    async getFlavorsForVenue(venueId: VenueId): Promise<VenueFlavor[]> {
+        const result = await this.sql<VenueFlavorDaoInterface[]>`select id, venue_id, name from venue_flavor where venue_id = ${ venueId } order by id`;
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertFlavorToEntity(item));
     }
 
     async getMultipleByIds(ids: number[]): Promise<Venue[]> {
@@ -79,6 +90,14 @@ export class VenueMapper {
             ...item,
             latitude: isDefined(item.latitude) ? Number(item.latitude) : item.latitude,
             longitude: isDefined(item.longitude) ? Number(item.longitude) : item.longitude,
+        }
+    }
+
+    private convertFlavorToEntity(item: VenueFlavorDaoInterface): VenueFlavor {
+        return {
+            id: item.id,
+            venueId: item.venueId,
+            name: item.name,
         }
     }
 

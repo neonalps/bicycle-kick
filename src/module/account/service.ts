@@ -4,9 +4,14 @@ import { CreateAccountDto } from "@src/model/internal/create-account";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { UuidSource } from "@src/util/uuid";
 import { AccountRole } from "@src/model/type/account-role";
-import { PaginationParams } from "../pagination/constants";
+import { PaginationParams } from "@src/module/pagination/constants";
 import { AccountId } from "@src/util/domain-types";
 import { UpdateAccountProfileDto } from "@src/model/external/dto/update-account-profile";
+import { IllegalStateError } from "@src/api/error/illegal-state";
+import { Language } from "@src/model/type/language";
+import { ScoreFormat } from "@src/model/type/score-format";
+import { DateFormat } from "@src/model/type/date-format";
+import { GameMinuteFormat } from "@src/model/type/game-minute-format";
 
 export interface GetAccountPaginationParams extends PaginationParams<AccountId> {
     search?: string;
@@ -20,7 +25,7 @@ export class AccountService {
         private readonly uuidSource: UuidSource
     ) {}
 
-    async getOrCreate(email: string, firstName?: string, lastName?: string): Promise<Account> {
+    async getOrCreate(email: string, firstName: string, lastName: string): Promise<Account> {
         validateNotBlank(email, "email");
 
         const existingAccount = await this.mapper.getByEmail(email);
@@ -32,7 +37,16 @@ export class AccountService {
             return existingAccount;
         }
 
-        return await this.create({ publicId: this.uuidSource.getRandom(), email, firstName, lastName });
+        return await this.create({
+            email,
+            firstName,
+            lastName,
+            role: AccountRole.Substitute,
+            language: null,
+            gameMinuteFormat: null,
+            dateFormat: null,
+            scoreFormat: null,
+         });
     }
 
     async getAllPaginated(paginationParams: GetAccountPaginationParams): Promise<Account[]> {
@@ -43,10 +57,27 @@ export class AccountService {
 
     async create(dto: CreateAccountDto): Promise<Account> {
         validateNotNull(dto, "dto");
-        validateNotBlank(dto.publicId, "dto.publicId");
         validateNotBlank(dto.email, "dto.email");
 
-        return await this.mapper.create(dto.publicId, dto.email, dto.firstName, dto.lastName, true, AccountRole.Substitute);
+        // check if an account with this email already exists
+        const existingAccount = await this.getByEmail(dto.email);
+        if (existingAccount !== null) {
+            throw new IllegalStateError(`An account with this email address already exists`);
+        }
+
+        return await this.mapper.create({
+            publicId: this.uuidSource.getRandom(),
+            email: dto.email,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            language: dto.language ?? Language.AustrianGerman,
+            scoreFormat: dto.scoreFormat ?? ScoreFormat.Colon,
+            dateFormat: dto.dateFormat ?? DateFormat.European,
+            gameMinuteFormat: dto.gameMinuteFormat ?? GameMinuteFormat.Dot,
+            enabled: true,
+            hasProfilePicture: false,
+            roles: [dto.role],
+        });
     }
 
     async getById(id: AccountId): Promise<Account | null> {
@@ -73,6 +104,15 @@ export class AccountService {
         validateNotBlank(email, "email");
 
         return await this.mapper.getByEmail(email);
+    }
+
+    async updateLatestLogin(accountId: AccountId, loginAt = new Date()): Promise<void> {
+        validateNotNull(accountId, "accountId");
+        validateNotNull(loginAt, "loginAt");
+
+        console.log(`updating latest login at ${new Date().toISOString()}`);
+
+        await this.mapper.updateLatestLogin(accountId, loginAt);
     }
 
     async updateProfile(id: AccountId, update: UpdateAccountProfileDto): Promise<void> {

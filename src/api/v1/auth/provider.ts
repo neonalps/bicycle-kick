@@ -13,7 +13,7 @@ import { LoginWithTokenRouteProvider } from "./login-with-token/route-provider";
 export function getAuthRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
     const loginWithTokenHandler = new LoginWithTokenHandler(services.apiHelperService, services.authService);
     const oAuthRouteHandler = new OAuthLoginHandler(services.apiHelperService, services.oAuthService);
-    const refreshTokenRouteHandler = new RefreshTokenRouteHandler(services.authService, services.dateSource, services.timeSource, getAuthTokenConfig());
+    const refreshTokenRouteHandler = new RefreshTokenRouteHandler(services.accountService, services.authService, services.dateSource, services.timeSource, getAuthTokenConfig());
     const sendMagicLinkRouteHandler = new SendMagicLinkHandler(services.accountService, services.magicLinkService);
 
     return [

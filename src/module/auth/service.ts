@@ -72,7 +72,9 @@ export class AuthService {
             throw new IllegalStateError(`Invalid token`);
         }
 
+        unawaited(this.accountService.updateLatestLogin(resolvedAccount.id));
         unawaited(this.linkTokenService.deleteById(linkToken.id));
+        
         return this.getAuthIdentity(resolvedAccount);
     }
 

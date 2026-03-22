@@ -59,7 +59,7 @@ import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 import { TacticalFormation } from "@src/model/external/dto/tactical-formation";
 import { PlayerCompetitionStatsItemDto, PlayerGoalsAgainstClubStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
 import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem } from "@src/model/internal/stats-player";
-import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, GameId, PersonId, SeasonId } from "@src/util/domain-types";
 import { OverallPosition } from "@src/model/type/position-overall";
 import { GameManagerDto } from "@src/model/external/dto/game-manager";
 import { Fixture, TablePosition } from "../matchday-details/types";
@@ -80,6 +80,7 @@ import { ManagerPeriod } from "@src/model/internal/manager-period";
 import { ManagerPeriodDto } from "@src/model/external/dto/manager-period";
 import { DateSource } from "@src/util/date";
 import { Nullish } from "@src/util/types";
+import { VenueFlavor } from "@src/model/internal/venue-flavor";
 
 export class ApiHelperService {
 
@@ -104,13 +105,13 @@ export class ApiHelperService {
         const clubIds = uniqueArrayElements(games.map(game => game.opponentId));
         const competitionIds = uniqueArrayElements(games.map(game => game.competitionId));
         const seasonIds = uniqueArrayElements(games.map(game => game.seasonId));
-        const venueIds = uniqueArrayElements(games.map(game => game.venueId));
+        const venueFlavorIds = uniqueArrayElements(games.map(game => game.venueFlavorId));
 
-        const [clubMap, competitionMap, seasonMap, venueMap] = await Promise.all([
+        const [clubMap, competitionMap, seasonMap, venueFlavorMap] = await Promise.all([
             this.clubService.getMapByIds(clubIds),
             this.competitionService.getMapByIds(competitionIds),
             this.seasonService.getMapByIds(seasonIds),
-            this.venueService.getMultipleByIds(venueIds),
+            this.venueService.getFlavorMapByIds(venueFlavorIds),
         ]);
 
         const parentCompetitionIds = uniqueArrayElements(Array.from(competitionMap.values())
@@ -123,7 +124,7 @@ export class ApiHelperService {
             const parentCompetition = competition.parentId !== undefined ? parentCompetitionMap.get(competition.parentId) : null;
             const season = getOrThrow(seasonMap, game.seasonId, "season not found in map");
             const opponent = getOrThrow(clubMap, game.opponentId, "opponent not found in map");
-            const venue = getOrThrow(venueMap, game.venueId, "venue was not found in map");
+            const venueFlavor = getOrThrow(venueFlavorMap, game.venueFlavorId, "venue flavor was not found in map");
 
             const basicGame: BasicGameDto = {
                 id: game.id,
@@ -131,7 +132,7 @@ export class ApiHelperService {
                 season: this.convertSeasonToSmallDto(season),
                 opponent: this.convertClubToSmallDto(opponent),
                 competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
-                venue: this.convertVenueToGameVenueDto(venue),
+                venue: this.convertVenueFlavorToGameVenueDto(venueFlavor),
                 round: game.competitionRound,
                 status: game.status,
                 isHomeGame: game.isHomeTeam,
@@ -181,7 +182,7 @@ export class ApiHelperService {
         });
     }
 
-    async getOrderedDetailedGameDtos(gameIds: number[], accountId?: number): Promise<DetailedGameDto[]> {
+    async getOrderedDetailedGameDtos(gameIds: GameId[], accountId?: number): Promise<DetailedGameDto[]> {
         const [basicGameInformation, gameEventsMap, gameManagersMap, gamePlayersMap, gameRefereesMap] = await Promise.all([
             this.gameService.getMultipleByIds(gameIds),
             this.gameEventService.getOrderedEventsForGamesMap(gameIds),
@@ -208,14 +209,14 @@ export class ApiHelperService {
         ];
         const personIds = this.getUniquePersonIds(people);
         const seasonIds = uniqueArrayElements(basicGameInformation.map(game => game.seasonId));
-        const venueIds = uniqueArrayElements(basicGameInformation.map(game => game.venueId));
+        const venueFlavorIds = uniqueArrayElements(basicGameInformation.map(game => game.venueFlavorId));
 
         const [clubMap, competitionMap, personMap, seasonMap, venueMap] = await Promise.all([
             this.clubService.getMapByIds(clubIds),
             this.competitionService.getMapByIds(competitionIds),
             this.personService.getMapByIds(personIds),
             this.seasonService.getMapByIds(seasonIds),
-            this.venueService.getMultipleByIds(venueIds),
+            this.venueService.getFlavorMapByIds(venueFlavorIds),
         ]);
         const parentCompetitionIds = uniqueArrayElements(Array.from(competitionMap.values())
             .filter(competition => competition.parentId !== null)
@@ -228,7 +229,7 @@ export class ApiHelperService {
             const parentCompetition = competition.parentId !== undefined ? parentCompetitionMap.get(competition.parentId) : null;
             const season = getOrThrow(seasonMap, game.seasonId, "season not found in map");
             const opponent = getOrThrow(clubMap, game.opponentId, "opponent not found in map");
-            const venue = getOrThrow(venueMap, game.venueId, "venue was not found in map");
+            const venueFlavor = getOrThrow(venueMap, game.venueFlavorId, "venue flavor was not found in map");
 
             const gamePlayers = gamePlayersMap.get(game.id) ?? [];
             const mainTeamGameReport: TeamGameReportDto = {
@@ -565,7 +566,7 @@ export class ApiHelperService {
                 season: this.convertSeasonToSmallDto(season),
                 opponent: this.convertClubToSmallDto(opponent),
                 competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
-                venue: this.convertVenueToGameVenueDto(venue),
+                venue: this.convertVenueFlavorToGameVenueDto(venueFlavor),
                 round: game.competitionRound,
                 status: game.status,
                 fullTime: [game.fullTimeGoalsMain, game.fullTimeGoalsOpponent],
@@ -1227,11 +1228,12 @@ export class ApiHelperService {
         return dto;
     }
 
-    private convertVenueToGameVenueDto(venue: Venue): GameVenueDto {
+    private convertVenueFlavorToGameVenueDto(venueFlavor: VenueFlavor): GameVenueDto {
         return {
-            id: venue.id,
-            branding: venue.name,       // TODO fix
-            city: venue.city,
+            id: venueFlavor.venueId,
+            flavorId: venueFlavor.id,
+            branding: venueFlavor.name,
+            city: venueFlavor.city,
         }
     }
 

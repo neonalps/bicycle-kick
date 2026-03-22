@@ -69,7 +69,7 @@ export class GameService {
             isPractice: dto.isPractice ?? false,
             isSoldOut: dto.isSoldOut ?? false,
             isNeutralGround: dto.isNeutralGround ?? false,
-        });
+        }, true);
 
         const createdGame = await this.getById(createdGameId);
         if (createdGame === null) {

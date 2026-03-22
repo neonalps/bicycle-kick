@@ -4,4 +4,5 @@ export interface VenueFlavor {
     id: VenueFlavorId;
     venueId: VenueId;
     name: string;
+    city: string;
 }

@@ -7,7 +7,7 @@ import { UpdateVenue } from "@src/model/internal/update-venue";
 import { Venue } from "@src/model/internal/venue";
 import { VenueFlavor } from "@src/model/internal/venue-flavor";
 import { isDefined } from "@src/util/common";
-import { VenueId } from "@src/util/domain-types";
+import { VenueFlavorId, VenueId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
 
@@ -70,10 +70,30 @@ export class VenueMapper {
         return resultMap;
     }
 
-    async search(parts: string[]): Promise<Venue[]> {
+    async getFlavorMapByIds(flavorIds: VenueFlavorId[]): Promise<Map<VenueFlavorId, VenueFlavor>> {
+        const result = await this.sql<VenueFlavorDaoInterface[]>`select vf.*, v.city from venue_flavor vf left join venue v on vf.venue_id = v.id where vf.id in ${ this.sql(flavorIds) }`;
+        if (result.length === 0) {
+            return new Map();
+        }
+
+        const resultMap = new Map<number, VenueFlavor>();
+        for (const resultItem of result) {
+            const entityItem = this.convertFlavorToEntity(resultItem);
+            resultMap.set(entityItem.id, entityItem);
+        }
+        return resultMap;
+    }
+
+    async searchForVenue(parts: string[]): Promise<Venue[]> {
         const results = await Promise.all(parts.map(part => this.findByNormalizedSearchValue(part)));
         const matchedIds = results.flat().map(item => item.id);    
         return await this.getMultipleByIds(groupByOccurrenceAndGetLargest(matchedIds));
+    }
+
+    async searchForVenueFlavor(parts: string[]): Promise<VenueFlavor[]> {
+        const results = await Promise.all(parts.map(part => this.findFlavorByNormalizedSearchValue(part)));
+        const matchedIds = results.flat().map(item => item.id);    
+        return await this.getMultipleFlavorsByIdsResult(groupByOccurrenceAndGetLargest(matchedIds));
     }
 
     private async findByNormalizedSearchValue(search: string): Promise<IdInterface[]> {
@@ -81,8 +101,17 @@ export class VenueMapper {
         return await this.sql<IdInterface[]>`select id from venue where normalized_search like ${ wildCard } limit 50`;
     }
 
+    private async findFlavorByNormalizedSearchValue(search: string): Promise<IdInterface[]> {
+        const wildCard = `%${search}%`;
+        return await this.sql<IdInterface[]>`select id from venue_flavor where normalized_search like ${ wildCard } limit 50`;
+    }
+
     private async getMultipleByIdsResult(ids: number[]): Promise<VenueDaoInterface[]> {
         return await this.sql<VenueDaoInterface[]>`select * from venue where id in ${ this.sql(ids) }`;
+    }
+
+    private async getMultipleFlavorsByIdsResult(ids: number[]): Promise<VenueFlavorDaoInterface[]> {
+        return await this.sql<VenueFlavorDaoInterface[]>`select vf.*, v.city from venue_flavor vf left join venue v on vf.venue_id = v.id where vf.id in ${ this.sql(ids) }`;
     }
 
     private convertToEntity(item: VenueDaoInterface): Venue {
@@ -98,6 +127,7 @@ export class VenueMapper {
             id: item.id,
             venueId: item.venueId,
             name: item.name,
+            city: item.city,
         }
     }
 

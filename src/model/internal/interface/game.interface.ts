@@ -1,14 +1,16 @@
+import { ClubId, CompetitionId, GameId, SeasonId, VenueFlavorId } from "@src/util/domain-types";
+
 export interface GameDaoInterface {
-    id: number;
+    id: GameId;
     kickoff: Date;
     resultTendency: string;
-    opponentId: number;
-    competitionId: number;
+    opponentId: ClubId;
+    competitionId: CompetitionId;
     competitionRound: string;
     competitionStage: string;
-    seasonId: number;
+    seasonId: SeasonId;
     status: string;
-    venueId: number;
+    venueFlavorId: VenueFlavorId;
     isHomeTeam: boolean;
     attendance: number;
     fullTimeGoalsMain: number;

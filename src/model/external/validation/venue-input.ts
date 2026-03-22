@@ -1,12 +1,12 @@
-import { competitionIdValidation } from "./competition-id";
 import { externalVenueValidation } from "./external-venue";
 import { ObjectType } from "./types";
+import { venueFlavorIdValidation } from "./venue-flavor-id";
 
 export const venueInputValidation: ObjectType = {
     type: 'object',
     required: [],
     properties: {
-        venueId: competitionIdValidation,
+        venueFlavorId: venueFlavorIdValidation,
         externalVenue: externalVenueValidation,
     },
     additionalProperties: false,

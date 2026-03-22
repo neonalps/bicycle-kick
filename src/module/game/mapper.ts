@@ -183,9 +183,12 @@ export class GameMapper {
         return true;
     }
 
-    async createOrUpdatedScheduled(dto: CreateGameDto): Promise<number> {
+    async createOrUpdatedScheduled(dto: CreateGameDto, throwIfExisting = false): Promise<number> {
         return await this.sql.begin(async tx => {
             const existingGameId = await this.resolveExistingScheduledGame(tx, dto.kickoff);
+            if (existingGameId !== null && throwIfExisting) {
+                throw new Error(`No updates are allowed in create method`);
+            }
 
             let gameId: GameId | undefined = undefined;
             if (existingGameId === null) {
@@ -1045,12 +1048,7 @@ export class GameMapper {
             return clubId;
         }
 
-        let homeVenueId: number | undefined;
-        if (club.externalClub?.homeVenue) {
-            homeVenueId = await this.resolveVenueId(tx, club.externalClub.homeVenue);
-        }
-
-        return await this.createClubViaExternalProvider(tx, club.externalClub as ExternalClubDto, homeVenueId);
+        throw new Error(`No longer implemented`);
     }
 
     private async getClubIdViaExternalProvider(tx: postgres.TransactionSql, externalClub: ExternalClubDto): Promise<number | null> {
@@ -1170,23 +1168,9 @@ export class GameMapper {
         return createdCompetitionId;
     }
 
-    private async resolveVenueId(tx: postgres.TransactionSql, venue: VenueInputDto): Promise<VenueId> {
-        if (venue.venueId !== undefined) {
-            return venue.venueId;
-        }
-
-        const venueId = await this.getVenueIdViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);
-        if (venueId !== null) {
-            return venueId;
-        }
-
-        const createResult = await this.createVenueAndFlavorViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);
-        return createResult.venueId;
-    }
-
     private async resolveVenueFlavorId(tx: postgres.TransactionSql, venue: VenueInputDto): Promise<VenueFlavorId> {
-        if (venue.venueId !== undefined) {
-            return venue.venueId;
+        if (venue.venueFlavorId !== undefined) {
+            return venue.venueFlavorId;
         }
 
         const venueId = await this.getVenueIdViaExternalProvider(tx, venue.externalVenue as ExternalVenueDto);

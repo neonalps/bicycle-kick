@@ -4,4 +4,5 @@ export interface VenueFlavorDaoInterface {
     id: VenueFlavorId;
     venueId: VenueId;
     name: string;
+    city: string;
 }

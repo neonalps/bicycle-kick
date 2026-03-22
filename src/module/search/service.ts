@@ -18,6 +18,7 @@ import { Game } from "@src/model/internal/game";
 import { ClubId } from "@src/util/domain-types";
 import { BasicClubDto } from "@src/model/external/dto/basic-club";
 import { GameStatus } from "@src/model/type/game-status";
+import { VenueFlavor } from "@src/model/internal/venue-flavor";
 
 export class SearchService {
 
@@ -69,7 +70,7 @@ export class SearchService {
         }
 
         if (entities.includes(SearchEntity.Venue)) {
-            searchProviders.push(this.searchForVenue(normalizedParts));
+            searchProviders.push(this.searchForVenueFlavor(normalizedParts));
         }
 
         const results = await Promise.all(searchProviders);
@@ -106,8 +107,13 @@ export class SearchService {
     }
 
     private async searchForVenue(parts: string[]): Promise<SearchResultItemDto[]> {
-        const venueResults = await this.venueService.search(parts);
+        const venueResults = await this.venueService.searchForVenue(parts);
         return venueResults.map(item => this.convertVenue(item));
+    }
+
+    private async searchForVenueFlavor(parts: string[]): Promise<SearchResultItemDto[]> {
+        const venueResults = await this.venueService.searchForFlavor(parts);
+        return venueResults.map(item => this.convertVenueFlavor(item));
     }
 
     private convertClub(item: Club): SearchResultItemDto {
@@ -222,6 +228,16 @@ export class SearchService {
     }
 
     private convertVenue(item: Venue): SearchResultItemDto {
+        const result: SearchResultItemDto = {
+            type: SearchEntity.Venue,
+            entityId: item.id,
+            title: `${item.name} (${item.city})`,
+        }
+
+        return result;
+    }
+
+    private convertVenueFlavor(item: VenueFlavor): SearchResultItemDto {
         const result: SearchResultItemDto = {
             type: SearchEntity.Venue,
             entityId: item.id,

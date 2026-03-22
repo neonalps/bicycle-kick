@@ -1,11 +1,12 @@
 import { Venue } from "@src/model/internal/venue";
 import { VenueMapper } from "./mapper";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
-import { VenueId } from "@src/util/domain-types";
+import { VenueFlavorId, VenueId } from "@src/util/domain-types";
 import { CreateVenue } from "@src/model/internal/create-venue";
 import { normalizeForSearch } from "@src/util/search";
 import { isDefined } from "@src/util/common";
 import { UpdateVenue } from "@src/model/internal/update-venue";
+import { VenueFlavor } from "@src/model/internal/venue-flavor";
 
 export class VenueService {
 
@@ -72,10 +73,25 @@ export class VenueService {
         return await this.mapper.getMapByIds(ids);
     }
 
-    async search(parts: string[]): Promise<Venue[]> {
+    async getFlavorMapByIds(flavorIds: VenueFlavorId[]): Promise<Map<VenueFlavorId, VenueFlavor>> {
+        validateNotNull(flavorIds, "flavorIds");
+        if (flavorIds.length === 0) {
+            return new Map();
+        }
+
+        return await this.mapper.getFlavorMapByIds(flavorIds);
+    }
+
+    async searchForVenue(parts: string[]): Promise<Venue[]> {
         validateNotNull(parts, "parts");
 
-        return await this.mapper.search(parts);
+        return await this.mapper.searchForVenue(parts);
+    }
+
+    async searchForFlavor(parts: string[]): Promise<VenueFlavor[]> {
+        validateNotNull(parts, "parts");
+
+        return await this.mapper.searchForVenueFlavor(parts);
     }
 
 }

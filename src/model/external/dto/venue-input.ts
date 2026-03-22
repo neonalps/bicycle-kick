@@ -1,6 +1,6 @@
 import { ExternalVenueDto } from "./external-venue";
 
 export interface VenueInputDto {
-    venueId?: number;
+    venueFlavorId?: number;
     externalVenue?: ExternalVenueDto;
 }

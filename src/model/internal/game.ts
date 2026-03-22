@@ -1,18 +1,18 @@
 import { Tendency } from "@src/model/type/tendency";
 import { GameStatus } from "@src/model/type/game-status";
-import { DateString } from "@src/util/domain-types";
+import { ClubId, CompetitionId, DateString, GameId, SeasonId, VenueFlavorId } from "@src/util/domain-types";
 
 export interface Game {
-    id: number;
+    id: GameId;
     kickoff: DateString;
     resultTendency: Tendency;
-    opponentId: number;
-    competitionId: number;
+    opponentId: ClubId;
+    competitionId: CompetitionId;
     competitionRound: string;
     competitionStage: string;
-    seasonId: number;
+    seasonId: SeasonId;
     status: GameStatus;
-    venueId: number;
+    venueFlavorId: VenueFlavorId;
     isHomeTeam: boolean;
     attendance: number;
     fullTimeGoalsMain: number;

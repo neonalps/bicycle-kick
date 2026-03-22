@@ -2,7 +2,7 @@ import { ClubService } from "@src/module/club/service";
 import { MatchdayDetailsProvider } from "./provider";
 import { ExternalProviderService } from "@src/module/external-provider/service";
 import { FetchMatchdayDetailsRequest, MatchdayDetails } from "./types";
-import { promiseAllObject } from "@src/util/common";
+import { ensureNotNullish, promiseAllObject } from "@src/util/common";
 import { GameService } from "@src/module/game/service";
 import { GetMatchdayDetailsRequestDto } from "@src/model/external/dto/get-matchday-details-request";
 import { CompetitionService } from "@src/module/competition/service";
@@ -58,6 +58,7 @@ export class MatchdayDetailsService {
         });
 
         const resolvedClubIds = await this.externalProviderService.getMultipleClubIdsByExternalProvider(provider.getName(), Array.from(externalProviderClubsIds));
+        this.correctResolvedClubMap(provider.getName(), new Date(game.kickoff), resolvedClubIds);
         const clubDetailsMap = await this.clubService.getMapByIds(Array.from(resolvedClubIds.values()));
 
         return {
@@ -86,6 +87,22 @@ export class MatchdayDetailsService {
             }),
         };
         
+    }
+
+    private correctResolvedClubMap(provider: ExternalProvider, kickoff: Date, resolvedClubMap: Map<string, ClubId>): void {
+        if (provider !== ExternalProvider.Bundesliga) {
+            return;
+        }
+
+        const clubKeysToProcess = resolvedClubMap.keys();
+        for (const clubKey of clubKeysToProcess) {
+            const clubValue = ensureNotNullish(resolvedClubMap.get(clubKey));
+            if (clubValue === 104 && kickoff < new Date(2007, 6, 1)) {
+                resolvedClubMap.set(clubKey, 115);
+            } else if (clubValue === 7 && kickoff < new Date(2005, 6, 1)) {
+                resolvedClubMap.set(clubKey, 74);
+            }
+        }
     }
     
     private determineProviderOrThrow(request: FetchMatchdayDetailsRequest, preferredProvider?: ExternalProvider): MatchdayDetailsProvider {

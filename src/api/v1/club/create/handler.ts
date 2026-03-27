@@ -25,7 +25,7 @@ export class CreateClubRouteHandler implements RouteHandler<CreateClubRequestDto
             homeVenueId: dto.homeVenueId,
         });
 
-        return this.apiHelper.convertClubToBasicDto(createdClub)
+        return this.apiHelper.convertClubToBasicDto(createdClub);
     }
 
 }

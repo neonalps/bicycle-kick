@@ -1,3 +1,5 @@
+import { VenueFlavorDto } from "./venue-flavor";
+
 export interface BasicVenueDto {
     id: number;
     name: string;
@@ -8,4 +10,5 @@ export interface BasicVenueDto {
     capacity?: number;
     latitude?: number;
     longitude?: number;
+    flavors: VenueFlavorDto[];
 }

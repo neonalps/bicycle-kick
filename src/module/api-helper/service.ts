@@ -5,7 +5,7 @@ import {GameService} from "@src/module/game/service";
 import {CompetitionService} from "@src/module/competition/service";
 import {VenueService} from "@src/module/venue/service";
 import {PersonService} from "@src/module/person/service";
-import {ensureNotNullish, getOrThrow, getUrlSlug, groupBy, isDefined, isNotDefined, uniqueArrayElements} from "@src/util/common";
+import {ensureNotNullish, getOrThrow, getUrlSlug, groupBy, isDefined, isNotDefined, promiseAllObject, uniqueArrayElements} from "@src/util/common";
 import {ClubService} from "@src/module/club/service";
 import {GamePlayer} from "@src/model/internal/game-player";
 import {SeasonService} from "@src/module/season/service";
@@ -81,6 +81,7 @@ import { ManagerPeriodDto } from "@src/model/external/dto/manager-period";
 import { DateSource } from "@src/util/date";
 import { Nullish } from "@src/util/types";
 import { VenueFlavor } from "@src/model/internal/venue-flavor";
+import { VenueFlavorDto } from "@src/model/external/dto/venue-flavor";
 
 export class ApiHelperService {
 
@@ -932,8 +933,11 @@ export class ApiHelperService {
         }
 
         if (isDefined(club.homeVenueId)) {
-            const venue = await this.venueService.getById(club.homeVenueId);
-            basicClub.homeVenue = this.convertVenueToBasicDto(venue as Venue);
+            const venueResult = await promiseAllObject({
+                venue: this.venueService.getById(club.homeVenueId),
+                flavors: this.venueService.getFlavorsForVenue(club.homeVenueId),
+            });
+            basicClub.homeVenue = this.convertVenueToBasicDto(venueResult.venue as Venue, venueResult.flavors);
         }
 
         return basicClub;
@@ -1200,14 +1204,15 @@ export class ApiHelperService {
         return dto;
     }
 
-    convertVenueToBasicDto(venue: Venue): BasicVenueDto {
+    convertVenueToBasicDto(venue: Venue, flavors: VenueFlavor[]): BasicVenueDto {
         const dto: BasicVenueDto = {
             id: venue.id,
             name: venue.name,
             shortName: venue.shortName,
             city: venue.city,
             countryCode: venue.countryCode,
-        }
+            flavors: flavors.map(flavor => this.convertVenueFlavorToDto(flavor)),
+        };
 
         if (isDefined(venue.district)) {
             dto.district = venue.district;
@@ -1226,6 +1231,13 @@ export class ApiHelperService {
         }
 
         return dto;
+    }
+
+    private convertVenueFlavorToDto(venueFlavor: VenueFlavor): VenueFlavorDto {
+        return {
+            id: venueFlavor.id,
+            name: venueFlavor.name,
+        };
     }
 
     private convertVenueFlavorToGameVenueDto(venueFlavor: VenueFlavor): GameVenueDto {

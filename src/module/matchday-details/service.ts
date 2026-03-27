@@ -98,8 +98,10 @@ export class MatchdayDetailsService {
         for (const clubKey of clubKeysToProcess) {
             const clubValue = ensureNotNullish(resolvedClubMap.get(clubKey));
             if (clubValue === 104 && kickoff < new Date(2007, 6, 1)) {
+                // earlier than July 2007: Austria Kärnten -> Pasching
                 resolvedClubMap.set(clubKey, 115);
             } else if (clubValue === 7 && kickoff < new Date(2005, 6, 1)) {
+                // earlier than July 2005: Red Bull Salzburg -> Austria Salzburg
                 resolvedClubMap.set(clubKey, 74);
             }
         }

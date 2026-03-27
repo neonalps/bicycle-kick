@@ -23,7 +23,7 @@ export class CreateVenueRouteHandler implements RouteHandler<CreateVenueRequestD
             longitude: dto.longitude,
         });
 
-        return this.apiHelper.convertVenueToBasicDto(createdVenue);
+        return this.apiHelper.convertVenueToBasicDto(createdVenue, []);
     }
 
 }

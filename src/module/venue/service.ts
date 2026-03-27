@@ -82,6 +82,12 @@ export class VenueService {
         return await this.mapper.getFlavorMapByIds(flavorIds);
     }
 
+    async getFlavorsForVenue(venueId: VenueId): Promise<VenueFlavor[]> {
+        validateNotNull(venueId, "venueId");
+
+        return await this.mapper.getFlavorsForVenue(venueId);
+    }
+
     async searchForVenue(parts: string[]): Promise<Venue[]> {
         validateNotNull(parts, "parts");
 

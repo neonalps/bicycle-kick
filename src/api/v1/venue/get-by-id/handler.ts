@@ -3,6 +3,7 @@ import { GetVenueByIdRequestDto } from "@src/model/external/dto/get-venue-by-id-
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { VenueService } from "@src/module/venue/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
+import { promiseAllObject } from "@src/util/common";
 
 export class GetVenueByIdRouteHandler implements RouteHandler<GetVenueByIdRequestDto, BasicVenueDto> {
 
@@ -12,9 +13,12 @@ export class GetVenueByIdRouteHandler implements RouteHandler<GetVenueByIdReques
     ) {}
 
     public async handle(_: AuthenticationContext, dto: GetVenueByIdRequestDto): Promise<BasicVenueDto> {
-        const venue = await this.venueService.requireById(dto.venueId);
+        const { venue, flavors } = await promiseAllObject({
+            venue: this.venueService.requireById(dto.venueId),
+            flavors: this.venueService.getFlavorsForVenue(dto.venueId),
+        });
 
-        return this.apiHelper.convertVenueToBasicDto(venue);
+        return this.apiHelper.convertVenueToBasicDto(venue, flavors);
     }
 
 }

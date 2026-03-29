@@ -4,5 +4,7 @@ export interface CompetitionDto {
     shortName: string;
     isDomestic: boolean;
     parent?: CompetitionDto;
+    iconSmall?: string;
+    iconLarge?: string;
     combineStatisticsWithParent?: boolean;
 }

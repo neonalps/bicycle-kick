@@ -3,16 +3,16 @@ import { GameVenueDto } from "./game-venue";
 import { GameStatus } from "@src/model/type/game-status";
 import { ScoreTuple } from "@src/model/internal/score";
 import { SmallSeasonDto } from "./small-season";
-import { SmallCompetitionDto } from "./small-competition";
 import { SmallClubDto } from "./small-club";
 import { DateString } from "@src/util/domain-types";
+import { CompetitionDto } from "./competition";
 
 export interface BasicGameDto {
     id: number;
     kickoff: DateString;
     opponent: SmallClubDto;
     season: SmallSeasonDto;
-    competition: SmallCompetitionDto;
+    competition: CompetitionDto;
     round: string;
     stage?: string;
     isHomeGame: boolean;

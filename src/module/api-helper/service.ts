@@ -132,7 +132,7 @@ export class ApiHelperService {
                 kickoff: game.kickoff,
                 season: this.convertSeasonToSmallDto(season),
                 opponent: this.convertClubToSmallDto(opponent),
-                competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
+                competition: this.convertCompetitionToDto(competition, parentCompetition ?? undefined),
                 venue: this.convertVenueFlavorToGameVenueDto(venueFlavor),
                 round: game.competitionRound,
                 status: game.status,
@@ -566,7 +566,7 @@ export class ApiHelperService {
                 kickoff: game.kickoff,
                 season: this.convertSeasonToSmallDto(season),
                 opponent: this.convertClubToSmallDto(opponent),
-                competition: this.convertCompetitionToSmallDto(competition, parentCompetition ?? undefined),
+                competition: this.convertCompetitionToDto(competition, parentCompetition ?? undefined),
                 venue: this.convertVenueFlavorToGameVenueDto(venueFlavor),
                 round: game.competitionRound,
                 status: game.status,
@@ -988,6 +988,14 @@ export class ApiHelperService {
             isDomestic: competition.isDomestic,
             combineStatisticsWithParent: competition.combineStatisticsWithParent,
         };
+
+        if (isDefined(competition.iconLarge)) {
+            dto.iconLarge = this.getMediaUrl(competition.iconLarge);
+        }
+
+        if (isDefined(competition.iconSmall)) {
+            dto.iconSmall = this.getMediaUrl(competition.iconSmall);
+        }
 
         if (parent) {
             dto.parent = this.convertCompetitionToDto(parent);

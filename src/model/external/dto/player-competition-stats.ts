@@ -1,13 +1,13 @@
 import { BasicPersonDto } from "./basic-person";
 import { SmallCompetitionDto } from "./small-competition";
 
-export interface PlayerCompetitionItemDto {
+export interface RankedPersonResultItemDto {
     rank: number;
-    player: BasicPersonDto;
+    person: BasicPersonDto;
     value: number;
 }
 
 export interface PlayerCompetitionStatsDto {
     competitions: SmallCompetitionDto[];
-    ranking: PlayerCompetitionItemDto[];
+    ranking: RankedPersonResultItemDto[];
 }

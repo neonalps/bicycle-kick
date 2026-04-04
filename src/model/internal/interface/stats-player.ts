@@ -38,7 +38,7 @@ export interface PlayerGoalTypeStatsDaoInterface {
     goalsScored: string;
 }
 
-export interface TopScorerResultItemDaoInterface {
+export interface RankedResultItemDaoInterface {
     personId: PersonId;
     rankingPosition: string;
     value: string;

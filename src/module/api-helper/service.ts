@@ -58,7 +58,7 @@ import { GameStarService } from "@src/module/game-star/service";
 import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 import { TacticalFormation } from "@src/model/external/dto/tactical-formation";
 import { PlayerCompetitionStatsItemDto, PlayerGoalsAgainstClubStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
-import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem } from "@src/model/internal/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, RankedValueResultItem } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, GameId, PersonId, SeasonId } from "@src/util/domain-types";
 import { OverallPosition } from "@src/model/type/position-overall";
 import { GameManagerDto } from "@src/model/external/dto/game-manager";
@@ -82,6 +82,7 @@ import { DateSource } from "@src/util/date";
 import { Nullish } from "@src/util/types";
 import { VenueFlavor } from "@src/model/internal/venue-flavor";
 import { VenueFlavorDto } from "@src/model/external/dto/venue-flavor";
+import { RankedPersonResultItemDto } from "@src/model/external/dto/player-competition-stats";
 
 export class ApiHelperService {
 
@@ -1158,6 +1159,19 @@ export class ApiHelperService {
         }
 
         return result;
+    }
+
+    async convertRankedPlayerResultItemToDto(items: RankedValueResultItem[]): Promise<RankedPersonResultItemDto[]> {
+        const personIds = uniqueArrayElements(items.map(item => item.personId));
+        const personMap = await this.personService.getMapByIds(personIds);
+
+        return items.map(item => {
+            return {
+                rank: item.rank,
+                person: this.convertPersonToBasicDto(getOrThrow(personMap, item.personId, `failed to find person ${item.personId} in map`)),
+                value: item.value,
+            };
+        });
     }
 
     convertMatchdayFixturesToDto(fixtures: Fixture[]): FixtureDto[] {

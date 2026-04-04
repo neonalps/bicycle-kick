@@ -1,9 +1,10 @@
 import { Sql } from "@src/db";
-import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerGoalTypeStatsDaoInterface, PlayerPerformanceStatsDaoInterface, TopScorerResultItemDaoInterface } from "@src/model/internal/interface/stats-player";
+import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerGoalTypeStatsDaoInterface, PlayerPerformanceStatsDaoInterface, RankedResultItemDaoInterface } from "@src/model/internal/interface/stats-player";
 import { QueryOptions } from "@src/model/internal/query-options";
-import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, TopScorerResultItem } from "@src/model/internal/stats-player";
+import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
 import { CompetitionId, PersonId } from "@src/util/domain-types";
+import { GetPlayerAppearancesPaginationParams, RankedValuePaginationLastSeen } from "./service";
 
 export class StatsMapper {
 
@@ -141,8 +142,8 @@ export class StatsMapper {
         }, new Map());
     }
 
-    async getTopScorers(queryOptions: QueryOptions, limit: number): Promise<ReadonlyArray<TopScorerResultItem>> {
-        const result = await this.sql<TopScorerResultItemDaoInterface[]>`
+    async getTopScorers(queryOptions: QueryOptions, limit: number, lastSeen?: RankedValuePaginationLastSeen): Promise<ReadonlyArray<RankedValueResultItem>> {
+        const result = await this.sql<RankedResultItemDaoInterface[]>`
             select
                 rank() over (
                     order by sum(gp.goals_scored) desc
@@ -160,10 +161,10 @@ export class StatsMapper {
                 ${queryOptions.onlySeasons ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
             group by
                 p.id
-            having 
-                sum(gp.goals_scored) > 0
+            ${isDefined(lastSeen) ? this.sql`having (sum(gp.goals_scored), p.id) < (${ lastSeen.value }, ${ lastSeen.personId })` : this.sql``}
             order by
-                sum(gp.goals_scored) desc
+                sum(gp.goals_scored) desc,
+                p.id desc
             limit ${limit}
         `;
 
@@ -171,7 +172,67 @@ export class StatsMapper {
             return [];
         }
 
-        return result.map(item => ({ rank: Number(item.rankingPosition), personId: item.personId, value: Number(item.value) }));
+        const convertedResult: RankedValueResultItem[] = [];
+
+        // TODO implement like for appearances below
+        for (const item of result) {
+            const currentItemValue = Number(item.value);
+            const currentItemRank = Number(item.rankingPosition);
+
+            convertedResult.push({
+                rank: currentItemRank,
+                personId: item.personId,
+                value: currentItemValue,
+            })
+        }
+        return convertedResult;
+    }
+
+    async getMostAppearancesPaginated(queryOptions: QueryOptions, params: GetPlayerAppearancesPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {
+        const result = await this.sql<RankedResultItemDaoInterface[]>`
+            select
+                rank() over (
+                    order by count(gp.id) desc
+                ) ranking_position,
+                p.id as person_id,
+                count(gp.id) as value
+            from
+                game g left join
+                game_players gp on gp.game_id  = g.id left join
+                person p on gp.person_id = p.id
+            where
+                gp.minutes_played is not null
+                ${isDefined(queryOptions.onlyForMain) ? this.sql` and gp.for_main = ${ queryOptions.onlyForMain }` : this.sql``}
+                ${isDefined(queryOptions.onlyCompetitions) ? this.sql` and g.competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
+                ${isDefined(queryOptions.onlySeasons) ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+            group by
+                p.id
+            ${isDefined(params.lastSeen) ? this.sql`having (count(gp.id), p.id) < (${ params.lastSeen.value }, ${ params.lastSeen.personId })` : this.sql``}
+            order by
+                count(gp.id) desc,
+                p.id desc
+            limit ${params.limit}
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        const convertedResult: RankedValueResultItem[] = [];
+
+        const displayRankOffset = params.lastSeen.rankOffset.display;
+        for (const item of result) {
+            const currentItemValue = Number(item.value);            
+            const isValueSameAsLastSeen = currentItemValue === params.lastSeen.value && params.lastSeen.value > 0;
+            const currentRankValue = isValueSameAsLastSeen ? displayRankOffset : Number(item.rankingPosition) + params.lastSeen.rankOffset.effective;
+
+            convertedResult.push({
+                rank: currentRankValue,
+                personId: item.personId,
+                value: currentItemValue,
+            })
+        }
+        return convertedResult;
     }
 
     async getEffectiveGoalScoredCompetitionIds(queryOptions: QueryOptions): Promise<ReadonlyArray<CompetitionId>> {

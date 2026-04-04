@@ -4,7 +4,7 @@ import { GamePlayerDaoInterface } from "@src/model/internal/interface/game-playe
 import { SortOrder } from "@src/module/pagination/constants";
 import { GetPlayerGamesPlayedPaginationParams } from "./service";
 import { assertUnreachable, isDefined, isNotDefined } from "@src/util/common";
-import { CompetitionId, PersonId } from "@src/util/domain-types";
+import { PersonId } from "@src/util/domain-types";
 import { QueryComparator, ValueWithModifier } from "@src/model/internal/stats-query-modifier";
 import { parseValueWithModifier } from "@src/util/stats";
 import { CompetitionService } from "@src/module/competition/service";
@@ -62,7 +62,7 @@ export class GamePlayerMapper {
         const psoPenaltiesTakenWithModifier: ValueWithModifier | undefined = params.psoPenaltiesTaken ? parseValueWithModifier(params.psoPenaltiesTaken) : undefined;
         const psoPenaltiesScoredWithModifier: ValueWithModifier | undefined = params.psoPenaltiesScored ? parseValueWithModifier(params.psoPenaltiesScored) : undefined;
 
-        const effectiveCompetitionIds = await this.getEffectiveCompetitionIds(competitionIds);
+        const effectiveCompetitionIds = await this.competitionService.getEffectiveCompetitionIds(competitionIds?.map(item => Number(item)));
 
         const result = await this.sql<GamePlayerDaoInterface[]>`
             select
@@ -163,27 +163,6 @@ export class GamePlayerMapper {
             default:
                 assertUnreachable(comparator);
         }
-    }
-
-    private async getEffectiveCompetitionIds(competitionIds?: string[]): Promise<ReadonlyArray<CompetitionId>> {
-        if (isNotDefined(competitionIds)) {
-            return [];
-        }
-
-        const result = new Set<CompetitionId>();
-        for (const competitionId of competitionIds as string[]) {
-            // add the competition id itself
-            const realCompetitionId = Number(competitionId);
-            result.add(realCompetitionId);
-
-            const childCompetitions = await this.competitionService.getChildCompetitions(realCompetitionId);
-            childCompetitions
-                .filter(item => item.combineStatisticsWithParent === true)
-                .map(item => item.id)
-                .forEach(competitionId => result.add(competitionId));
-        }
-
-        return Array.from(result);
     }
 
 }

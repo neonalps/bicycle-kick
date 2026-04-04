@@ -2,6 +2,7 @@ import { Competition } from "@src/model/internal/competition";
 import { validateNotNull } from "@src/util/validation";
 import { CompetitionMapper } from "./mapper";
 import { CompetitionId } from "@src/util/domain-types";
+import { isNotDefined } from "@src/util/common";
 
 export class CompetitionService {
 
@@ -44,6 +45,26 @@ export class CompetitionService {
         validateNotNull(competitionId, "competitionId");
 
         return await this.mapper.getChildCompetitions(competitionId, combineStatisticsWithParent);
+    }
+
+    async getEffectiveCompetitionIds(competitionIds?: CompetitionId[]): Promise<ReadonlyArray<CompetitionId>> {
+        if (isNotDefined(competitionIds) || competitionIds.length === 0) {
+            return [];
+        }
+
+        const result = new Set<CompetitionId>();
+        for (const competitionId of competitionIds) {
+            // add the competition id itself
+            result.add(competitionId);
+
+            const childCompetitions = await this.getChildCompetitions(competitionId);
+            childCompetitions
+                .filter(item => item.combineStatisticsWithParent === true)
+                .map(item => item.id)
+                .forEach(competitionId => result.add(competitionId));
+        }
+
+        return Array.from(result);
     }
 
 }

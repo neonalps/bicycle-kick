@@ -41,7 +41,7 @@ export class GetDashboardHandler implements RouteHandler<DashboardRequestDto, Da
                 ranking: dashboard.topScorers.ranking.map(item => {
                     return {
                         rank: item.rank,
-                        player: this.apiHelper.convertPersonToBasicDto(item.person),
+                        person: this.apiHelper.convertPersonToBasicDto(item.person),
                         value: item.value,
                     }
                 })

@@ -3,7 +3,7 @@ import { SeasonService } from "@src/module/season/service";
 import { StatsMapper } from "./mapper";
 import { ArrayNonEmpty, getOrThrow, isDefined, isNotDefined, promiseAllObject, uniqueArrayElements } from "@src/util/common";
 import { validateNotNull } from "@src/util/validation";
-import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, TopScorerResultItem } from "@src/model/internal/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 import { combinePlayerBaseStats, getEmptyPlayerBaseStats } from "./util";
 import { Competition } from "@src/model/internal/competition";
@@ -11,7 +11,25 @@ import { Season } from "@src/model/internal/season";
 import { QueryOptions } from "@src/model/internal/query-options";
 import { Club } from "@src/model/internal/club";
 import { ClubService } from "@src/module/club/service";
-import { GoalType } from "@src/model/type/goal-type";
+import { PaginationParams, RankOffset } from "@src/module/pagination/constants";
+
+export interface GetPlayerAppearancesPaginationParams extends PaginationParams<RankedValuePaginationLastSeen> {
+    forMain: boolean;
+    competitionIds?: Array<CompetitionId>;
+    seasonIds?: Array<SeasonId>;
+}
+
+export interface GetTopScorerPaginationParams extends PaginationParams<RankedValuePaginationLastSeen> {
+    forMain: boolean;
+    competitionIds?: ArrayNonEmpty<CompetitionId>;
+    seasonIds?: ArrayNonEmpty<SeasonId>;
+}
+
+export type RankedValuePaginationLastSeen = {
+    rankOffset: RankOffset;
+    value: number;
+    personId: PersonId;
+};
 
 export enum PlayerStatsItem {
     All = 'all',
@@ -113,8 +131,12 @@ export class StatsService {
         }
     }
 
-    async getTopScorers(queryOptions: QueryOptions = {}, limit = 10): Promise<ReadonlyArray<TopScorerResultItem>> {
+    async getTopScorers(queryOptions: QueryOptions, limit = 10): Promise<ReadonlyArray<RankedValueResultItem>> {
         return await this.mapper.getTopScorers(queryOptions, limit);
+    }
+
+    async getMostAppearancesPaginated(queryOptions: QueryOptions, paginationParams: GetPlayerAppearancesPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {
+        return await this.mapper.getMostAppearancesPaginated(queryOptions, paginationParams);
     }
 
     async getEffectiveGoalScoredCompetitionIds(queryOptions: QueryOptions = {}): Promise<ReadonlyArray<CompetitionId>> {

@@ -1,4 +1,5 @@
 import { SortOrder } from "@src/module/pagination/constants";
+import { ArrayItemsString } from "./domain-types";
 
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const charactersLength = characters.length;
@@ -80,6 +81,14 @@ export function requireSingleArrayElement<T>(array: T[], errorMessage?: string):
 }
 
 export type ArrayNonEmpty<T> = [T, ...T[]];
+
+export function splitNonEmptyArrayString(input: ArrayItemsString): ArrayNonEmpty<string> {
+    const result = input.split(",").map(item => item.trim());
+    if (result.length === 0) {
+        throw new Error(`Empty array strings are not allowed here`);
+    }
+    return result as ArrayNonEmpty<string>;
+}
 
 export async function promiseAllObject<T extends Record<string, Promise<any>>>(obj: T): Promise<{ [K in keyof T]: Awaited<T[K]> }> {
   const entries = Object.entries(obj);

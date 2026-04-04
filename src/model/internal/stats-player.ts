@@ -65,13 +65,13 @@ export interface PlayerGoalTypeStatsItem {
     goalsScored: number;
 }
 
-export interface TopScorerResultItem {
+export interface RankedValueResultItem {
     personId: PersonId;
     rank: number;
     value: number;
 }
 
-export interface TopScorerPersonResultItem {
+export interface RankedPersonValueResultItem {
     person: Person;
     rank: number;
     value: number;
@@ -79,5 +79,5 @@ export interface TopScorerPersonResultItem {
 
 export interface TopScorersInfo {
     competitions: Competition[];
-    ranking: TopScorerPersonResultItem[];
+    ranking: RankedPersonValueResultItem[];
 }

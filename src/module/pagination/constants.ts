@@ -17,6 +17,11 @@ export interface PaginationQueryParams {
     order?: SortOrder;
 }
 
+export interface RankOffset {
+    display: number;    // the offset that is required to calculate the displayed value
+    effective: number;  // the effective offset for the calculation - if three items were at position 10 we need to factor this information in to calculate the next page
+}
+
 export const PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES: Record<string, PrimitiveType | StringEnumType> = {
     limit: { type: 'number' },
     order: { type: 'string', enum: [ SortOrder.Ascending, SortOrder.Descending ] },

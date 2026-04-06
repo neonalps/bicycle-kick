@@ -1,7 +1,7 @@
 import { Sql } from "@src/db";
 import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerGoalTypeStatsDaoInterface, PlayerPerformanceStatsDaoInterface, RankedResultItemDaoInterface } from "@src/model/internal/interface/stats-player";
 import { QueryOptions } from "@src/model/internal/query-options";
-import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem } from "@src/model/internal/stats-player";
+import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem, ShirtDistributionItem } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
 import { CompetitionId, PersonId } from "@src/util/domain-types";
 import { GetPlayerAppearancesPaginationParams, RankedValuePaginationLastSeen } from "./service";
@@ -186,6 +186,29 @@ export class StatsMapper {
             })
         }
         return convertedResult;
+    }
+
+    async getShirtDistribution(personId: PersonId): Promise<ReadonlyArray<ShirtDistributionItem>> {
+        const result = await this.sql<Array<{ shirt: number; shirtCount: string }>>`
+            select
+                gp.shirt,
+                count(gp.shirt) as shirt_count
+            from
+                game_players gp
+            where
+                gp.person_id = ${ personId } and 
+                gp.for_main = true
+            group by
+                gp.shirt
+            order by
+                count(gp.shirt) desc
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => ( { shirt: item.shirt, count: Number(item.shirtCount) } ));
     }
 
     async getMostAppearancesPaginated(queryOptions: QueryOptions, params: GetPlayerAppearancesPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {

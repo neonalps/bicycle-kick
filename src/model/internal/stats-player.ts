@@ -60,6 +60,11 @@ export interface PlayerGoalsAgainstClubStatsItem {
     goalsScored: number;
 }
 
+export interface ShirtDistributionItem {
+    shirt: number;
+    count: number;
+}
+
 export interface PlayerGoalTypeStatsItem {
     goalType: GoalType;
     goalsScored: number;

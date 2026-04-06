@@ -52,6 +52,8 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
             if (refereeGames.length > 0) {
                 isReferee = true;
                 response.stats.refereeGames = await this.apiHelper.getOrderedBasicGameDtos(refereeGames);
+            } else {
+                response.stats.shirtDistribution = await this.statsService.getShirtDistribution(person.id);
             }
         }
 

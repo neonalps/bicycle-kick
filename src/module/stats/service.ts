@@ -3,7 +3,7 @@ import { SeasonService } from "@src/module/season/service";
 import { StatsMapper } from "./mapper";
 import { ArrayNonEmpty, getOrThrow, isDefined, isNotDefined, promiseAllObject, uniqueArrayElements } from "@src/util/common";
 import { validateNotNull } from "@src/util/validation";
-import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem } from "@src/model/internal/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem, ShirtDistributionItem } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
 import { combinePlayerBaseStats, getEmptyPlayerBaseStats } from "./util";
 import { Competition } from "@src/model/internal/competition";
@@ -141,6 +141,12 @@ export class StatsService {
 
     async getEffectiveGoalScoredCompetitionIds(queryOptions: QueryOptions = {}): Promise<ReadonlyArray<CompetitionId>> {
         return await this.mapper.getEffectiveGoalScoredCompetitionIds(queryOptions);
+    }
+
+    async getShirtDistribution(personId: PersonId): Promise<ReadonlyArray<ShirtDistributionItem>> {
+        validateNotNull(personId, "personId");
+
+        return await this.mapper.getShirtDistribution(personId);
     }
 
     private resolveRequestedStatsItems(requestedItems: ReadonlyArray<PlayerStatsItem>): ReadonlyArray<PlayerStatsItem> {

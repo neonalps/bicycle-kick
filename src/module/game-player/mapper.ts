@@ -92,6 +92,7 @@ export class GamePlayerMapper {
                 ${isDefined(params.yellowCard) ? this.sql` and gp.yellow_card = ${params.yellowCard}` : this.sql``}
                 ${isDefined(params.yellowRedCard) ? this.sql` and gp.yellow_red_card = ${params.yellowRedCard}` : this.sql``}
                 ${isDefined(params.redCard) ? this.sql` and gp.red_card = ${params.redCard}` : this.sql``}
+                ${isDefined(params.shirt) ? this.sql` and gp.shirt = ${params.shirt}` : this.sql``}
             order by
                 g.kickoff ${ this.determineSortOrder(params.order) }
             limit

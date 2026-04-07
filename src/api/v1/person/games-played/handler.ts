@@ -85,6 +85,10 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
                 params.redCard = dto.redCard;
             }
 
+            if (isDefined(dto.shirt)) {
+                params.shirt = Number(dto.shirt);
+            }
+
             if (isDefined(dto.regulationPenaltiesTaken)) {
                 params.regulationPenaltiesTaken = dto.regulationPenaltiesTaken;
             }
@@ -176,6 +180,10 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
 
         if (isDefined(oldParams.redCard)) {
             newParams.redCard = oldParams.redCard;
+        }
+
+        if (isDefined(oldParams.shirt)) {
+            newParams.shirt = oldParams.shirt;
         }
 
         if (isDefined(oldParams.regulationPenaltiesFaced)) {

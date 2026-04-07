@@ -16,6 +16,7 @@ export interface GetPlayerGamesPlayedPaginationParams extends PaginationParams<D
     yellowCard?: boolean;
     yellowRedCard?: boolean;
     redCard?: boolean;
+    shirt?: number;
     regulationPenaltiesTaken?: string;
     regulationPenaltiesScored?: string;
     regulationPenaltiesFaced?: string;

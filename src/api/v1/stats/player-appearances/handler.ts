@@ -31,7 +31,7 @@ export class GetPlayerAppearanceStatsRouteHandler implements RouteHandler<GetPla
 
         const paginatedResult = await this.statsService.getMostAppearancesPaginated(
             {
-                onlyForMain: request.forMain,
+                onlyForMain: paginationParams.forMain,
                 onlyCompetitions: isDefined(paginationParams.competitionIds) ? await this.competitionService.getEffectiveCompetitionIds(paginationParams.competitionIds) : undefined,
             }, paginationParams);
         const responseItems = await this.apiHelperService.convertRankedPlayerResultItemToDto([...paginatedResult]);

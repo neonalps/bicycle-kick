@@ -16,6 +16,7 @@ export interface GetGamesPlayedRequestDto extends PaginationQueryParams {
     yellowCard?: boolean;
     yellowRedCard?: boolean;
     redCard?: boolean;
+    shirt?: string;
     regulationPenaltiesTaken?: string;
     regulationPenaltiesScored?: string;
     regulationPenaltiesFaced?: string;

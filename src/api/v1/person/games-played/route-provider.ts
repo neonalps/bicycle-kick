@@ -41,6 +41,7 @@ export class GetPersonGamesPlayedRouteProvider implements RouteProvider<GetGames
                     yellowCard: { type: 'boolean' },
                     yellowRedCard: { type: 'boolean' },
                     redCard: { type: 'boolean' },
+                    shirt: { type: 'string' },
                     regulationPenaltiesFaced: { type: 'string' },
                     regulationPenaltiesSaved: { type: 'string' },
                     regulationPenaltiesTaken: { type: 'string' },

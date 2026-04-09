@@ -3,6 +3,9 @@ import { validateNotNull } from "@src/util/validation";
 import { CompetitionMapper } from "./mapper";
 import { CompetitionId } from "@src/util/domain-types";
 import { isNotDefined } from "@src/util/common";
+import { PaginationParams } from "@src/module/pagination/constants";
+
+export interface GetAllCompetitionsPaginationParams extends PaginationParams<number> {}
 
 export class CompetitionService {
 
@@ -20,6 +23,15 @@ export class CompetitionService {
             throw new Error(`No competition with ID ${id} exists`);
         }
         return competition;
+    }
+
+    async getAllPaginated(paginationParams: GetAllCompetitionsPaginationParams): Promise<Array<Competition>> {
+        validateNotNull(paginationParams, "paginationParams");
+        validateNotNull(paginationParams.lastSeen, "paginationParams.lastSeen");
+        validateNotNull(paginationParams.limit, "paginationParams.limit");
+        validateNotNull(paginationParams.order, "paginaationParams.order");
+
+        return await this.mapper.getAllPaginated(paginationParams);
     }
 
     async getMapByIds(ids: number[]): Promise<Map<number, Competition>> {

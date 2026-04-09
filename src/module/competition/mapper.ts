@@ -7,18 +7,40 @@ import { isDefined } from "@src/util/common";
 import { CompetitionId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
+import { GetAllCompetitionsPaginationParams } from "./service";
+import { SortOrder } from "../pagination/constants";
 
 export class CompetitionMapper {
 
     constructor(private readonly sql: Sql) {}
 
-    async create(create: CreateCompetition, tx?: postgres.TransactionSql): Promise<number> {
+    async create(create: CreateCompetition, tx?: postgres.TransactionSql): Promise<CompetitionId> {
         const query = tx || this.sql;
         const result = await query`insert into competition ${ query(create, 'name', 'shortName', 'isDomestic', 'parentId', 'combineStatisticsWithParent', 'iconLarge', 'iconSmall', 'normalizedSearch', 'victoryGameText') } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to create competition`);
         }
         return result[0].id;
+    }
+
+    async getAllPaginated(params: GetAllCompetitionsPaginationParams): Promise<Array<Competition>> {
+        const result = await this.sql<CompetitionDaoInterface[]>`
+            select
+                c.*
+            from
+                competition c
+            where
+                c.sort_order ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
+            order by
+                c.sort_order ${ this.determineSortOrder(params.order) }
+            limit
+                ${ params.limit }`;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
     }
 
     async getById(id: number): Promise<Competition | null> {
@@ -30,17 +52,17 @@ export class CompetitionMapper {
         return this.convertToEntity(result[0]);
     }
 
-    async getMultipleByIds(ids: number[]): Promise<Competition[]> {
+    async getMultipleByIds(ids: CompetitionId[]): Promise<Competition[]> {
         return (await this.getMultipleByIdsResult(ids)).map(item => this.convertToEntity(item));
     }
 
-    async getAllInMap(): Promise<Map<number, Competition>> {
+    async getAllInMap(): Promise<Map<CompetitionId, Competition>> {
         const result = await this.sql<CompetitionDaoInterface[]>`select * from competition`;
         if (result.length === 0) {
             return new Map();
         }
 
-        const resultMap = new Map<number, Competition>();
+        const resultMap = new Map<CompetitionId, Competition>();
         for (const resultItem of result) {
             const entityItem = this.convertToEntity(resultItem);
             resultMap.set(entityItem.id, entityItem);
@@ -48,13 +70,13 @@ export class CompetitionMapper {
         return resultMap;
     }
 
-    async getMapByIds(ids: number[]): Promise<Map<number, Competition>> {
+    async getMapByIds(ids: CompetitionId[]): Promise<Map<CompetitionId, Competition>> {
         const result = await this.sql<CompetitionDaoInterface[]>`select * from competition where id in ${ this.sql(ids) }`;
         if (result.length === 0) {
             return new Map();
         }
 
-        const resultMap = new Map<number, Competition>();
+        const resultMap = new Map<CompetitionId, Competition>();
         for (const resultItem of result) {
             const entityItem = this.convertToEntity(resultItem);
             resultMap.set(entityItem.id, entityItem);
@@ -104,8 +126,13 @@ export class CompetitionMapper {
             isDomestic: item.isDomestic,
             combineStatisticsWithParent: item.combineStatisticsWithParent,
             parentId: item.parentId,
+            sortOrder: item.sortOrder,
             victoryGameText: item.victoryGameText,
         };
+    }
+
+    private determineSortOrder(order: SortOrder) {
+        return order === SortOrder.Descending ? this.sql`desc` : this.sql`asc`;
     }
 
 }

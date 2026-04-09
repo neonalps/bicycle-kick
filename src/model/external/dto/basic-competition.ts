@@ -1,13 +1,13 @@
-export interface CompetitionDaoInterface {
-    id: number;
+import { CompetitionId } from "@src/util/domain-types";
+
+export interface BasicCompetitionDto {
+    id: CompetitionId;
     name: string;
     shortName: string;
     isDomestic: boolean;
     iconSmall?: string;
     iconLarge?: string;
-    parentId?: number;
+    parentCompetitionId?: CompetitionId;
     combineStatisticsWithParent?: boolean;
-    normalizedSearch: string;
-    victoryGameText?: string;
     sortOrder: number;
 }

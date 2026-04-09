@@ -10,6 +10,7 @@ import { PersonService } from "@src/module/person/service";
 import { QueryOptions } from "@src/model/internal/query-options";
 import { CompetitionId, SeasonId } from "@src/util/domain-types";
 import { TopScorersInfo } from "@src/model/internal/stats-player";
+import { MAX_NUMBER, SortOrder } from "@src/module/pagination/constants";
 
 export type DashboardWidget = keyof Dashboard;
 
@@ -66,7 +67,7 @@ export class DashboardService {
         }
 
         const { topScorers, effectiveCompetitionsIds } = await promiseAllObject({
-            topScorers: this.statsService.getTopScorers(topScorerQueryOptions, 5),
+            topScorers: this.statsService.getTopScorersPaginated(topScorerQueryOptions, { limit: 5, order: SortOrder.Descending, lastSeen: { rankOffset: { effective: 0, display: 0 }, personId: MAX_NUMBER, value: MAX_NUMBER } }),
             effectiveCompetitionsIds: this.statsService.getEffectiveGoalScoredCompetitionIds(topScorerQueryOptions),
         })
 

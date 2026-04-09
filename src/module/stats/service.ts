@@ -14,13 +14,13 @@ import { ClubService } from "@src/module/club/service";
 import { PaginationParams, RankOffset } from "@src/module/pagination/constants";
 
 export interface GetPlayerAppearancesPaginationParams extends PaginationParams<RankedValuePaginationLastSeen> {
-    forMain: boolean;
+    forMain?: boolean;
     competitionIds?: Array<CompetitionId>;
     seasonIds?: Array<SeasonId>;
 }
 
 export interface GetTopScorerPaginationParams extends PaginationParams<RankedValuePaginationLastSeen> {
-    forMain: boolean;
+    forMain?: boolean;
     competitionIds?: ArrayNonEmpty<CompetitionId>;
     seasonIds?: ArrayNonEmpty<SeasonId>;
 }
@@ -131,8 +131,8 @@ export class StatsService {
         }
     }
 
-    async getTopScorers(queryOptions: QueryOptions, limit = 10): Promise<ReadonlyArray<RankedValueResultItem>> {
-        return await this.mapper.getTopScorers(queryOptions, limit);
+    async getTopScorersPaginated(queryOptions: QueryOptions, paginationParams: GetTopScorerPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {
+        return await this.mapper.getTopScorers(queryOptions, paginationParams);
     }
 
     async getMostAppearancesPaginated(queryOptions: QueryOptions, paginationParams: GetPlayerAppearancesPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {

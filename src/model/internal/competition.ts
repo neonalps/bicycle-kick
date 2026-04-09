@@ -8,4 +8,5 @@ export interface Competition {
     iconSmall?: string;
     iconLarge?: string;
     victoryGameText?: string;
+    sortOrder: number;
 }

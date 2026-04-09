@@ -83,6 +83,7 @@ import { Nullish } from "@src/util/types";
 import { VenueFlavor } from "@src/model/internal/venue-flavor";
 import { VenueFlavorDto } from "@src/model/external/dto/venue-flavor";
 import { RankedPersonResultItemDto } from "@src/model/external/dto/player-competition-stats";
+import { BasicCompetitionDto } from "@src/model/external/dto/basic-competition";
 
 export class ApiHelperService {
 
@@ -1022,6 +1023,38 @@ export class ApiHelperService {
 
         if (parent) {
             dto.parent = this.convertCompetitionToSmallDto(parent);
+        }
+
+        return dto;
+    }
+
+    convertOrderedCompetitionsToBasicDto(orderedCompetitions: Competition[]): BasicCompetitionDto[] {
+        return orderedCompetitions.map(item => this.convertCompetitionToBasicDto(item));
+    }
+
+    convertCompetitionToBasicDto(competition: Competition): BasicCompetitionDto {
+        const dto: BasicCompetitionDto = {
+            id: competition.id,
+            name: competition.name,
+            isDomestic: competition.isDomestic,
+            shortName: competition.shortName,
+            sortOrder: competition.sortOrder,
+        }
+
+        if (isDefined(competition.iconLarge)) {
+            dto.iconLarge = this.getMediaUrl(competition.iconLarge);
+        }
+
+        if (isDefined(competition.iconSmall)) {
+            dto.iconSmall = this.getMediaUrl(competition.iconSmall);
+        }
+
+        if (isDefined(competition.parentId)) {
+            dto.parentCompetitionId = competition.parentId;
+        }
+
+        if (competition.combineStatisticsWithParent === true) {
+            dto.combineStatisticsWithParent = competition.combineStatisticsWithParent;
         }
 
         return dto;

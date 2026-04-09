@@ -12,6 +12,7 @@ import { ApplicationServices } from "@src/di/services";
 import { getVenueRouteProviders } from "./v1/venue/providers";
 import { getStatsRouteProviders } from "./v1/stats/providers";
 import { getManagerRouteProviders } from "./v1/manager/providers";
+import { getCompetitionRouteProviders } from "./v1/competition/providers";
 
 export function getRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
@@ -19,6 +20,7 @@ export function getRouteProviders(services: ApplicationServices): RouteProvider<
         ...getAccountRouteProviders(services),
         ...getAuthRouteProviders(services),
         ...getClubRouteProviders(services),
+        ...getCompetitionRouteProviders(services),
         ...getDashboardRouteProviders(services),
         ...getGameRouteProviders(services),
         ...getManagerRouteProviders(services),

@@ -4,7 +4,7 @@ import { QueryOptions } from "@src/model/internal/query-options";
 import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem, ShirtDistributionItem } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
 import { CompetitionId, PersonId } from "@src/util/domain-types";
-import { GetPlayerAppearancesPaginationParams, RankedValuePaginationLastSeen } from "./service";
+import { GetPlayerAppearancesPaginationParams, GetTopScorerPaginationParams, RankedValuePaginationLastSeen } from "./service";
 
 export class StatsMapper {
 
@@ -142,7 +142,7 @@ export class StatsMapper {
         }, new Map());
     }
 
-    async getTopScorers(queryOptions: QueryOptions, limit: number, lastSeen?: RankedValuePaginationLastSeen): Promise<ReadonlyArray<RankedValueResultItem>> {
+    async getTopScorers(queryOptions: QueryOptions, params: GetTopScorerPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {
         const result = await this.sql<RankedResultItemDaoInterface[]>`
             select
                 rank() over (
@@ -161,11 +161,11 @@ export class StatsMapper {
                 ${queryOptions.onlySeasons ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
             group by
                 p.id
-            ${isDefined(lastSeen) ? this.sql`having (sum(gp.goals_scored), p.id) < (${ lastSeen.value }, ${ lastSeen.personId })` : this.sql``}
+            ${isDefined(params.lastSeen) ? this.sql`having (sum(gp.goals_scored), p.id) < (${ params.lastSeen.value }, ${ params.lastSeen.personId })` : this.sql``}
             order by
                 sum(gp.goals_scored) desc,
                 p.id desc
-            limit ${limit}
+            limit ${params.limit}
         `;
 
         if (result.length === 0) {
@@ -174,13 +174,14 @@ export class StatsMapper {
 
         const convertedResult: RankedValueResultItem[] = [];
 
-        // TODO implement like for appearances below
+        const displayRankOffset = params.lastSeen.rankOffset.display;
         for (const item of result) {
-            const currentItemValue = Number(item.value);
-            const currentItemRank = Number(item.rankingPosition);
+            const currentItemValue = Number(item.value);            
+            const isValueSameAsLastSeen = currentItemValue === params.lastSeen.value && params.lastSeen.value > 0;
+            const currentRankValue = isValueSameAsLastSeen ? displayRankOffset : Number(item.rankingPosition) + params.lastSeen.rankOffset.effective;
 
             convertedResult.push({
-                rank: currentItemRank,
+                rank: currentRankValue,
                 personId: item.personId,
                 value: currentItemValue,
             })

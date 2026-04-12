@@ -103,6 +103,9 @@ export class MatchdayDetailsService {
             } else if (clubValue === 7 && kickoff < new Date(2005, 6, 1)) {
                 // earlier than July 2005: Red Bull Salzburg -> Austria Salzburg
                 resolvedClubMap.set(clubKey, 74);
+            } else if (clubValue === 47 && kickoff < new Date(2002, 7, 1)) {
+                // earlier than July 2002: Wacker Innsbruck -> FC Tirol
+                resolvedClubMap.set(clubKey, 130);
             }
         }
     }

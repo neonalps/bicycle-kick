@@ -1,10 +1,11 @@
 import { Person } from "@src/model/internal/person";
 import { PersonMapper } from "./mapper";
-import { validateNotBlank, validateNotNull } from "@src/util/validation";
+import { validateNotBlank, validateNotNull, validateTrue } from "@src/util/validation";
 import { CreatePerson } from "@src/model/internal/create-person";
 import { normalizeForSearch } from "@src/util/search";
 import { UpdatePerson } from "@src/model/internal/update-person";
 import { PersonId } from "@src/util/domain-types";
+import { ArrayNonEmpty } from "@src/util/common";
 
 export class PersonService {
 
@@ -76,13 +77,16 @@ export class PersonService {
     }
 
     async mergePersons(personIdsToMerge: PersonId[]): Promise<void> {
-        // check that all personst exist
+        validateNotNull(personIdsToMerge, "personIdstoMerge");
+        validateTrue(personIdsToMerge.length > 1, `There must be at least two persons to merge`);
+
+        // check that all persons exist
         const existingPersonIds = await this.mapper.getMultipleByIds(personIdsToMerge);
         if (personIdsToMerge.length !== existingPersonIds.length) {
             throw new Error(`Not all passed persons exist`);
         }
 
-        
+        await this.mapper.mergePersons(personIdsToMerge as ArrayNonEmpty<PersonId>);
     }
 
 }

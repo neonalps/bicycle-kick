@@ -30,7 +30,7 @@ export class GetAllManagerPeriodsRouteProvider implements RouteProvider<GetManag
         return {
             name: 'GetManagerPeriods',
             method: 'GET',
-            path: '/api/v1/manager/periods',
+            path: '/api/v1/managers/periods',
             schema,
             handler: this.handler,
             authenticated: true,

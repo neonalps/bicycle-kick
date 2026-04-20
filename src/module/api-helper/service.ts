@@ -835,11 +835,11 @@ export class ApiHelperService {
         }
 
         if (isDefined(item.birthday)) {
-            person.birthday = item.birthday;
+            person.birthday = item.birthday.toISOString();
         }
 
         if (isDefined(item.deathday)) {
-            person.deathday = item.deathday;
+            person.deathday = item.deathday.toISOString();
         }
 
         if (isDefined(item.nationalities) && item.nationalities.length > 0) {

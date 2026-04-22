@@ -34,7 +34,7 @@ export class CompetitionService {
         return await this.mapper.getAllPaginated(paginationParams);
     }
 
-    async getMapByIds(ids: number[]): Promise<Map<number, Competition>> {
+    async getMapByIds(ids: CompetitionId[]): Promise<Map<CompetitionId, Competition>> {
         validateNotNull(ids, "ids");
         if (ids.length === 0) {
             return new Map();
@@ -49,7 +49,7 @@ export class CompetitionService {
         return await this.mapper.search(parts);
     }
 
-    async getAllInMap(): Promise<Map<number, Competition>> {
+    async getAllInMap(): Promise<Map<CompetitionId, Competition>> {
         return await this.mapper.getAllInMap();
     }
 

@@ -25,7 +25,7 @@ import {GameEventDto} from "@src/model/external/dto/game-event";
 import {GameEventType} from "@src/model/external/dto/game-event-type";
 import { ApiConfig } from "@src/api/v1/config";
 import { BasicGameDto } from "@src/model/external/dto/basic-game";
-import { Game } from "@src/model/internal/game";
+import { Game, RecordSummary } from "@src/model/internal/game";
 import { SquadMember } from "@src/model/internal/squad-member";
 import { SquadMemberDto } from "@src/model/external/dto/squad-member";
 import { GoalGameEventDto } from "@src/model/external/dto/game-event-goal";
@@ -84,6 +84,9 @@ import { VenueFlavor } from "@src/model/internal/venue-flavor";
 import { VenueFlavorDto } from "@src/model/external/dto/venue-flavor";
 import { RankedPersonResultItemDto } from "@src/model/external/dto/player-competition-stats";
 import { BasicCompetitionDto } from "@src/model/external/dto/basic-competition";
+import { RecordSummaryDto } from "@src/model/external/dto/record-summary";
+import { SeasonTitle } from "@src/model/internal/season-title";
+import { SeasonTitleDto } from "@src/model/external/dto/season-title";
 
 export class ApiHelperService {
 
@@ -737,11 +740,16 @@ export class ApiHelperService {
         const personIds = uniqueArrayElements(periods.map(item => item.personId));
         const personMap = await this.personService.getMapByIds(personIds);
 
-        return periods.map(period => {
+
+        const periodResult: ManagerPeriodDto[] = [];
+
+        for (const period of periods) {
             const converted: ManagerPeriodDto = {
                 id: period.id,
                 person: this.convertPersonToBasicDto(getOrThrow(personMap, period.personId, `Failed to find person ${period.personId} in map`)),
                 start: period.start.toISOString(),
+                summary: this.convertRecordSummaryToDto(period.summary),
+                titles: await this.convertSeasonTitlesToDto(period.titles),
             };
 
             if (isDefined(period.end)) {
@@ -752,8 +760,10 @@ export class ApiHelperService {
                 converted.interim = period.interim;
             }
 
-            return converted;
-        });
+            periodResult.push(converted);
+        }
+
+        return periodResult;
     }
 
     convertExternalProviderPersonLinks(person: Person, externalProviderPersons: ReadonlyArray<ExternalProviderPerson>, isReferee = false): ExternalProviderLinkDto[] {
@@ -793,6 +803,49 @@ export class ApiHelperService {
             default:
                 throw new Error(`Unhandled external provider ${provider}`);
         }
+    }
+
+    private convertRecordSummaryToDto(summary: RecordSummary): RecordSummaryDto {
+        return {
+            gameCount: summary.gameCount,
+            win: summary.win,
+            draw: summary.draw,
+            loss: summary.loss,
+            avgPointsFixed: summary.avgPoints.toFixed(3),
+        }
+    }
+
+    private async convertSeasonTitlesToDto(titles: Nullish<Array<SeasonTitle>>): Promise<Array<SeasonTitleDto>> {
+        if (isNotDefined(titles) || titles.length === 0) {
+            return [];
+        }
+
+        const seasonIds = uniqueArrayElements(titles.map(item => item.seasonId));
+        const competitionIds = uniqueArrayElements(titles.map(item => item.competitionId));
+
+        const { seasonMap, competitionMap } = await promiseAllObject({
+            seasonMap: this.seasonService.getMapByIds(seasonIds),
+            competitionMap: this.competitionService.getMapByIds(competitionIds),
+        });
+
+        return titles.map(item => {
+            const result: SeasonTitleDto = {
+                id: item.id,
+                competition: this.convertCompetitionToSmallDto(ensureNotNullish(competitionMap.get(item.competitionId))),
+                season: this.convertSeasonToSmallDto(ensureNotNullish(seasonMap.get(item.seasonId))),
+                titleCount: item.titleCount,
+            };
+
+            if (isDefined(item.victoryDate)) {
+                result.victoryDate = item.victoryDate.toISOString();
+            }
+            
+            if (isDefined(item.victoryGame)) {
+                result.victoryGameId = item.victoryGame;
+            }
+
+            return result;
+        });
     }
 
     private convertToSquadMemberDto(member: SquadMember, people: Map<PersonId, Person>): SquadMemberDto {

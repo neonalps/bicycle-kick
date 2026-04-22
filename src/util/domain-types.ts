@@ -9,6 +9,7 @@ export type GameId = Flavor<number, 'GameId'>;
 export type LinkTokenId = Flavor<number, 'LinkTokenId'>;
 export type PersonId = Flavor<number, 'PersonId'>;
 export type SeasonId = Flavor<number, 'SeasonId'>;
+export type SeasonTitleId = Flavor<number, 'SeasonTitleId'>;
 export type VenueId = Flavor<number, 'VenueId'>;
 export type VenueFlavorId = Flavor<number, 'VenueFlavorId'>;
 export type ManagerPeriodId = Flavor<number, 'ManagerPeriodId'>;

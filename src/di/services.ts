@@ -28,6 +28,7 @@ import { PaginationService } from "@src/module/pagination/service";
 import { PermissionService } from "@src/module/permission/service";
 import { PersonService } from "@src/module/person/service";
 import { SearchService } from "@src/module/search/service";
+import { SeasonTitlesService } from "@src/module/season-titles/service";
 import { SeasonService } from "@src/module/season/service";
 import { SquadService } from "@src/module/squad/service";
 import { StatsService } from "@src/module/stats/service";
@@ -67,6 +68,7 @@ export interface ApplicationServices {
     personService: PersonService,
     searchService: SearchService,
     seasonService: SeasonService,
+    seasonTitlesService: SeasonTitlesService,
     sofascoreGameImporter: SofascoreGameImporter,
     sofascoreGameProvider: SofascoreGameProvider,
     statsService: StatsService,

@@ -1,13 +1,14 @@
-import { Game } from "@src/model/internal/game";
+import { Game, RecordSummary } from "@src/model/internal/game";
 import { GameMapper } from "./mapper";
 import { validateNotNull } from "@src/util/validation";
 import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
 import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
 import { QueryOptions } from "@src/model/internal/query-options";
 import { ClubId, GameId, PersonId } from "@src/util/domain-types";
-import { SortOrder } from "../pagination/constants";
+import { SortOrder } from "@src/module/pagination/constants";
 import { RefereeRole } from "@src/model/external/dto/referee-role";
 import { UpdateGameRequestDto } from "@src/model/external/dto/update-game-request";
+import { assertUnreachable } from "@src/util/common";
 
 export class GameService {
 
@@ -152,6 +153,40 @@ export class GameService {
         validateNotNull(personId, "personId");
 
         return await this.mapper.getOrderedGamesForReferee(personId, role, sortOrder);
+    }
+
+    async getRecordSummaryForPeriod(from: Date, to: Date | null, queryOptions?: QueryOptions): Promise<RecordSummary> {
+        validateNotNull(from, "from");
+
+        const gamesInPeriod = await this.mapper.getGamesInPeriod(from, to, queryOptions);
+        let wins = 0;
+        let draws = 0;
+        let losses = 0;
+
+        for (let i = 0; i < gamesInPeriod.length; i++) {
+            const current = gamesInPeriod[i];
+            switch (current.resultTendency) {
+                case 'w':
+                    wins += 1;
+                    break;
+                case 'd':
+                    draws += 1;
+                    break;
+                case 'l':
+                    losses += 1;
+                    break;
+                default:
+                    assertUnreachable(current.resultTendency);
+            }
+        }
+
+        return {
+            gameCount: gamesInPeriod.length,
+            win: wins,
+            draw: draws,
+            loss: losses,
+            avgPoints: (wins * 3 + draws) / gamesInPeriod.length,
+        };
     }
 
 }

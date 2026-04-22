@@ -46,6 +46,7 @@ import { RefereeRole } from "@src/model/external/dto/referee-role";
 import { ExternalProvider } from "@src/model/type/external-provider";
 import { UpdateGameDto } from "@src/model/internal/update-game";
 import { GameRefereeDaoInterface } from "@src/model/internal/interface/game-referee.interface";
+import { QueryOptions } from "@src/model/internal/query-options";
 
 export class GameMapper {
 
@@ -93,6 +94,25 @@ export class GameMapper {
         }
 
         return result.map(item => item.id);
+    }
+
+    async getGamesInPeriod(from: Date, to: Date | null, queryOptions?: QueryOptions): Promise<Game[]> {
+        const result = await this.sql<GameDaoInterface[]>`
+            select
+                g.*
+            from
+                game g
+            where
+                g.kickoff >= ${ from }
+                ${isDefined(to) ? this.sql` and g.kickoff <= ${ to }` : this.sql``}
+                and g.status = ${ GameStatus.Finished }
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
     }
 
     async deleteById(gameId: number): Promise<void> {

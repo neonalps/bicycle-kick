@@ -95,6 +95,8 @@ import { MailService } from "@src/module/mail/service";
 import { MagicLinkService } from "@src/module/auth/magic-link.service";
 import { LinkTokenMapper } from "@src/module/link-token/mapper";
 import { LinkTokenService } from "@src/module/link-token/service";
+import { SeasonTitlesMapper } from "@src/module/season-titles/mapper";
+import { SeasonTitlesService } from "@src/module/season-titles/service";
 
 export class DependencyManager {
 
@@ -217,7 +219,10 @@ export class DependencyManager {
         const externalProviderMapper = new ExternalProviderMapper(sqlInstance);
         const externalProviderService = new ExternalProviderService(externalProviderMapper, personService);
 
-        const managerPeriodMapper = new ManagerPeriodMapper(sqlInstance);
+        const seasonTitlesMapper = new SeasonTitlesMapper(sqlInstance);
+        const seasonTitlesService = new SeasonTitlesService(seasonTitlesMapper);
+
+        const managerPeriodMapper = new ManagerPeriodMapper(sqlInstance, gameService, seasonTitlesService);
         const managerPeriodService = new ManagerPeriodService(managerPeriodMapper);
 
         const matchdayProviders = new Map<ExternalProvider, MatchdayDetailsProvider>([
@@ -306,6 +311,7 @@ export class DependencyManager {
             personService: personService,
             searchService: searchService,
             seasonService: seasonService,
+            seasonTitlesService: seasonTitlesService,
             sofascoreGameImporter: sofascoreGameImporter,
             sofascoreGameProvider: sofascoreGameProvider,
             statsService: statsService,

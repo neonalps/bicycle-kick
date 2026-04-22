@@ -57,3 +57,11 @@ export interface Game {
     titleWinningGame: boolean;
     titleCount?: number;
 }
+
+export interface RecordSummary {
+    gameCount: number;
+    win: number;
+    draw: number;
+    loss: number;
+    avgPoints: number;
+}

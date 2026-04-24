@@ -87,6 +87,9 @@ import { BasicCompetitionDto } from "@src/model/external/dto/basic-competition";
 import { RecordSummaryDto } from "@src/model/external/dto/record-summary";
 import { SeasonTitle } from "@src/model/internal/season-title";
 import { SeasonTitleDto } from "@src/model/external/dto/season-title";
+import { GameAbsence } from "@src/model/internal/game-absence";
+import { GameAbsenceDto } from "@src/model/external/dto/game-absence";
+import { GameAbsenceService } from "@src/module/game-absence/service";
 
 export class ApiHelperService {
 
@@ -96,6 +99,7 @@ export class ApiHelperService {
         private readonly competitionService: CompetitionService,
         private readonly dateSource: DateSource,
         private readonly gameService: GameService,
+        private readonly gameAbsenceService: GameAbsenceService,
         private readonly gameAttendedService: GameAttendedService,
         private readonly gameEventService: GameEventService,
         private readonly gameManagerService: GameManagerService,
@@ -188,9 +192,27 @@ export class ApiHelperService {
         });
     }
 
+    private convertOrderedGameAbsencesToDto(gameAbsences: GameAbsence[], personMap: Map<PersonId, Person>): GameAbsenceDto[] {
+        if (gameAbsences.length === 0) {
+            return [];
+        }
+
+        const result: GameAbsenceDto[] = [];
+        for (const absence of gameAbsences) {
+            result.push({
+                id: absence.id,
+                person: this.convertPersonToBasicDto(ensureNotNullish(personMap.get(absence.personId))),
+                type: absence.absenceType,
+                reason: absence.absenceReason,
+            })
+        }
+        return result;
+    }
+
     async getOrderedDetailedGameDtos(gameIds: GameId[], accountId?: number): Promise<DetailedGameDto[]> {
-        const [basicGameInformation, gameEventsMap, gameManagersMap, gamePlayersMap, gameRefereesMap] = await Promise.all([
+        const [basicGameInformation, gameAbsencesMap, gameEventsMap, gameManagersMap, gamePlayersMap, gameRefereesMap] = await Promise.all([
             this.gameService.getMultipleByIds(gameIds),
+            this.gameAbsenceService.getOrderedAbsencesForGamesMap(gameIds),
             this.gameEventService.getOrderedEventsForGamesMap(gameIds),
             this.gameManagerService.getManagersForGamesMap(gameIds),
             this.gamePlayerService.getPlayersForGamesMap(gameIds),
@@ -209,6 +231,7 @@ export class ApiHelperService {
         const clubIds = uniqueArrayElements(basicGameInformation.map(game => game.opponentId));
         const competitionIds = uniqueArrayElements(basicGameInformation.map(game => game.competitionId));
         const people = [
+            ...Array.from(gameAbsencesMap.values()).flat(),
             ...Array.from(gameManagersMap.values()).flat(),
             ...Array.from(gamePlayersMap.values()).flat(),
             ...Array.from(gameRefereesMap.values()).flat(),
@@ -584,6 +607,11 @@ export class ApiHelperService {
                     events: gameEventDtos,
                     referees: refereeDtos,
                 },
+            }
+
+            const gameAbsences = gameAbsencesMap.get(game.id) ?? [];
+            if (gameAbsences.length > 0) {
+                detailedGameDto.absences = this.convertOrderedGameAbsencesToDto(gameAbsences, personMap);
             }
 
             if (isDefined(game.resultTendency)) {

@@ -18,12 +18,13 @@ import { ExpulsionReason } from "@src/model/type/expulsion-reason";
 import { GoalType } from "@src/model/type/goal-type";
 import { PenaltyMissedReason } from "@src/model/type/penalty-missed-reason";
 import { PsoResult } from "@src/model/type/pso-result";
+import { GameId } from "@src/util/domain-types";
 
 export class GameEventMapper {
 
     constructor(private readonly sql: Sql) {}
 
-    async getOrderedEventsForGame(gameId: number): Promise<GameEvent[]> {
+    async getOrderedEventsForGame(gameId: GameId): Promise<GameEvent[]> {
         const result = await this.sql<GameEventDaoInterface[]>`select * from game_events where game_id = ${ gameId } order by sort_order asc`;
         if (result.length === 0) {
             return [];
@@ -32,13 +33,13 @@ export class GameEventMapper {
         return result.map(item => this.convertToEntity(item));
     }
 
-    async getOrderedEventsForGamesMap(gameIds: number[]): Promise<Map<number, GameEvent[]>> {
+    async getOrderedEventsForGamesMap(gameIds: GameId[]): Promise<Map<GameId, GameEvent[]>> {
         const result = await this.sql<GameEventDaoInterface[]>`select * from game_events where game_id in ${ this.sql(gameIds) } order by game_id, sort_order asc`;
         if (result.length === 0) {
             return new Map();
         }
 
-        const resultMap = new Map<number, GameEvent[]>();
+        const resultMap = new Map<GameId, GameEvent[]>();
         for (const resultItem of result) {
             const eventEntity = this.convertToEntity(resultItem);
 

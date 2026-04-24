@@ -13,6 +13,7 @@ import { DashboardService } from "@src/module/dashboard/service";
 import { ExternalProviderService } from "@src/module/external-provider/service";
 import { SofascoreGameImporter } from "@src/module/external-provider/sofascore/game-importer";
 import { SofascoreGameProvider } from "@src/module/external-provider/sofascore/game-provider";
+import { GameAbsenceService } from "@src/module/game-absence/service";
 import { GameAttendedService } from "@src/module/game-attended/service";
 import { GameEventService } from "@src/module/game-event/service";
 import { GameManagerService } from "@src/module/game-manager/service";
@@ -51,6 +52,7 @@ export interface ApplicationServices {
     dateSource: DateSource,
     externalProviderService: ExternalProviderService,
     gameService: GameService,
+    gameAbsenceService: GameAbsenceService,
     gameAttendedService: GameAttendedService,
     gameEventService: GameEventService,
     gameManagerService: GameManagerService,

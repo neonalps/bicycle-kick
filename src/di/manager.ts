@@ -97,6 +97,8 @@ import { LinkTokenMapper } from "@src/module/link-token/mapper";
 import { LinkTokenService } from "@src/module/link-token/service";
 import { SeasonTitlesMapper } from "@src/module/season-titles/mapper";
 import { SeasonTitlesService } from "@src/module/season-titles/service";
+import { GameAbsenceMapper } from "@src/module/game-absence/mapper";
+import { GameAbsenceService } from "@src/module/game-absence/service";
 
 export class DependencyManager {
 
@@ -139,6 +141,8 @@ export class DependencyManager {
         const clubService = new ClubService(clubMapper);
         const competitionMapper = new CompetitionMapper(sqlInstance);
         const competitionService = new CompetitionService(competitionMapper);
+        const gameAbsenceMapper = new GameAbsenceMapper(sqlInstance);
+        const gameAbsenceService = new GameAbsenceService(gameAbsenceMapper);
         const gameAttendedMapper = new GameAttendedMapper(sqlInstance);
         const gameAttendedService = new GameAttendedService(gameAttendedMapper);
         const gameEventMapper = new GameEventMapper(sqlInstance);
@@ -179,7 +183,8 @@ export class DependencyManager {
             clubService, 
             competitionService, 
             dateSource,
-            gameService, 
+            gameService,
+            gameAbsenceService,
             gameAttendedService,
             gameEventService, 
             gameManagerService,
@@ -294,6 +299,7 @@ export class DependencyManager {
             dateSource: dateSource,
             externalProviderService: externalProviderService,
             gameService: gameService,
+            gameAbsenceService: gameAbsenceService,
             gameAttendedService: gameAttendedService,
             gameEventService: gameEventService,
             gameManagerService: gameManagerService,

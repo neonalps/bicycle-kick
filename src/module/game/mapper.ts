@@ -119,8 +119,21 @@ export class GameMapper {
         await this.sql`delete from game where id = ${gameId};`;
     }
 
-    async getNextGames(from: Date, take: number): Promise<Game[]> {
-        const result = await this.sql<IdInterface[]>`select id from game where kickoff >= ${from} and status = ${ GameStatus.Scheduled } order by kickoff asc limit ${take}`;
+    async getNextGames(from: Date, take: number, queryOptions: QueryOptions = {}): Promise<Game[]> {
+        const result = await this.sql<IdInterface[]>`
+            select
+                id
+            from
+                game
+            where
+                kickoff > ${from} and status = ${ GameStatus.Scheduled }
+                ${queryOptions.onlySeasons !== undefined ? this.sql` and season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+                ${queryOptions.onlyCompetitions !== undefined ? this.sql` and competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
+            order by
+                kickoff asc
+            limit
+                ${take}`;
+
         if (result.length === 0) {
             return [];
         }
@@ -128,8 +141,21 @@ export class GameMapper {
         return this.getMultipleByIds(result.map(item => item.id));
     }
 
-    async getPreviousGames(from: Date, take: number): Promise<Game[]> {
-        const result = await this.sql<IdInterface[]>`select id from game where kickoff <= ${from} and status = ${ GameStatus.Finished } order by kickoff desc limit ${take}`;
+    async getPreviousGames(from: Date, take: number, queryOptions: QueryOptions = {}): Promise<Game[]> {
+        const result = await this.sql<IdInterface[]>`
+            select
+                id
+            from
+                game
+            where
+                kickoff < ${from} and status = ${ GameStatus.Finished }
+                ${queryOptions.onlySeasons !== undefined ? this.sql` and season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+                ${queryOptions.onlyCompetitions !== undefined ? this.sql` and competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
+            order by
+                kickoff asc
+            limit
+                ${take}`;
+
         if (result.length === 0) {
             return [];
         }
@@ -360,7 +386,7 @@ export class GameMapper {
 
             const referees = await this.resolveGameReferees(tx, gameId, dto.referees);
             if (referees.length > 0) {
-                await tx`insert into game_referees ${ tx(referees, 'gameId', 'personId', 'sortOrder', 'role') }`;
+                await tx`insert into game_referees ${ tx(referees, 'gameId', 'personId', 'sortOrder', 'role') } on conflict do nothing`;
             }
 
             let fullTimeGoalsMain = 0;

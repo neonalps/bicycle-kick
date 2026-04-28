@@ -9,7 +9,9 @@ export enum GameAbsenceReason {
     // exempt
     Private = "private",
     // injury
-    // TODO add here
+    Ankle = "ankle",
+    CruciaLigament = "cruciateLigamentRupture",
+    Muscle = "muscle",
     // suspension
     YellowCard = "yellowCard",
     RedCard = "redCard",

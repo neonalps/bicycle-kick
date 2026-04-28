@@ -10,4 +10,5 @@ export interface QueryOptions {
     onlyDomestic?: boolean,
     onlyInternational?: boolean,
     onlyForMain?: boolean;
+    onlyActiveSquadMembers?: boolean;
 }

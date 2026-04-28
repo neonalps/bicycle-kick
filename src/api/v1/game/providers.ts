@@ -18,6 +18,8 @@ import { GetMatchdayDetailsRouteProvider } from "./matchday-details/route-provid
 import { ApplicationServices } from "@src/di/services";
 import { UpdateGameByIdRouteHandler } from "./update-by-id/handler";
 import { UpdateGameByIdRouteProvider } from "./update-by-id/route-provider";
+import { FindPotentialGameAbsencesHandler } from "./find-potential-absences/handler";
+import { FindPotentialGameAbsencesRouteProvider } from "./find-potential-absences/route-provider";
 
 export function getGameRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
@@ -29,6 +31,7 @@ export function getGameRouteProviders(services: ApplicationServices): RouteProvi
     const unstarGameHandler = new UnstarGameHandler(services.gameStarService);
     const attendGameHandler = new AttendGameHandler(services.gameAttendedService);
     const unattendGameHandler = new UnattendGameHandler(services.gameAttendedService);
+    const findPotentialAbsencesHandler = new FindPotentialGameAbsencesHandler(services.apiHelperService, services.gameAbsenceService);
     const loadExternalMatchdayDetailsHandler = new GetMatchdayDetailsRouteHandler(services.apiHelperService, services.matchdayDetailsService);
 
     return [
@@ -40,6 +43,7 @@ export function getGameRouteProviders(services: ApplicationServices): RouteProvi
         new UnstarGameRouteProvider(unstarGameHandler),
         new AttendGameRouteProvider(attendGameHandler),
         new UnattendGameRouteProvider(unattendGameHandler),
+        new FindPotentialGameAbsencesRouteProvider(findPotentialAbsencesHandler),
         new GetMatchdayDetailsRouteProvider(loadExternalMatchdayDetailsHandler),
     ];
 }

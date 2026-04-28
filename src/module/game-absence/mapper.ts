@@ -50,6 +50,10 @@ export class GameAbsenceMapper {
         return resultMap;
     }
 
+    async findPotentialAbsencesForGame(gameId: GameId): Promise<void> {
+
+    }
+
     private convertToEntity(item: GameAbsenceDaoInterface): GameAbsence {
         return {
             id: item.id,

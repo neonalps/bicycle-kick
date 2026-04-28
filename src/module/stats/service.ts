@@ -31,6 +31,11 @@ export type RankedValuePaginationLastSeen = {
     personId: PersonId;
 };
 
+export type PersonSum = {
+    personId: PersonId;
+    sum: number;
+}
+
 export enum PlayerStatsItem {
     All = 'all',
     GoalTypes = 'goalTypes',
@@ -147,6 +152,10 @@ export class StatsService {
         validateNotNull(personId, "personId");
 
         return await this.mapper.getShirtDistribution(personId);
+    }
+
+    async getOrderedYellowCardsSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
+        return await this.mapper.getOrderedYellowCardsSum(queryOptions);
     }
 
     private resolveRequestedStatsItems(requestedItems: ReadonlyArray<PlayerStatsItem>): ReadonlyArray<PlayerStatsItem> {

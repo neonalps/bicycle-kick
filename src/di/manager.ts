@@ -141,8 +141,6 @@ export class DependencyManager {
         const clubService = new ClubService(clubMapper);
         const competitionMapper = new CompetitionMapper(sqlInstance);
         const competitionService = new CompetitionService(competitionMapper);
-        const gameAbsenceMapper = new GameAbsenceMapper(sqlInstance);
-        const gameAbsenceService = new GameAbsenceService(gameAbsenceMapper);
         const gameAttendedMapper = new GameAttendedMapper(sqlInstance);
         const gameAttendedService = new GameAttendedService(gameAttendedMapper);
         const gameEventMapper = new GameEventMapper(sqlInstance);
@@ -155,7 +153,6 @@ export class DependencyManager {
         const gameRefereeService = new GameRefereeService(gameRefereeMapper);
         const gameStarMapper = new GameStarMapper(sqlInstance);
         const gameStarService = new GameStarService(gameStarMapper);
-
         const linkTokenMapper = new LinkTokenMapper(sqlInstance);
         const linkTokenService = new LinkTokenService(linkTokenMapper, timeSource, tokenConfig, uuidSource);
 
@@ -177,6 +174,9 @@ export class DependencyManager {
             cdnBaseUrl: getCdnBaseUrl(),
             baseUrl: getFrontendBaseUrl(),
         };
+
+        const gameAbsenceMapper = new GameAbsenceMapper(sqlInstance);
+        const gameAbsenceService = new GameAbsenceService(gameAbsenceMapper, competitionService, gameService);
 
         const apiHelperService = new ApiHelperService(
             apiConfig, 

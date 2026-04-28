@@ -117,16 +117,16 @@ export class GameService {
         return await this.mapper.deleteById(gameId);
     }
 
-    async getNextGames(from: Date, take: number = 1): Promise<Game[]> {
+    async getNextGames(from: Date, take: number = 1, queryOptions: QueryOptions = {}): Promise<Game[]> {
         validateNotNull(from, "from");
 
-        return await this.mapper.getNextGames(from, take);
+        return await this.mapper.getNextGames(from, take, queryOptions);
     }
 
-    async getPreviousGames(from: Date, take: number = 1): Promise<Game[]> {
+    async getPreviousGames(from: Date, take: number = 1, queryOptions: QueryOptions = {}): Promise<Game[]> {
         validateNotNull(from, "from");
 
-        return await this.mapper.getPreviousGames(from, take);
+        return await this.mapper.getPreviousGames(from, take, queryOptions);
     }
 
     async getLastFinishedGames(

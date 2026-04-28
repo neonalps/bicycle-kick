@@ -89,7 +89,8 @@ import { SeasonTitle } from "@src/model/internal/season-title";
 import { SeasonTitleDto } from "@src/model/external/dto/season-title";
 import { GameAbsence } from "@src/model/internal/game-absence";
 import { GameAbsenceDto } from "@src/model/external/dto/game-absence";
-import { GameAbsenceService } from "@src/module/game-absence/service";
+import { GameAbsenceService, PotentialGameAbsence } from "@src/module/game-absence/service";
+import { PotentialGameAbsenceDto } from "@src/model/external/dto/game-absence-potential";
 
 export class ApiHelperService {
 
@@ -190,6 +191,25 @@ export class ApiHelperService {
 
             return basicGame;
         });
+    }
+
+    async convertPotentialGameAbsencesToDto(potentialGameAbsences: PotentialGameAbsence[]): Promise<PotentialGameAbsenceDto[]> {
+        if (potentialGameAbsences.length === 0) {
+            return [];
+        }
+
+        const personIds = uniqueArrayElements(potentialGameAbsences.map(item => item.personId));
+        const personMap = await this.personService.getMapByIds(personIds);
+
+        const result: PotentialGameAbsenceDto[] = [];
+        for (const absence of potentialGameAbsences) {
+            result.push({
+                person: this.convertPersonToBasicDto(ensureNotNullish(personMap.get(absence.personId))),
+                type: absence.absenceType,
+                reason: absence.absenceReason,
+            })
+        }
+        return result;
     }
 
     private convertOrderedGameAbsencesToDto(gameAbsences: GameAbsence[], personMap: Map<PersonId, Person>): GameAbsenceDto[] {

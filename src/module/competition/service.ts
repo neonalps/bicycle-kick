@@ -59,6 +59,9 @@ export class CompetitionService {
         return await this.mapper.getChildCompetitions(competitionId, combineStatisticsWithParent);
     }
 
+    /**
+     * Returns all child competitions of an array of competition IDs that have the combineStatisticsWithParent flag.
+     */
     async getEffectiveCompetitionIds(competitionIds?: CompetitionId[]): Promise<ReadonlyArray<CompetitionId>> {
         if (isNotDefined(competitionIds) || competitionIds.length === 0) {
             return [];
@@ -74,6 +77,27 @@ export class CompetitionService {
                 .filter(item => item.combineStatisticsWithParent === true)
                 .map(item => item.id)
                 .forEach(competitionId => result.add(competitionId));
+        }
+
+        return Array.from(result);
+    }
+
+    /**
+     * Checks whether the passed competition has a parent and will return that and all of its children that have the combineStatisticsWithParent flag.
+     * Example: For Bundesliga Meisterrunde it will also include Bundesliga and Europa League / Conference League Playoff.
+     */
+    async getRelevantCompetitionIds(competitionId: CompetitionId): Promise<ReadonlyArray<CompetitionId>> {
+        validateNotNull(competitionId, "competitionId");
+
+        const competition = await this.requireById(competitionId);
+
+        const result = new Set<CompetitionId>();
+        if (isNotDefined(competition.parentId)) {
+            // if there is no parent competition we still have to include the relevant child competitions
+            const relevantChildCompetitionIds = await this.getEffectiveCompetitionIds([competition.id]);
+            relevantChildCompetitionIds.forEach(item => result.add(item));
+        } else {
+            return await this.getRelevantCompetitionIds(competition.parentId);
         }
 
         return Array.from(result);

@@ -4,7 +4,12 @@ import { QueryOptions } from "@src/model/internal/query-options";
 import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem, ShirtDistributionItem } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
 import { CompetitionId, PersonId } from "@src/util/domain-types";
-import { GetPlayerAppearancesPaginationParams, GetTopScorerPaginationParams, RankedValuePaginationLastSeen } from "./service";
+import { GetPlayerAppearancesPaginationParams, GetTopScorerPaginationParams, PersonSum, RankedValuePaginationLastSeen } from "./service";
+
+type PersonSumDaoInterface = {
+    personId: PersonId;
+    sumValue: string;
+}
 
 export class StatsMapper {
 
@@ -210,6 +215,38 @@ export class StatsMapper {
         }
 
         return result.map(item => ( { shirt: item.shirt, count: Number(item.shirtCount) } ));
+    }
+
+    async getOrderedYellowCardsSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
+        const result = await this.sql<PersonSumDaoInterface[]>`
+            select
+                p.id as person_id,
+                sum(case when gp.yellow_card = true and gp.red_card = false and gp.yellow_red_card = false then 1 else 0 end) as sum_value
+            from 
+                game_players gp left join
+                game g on gp.game_id = g.id left join
+                person p on gp.person_id = p.id
+                ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` left join squad sq on sq.person_id = gp.person_id` : this.sql``}
+            where
+                1 = 1
+                ${queryOptions.onlyForMain !== undefined ? this.sql` and gp.for_main = ${ queryOptions.onlyForMain }` : this.sql``}
+                ${queryOptions.onlySeasons !== undefined ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+                ${queryOptions.onlyCompetitions !== undefined ? this.sql` and g.competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
+                ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` and sq.season_id = g.season_id and (sq."end" is null or sq."end" > now())` : this.sql``}                
+            group by
+                p.id
+            order by 
+                sum_value desc
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => ({
+            personId: item.personId,
+            sum: Number(item.sumValue),
+        }));
     }
 
     async getMostAppearancesPaginated(queryOptions: QueryOptions, params: GetPlayerAppearancesPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {

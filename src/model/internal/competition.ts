@@ -9,4 +9,5 @@ export interface Competition {
     iconLarge?: string;
     victoryGameText?: string;
     sortOrder: number;
+    yellowCardSuspensions?: number[];
 }

@@ -128,6 +128,7 @@ export class CompetitionMapper {
             parentId: item.parentId,
             sortOrder: item.sortOrder,
             victoryGameText: item.victoryGameText,
+            yellowCardSuspensions: item.yellowCardSuspensions,
         };
     }
 

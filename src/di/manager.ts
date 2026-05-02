@@ -170,13 +170,16 @@ export class DependencyManager {
         const gameMapper = new GameMapper(sqlInstance, clubMapper, competitionMapper, personMapper, venueMapper);
         const gameService = new GameService(gameMapper, seasonService);
 
+        const statsMapper = new StatsMapper(sqlInstance);
+        const statsService = new StatsService(statsMapper, clubService, competitionService, seasonService);
+
         const apiConfig: ApiConfig = {
             cdnBaseUrl: getCdnBaseUrl(),
             baseUrl: getFrontendBaseUrl(),
         };
 
         const gameAbsenceMapper = new GameAbsenceMapper(sqlInstance);
-        const gameAbsenceService = new GameAbsenceService(gameAbsenceMapper, competitionService, gameService);
+        const gameAbsenceService = new GameAbsenceService(gameAbsenceMapper, competitionService, gameService, statsService);
 
         const apiHelperService = new ApiHelperService(
             apiConfig, 
@@ -206,9 +209,6 @@ export class DependencyManager {
 
         const sofascoreGameProvider = new SofascoreGameProvider({ mainTeamName: ["Sturm Graz"] }, timeSource);
         const sofascoreGameImporter = new SofascoreGameImporter(getSofascoreMainClubId(), sofascoreGameProvider, timeSource);
-
-        const statsMapper = new StatsMapper(sqlInstance);
-        const statsService = new StatsService(statsMapper, clubService, competitionService, seasonService);
 
         const dashboardService = new DashboardService(competitionService, dateSource, gameService, personService, seasonService, statsService);
 

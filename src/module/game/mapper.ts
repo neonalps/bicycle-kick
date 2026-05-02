@@ -152,7 +152,7 @@ export class GameMapper {
                 ${queryOptions.onlySeasons !== undefined ? this.sql` and season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
                 ${queryOptions.onlyCompetitions !== undefined ? this.sql` and competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
             order by
-                kickoff asc
+                kickoff desc
             limit
                 ${take}`;
 

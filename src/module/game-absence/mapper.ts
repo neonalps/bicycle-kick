@@ -2,7 +2,9 @@ import { Sql } from "@src/db";
 import { CreateGameAbsence } from "@src/model/internal/create-game-absence";
 import { GameAbsence } from "@src/model/internal/game-absence";
 import { GameAbsenceDaoInterface } from "@src/model/internal/interface/game-absence.interface";
-import { GameAbsenceId, GameId } from "@src/util/domain-types";
+import { CompetitionId, GameAbsenceId, GameId, PersonId, SeasonId } from "@src/util/domain-types";
+import { PotentialGameAbsence } from "./service";
+import { GameAbsenceType } from "@src/model/type/game-absence";
 
 export class GameAbsenceMapper {
 
@@ -50,8 +52,26 @@ export class GameAbsenceMapper {
         return resultMap;
     }
 
-    async findPotentialAbsencesForGame(gameId: GameId): Promise<void> {
+    async findYellowCardSuspensionsForCompetition(potentiallySuspendedPersons: PersonId[], relevantCompetitionIds: CompetitionId[], seasonId: SeasonId): Promise<GameAbsence[]> {
+        const result = await this.sql<GameAbsenceDaoInterface[]>`
+            select
+                ga.*
+            from
+                game_absences ga left join
+                game g on ga.game_id = g.id
+            where
+                ga.person_id in ${ this.sql(potentiallySuspendedPersons) } and
+                ga.absence_type = ${ GameAbsenceType.Suspended } and
+                ga.absence_reason like 'yellowCard:%' and
+                g.season_id = ${ seasonId } and
+                g.competition_id in ${ this.sql(relevantCompetitionIds) }
+        `;
 
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
     }
 
     private convertToEntity(item: GameAbsenceDaoInterface): GameAbsence {

@@ -1,11 +1,11 @@
-import { PotentialGameAbsenceDto } from "@src/model/external/dto/game-absence-potential";
 import { GameIdRequestDto } from "@src/model/external/dto/game-id-request";
 import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { FindPotentialGameAbsencesHandler } from "./handler";
 import { requireNonNull } from "@src/util/common";
 import { Capability } from "@src/model/internal/capabilities";
+import { PotentialGameAbsencesResponseDto } from "@src/model/external/dto/get-potential-game-absences-response";
 
-export class FindPotentialGameAbsencesRouteProvider implements RouteProvider<GameIdRequestDto, PotentialGameAbsenceDto[]> {
+export class FindPotentialGameAbsencesRouteProvider implements RouteProvider<GameIdRequestDto, PotentialGameAbsencesResponseDto> {
 
     private readonly handler: FindPotentialGameAbsencesHandler;
 
@@ -13,7 +13,7 @@ export class FindPotentialGameAbsencesRouteProvider implements RouteProvider<Gam
         this.handler = requireNonNull(handler);
     }
 
-    provide(): RouteDefinition<GameIdRequestDto, PotentialGameAbsenceDto[]> {
+    provide(): RouteDefinition<GameIdRequestDto, PotentialGameAbsencesResponseDto> {
         const schema: RequestSchema = {
             params: {
                 type: 'object',

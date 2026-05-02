@@ -10,4 +10,5 @@ export interface CompetitionDaoInterface {
     normalizedSearch: string;
     victoryGameText?: string;
     sortOrder: number;
+    yellowCardSuspensions?: number[];
 }

@@ -950,7 +950,7 @@ export class ApiHelperService {
         return person;
     }
 
-    private convertPersonToSmallDto(person: Person): SmallPersonDto {
+    convertPersonToSmallDto(person: Person): SmallPersonDto {
         const smallPerson: SmallPersonDto = {
             id: person.id,
             lastName: person.lastName,

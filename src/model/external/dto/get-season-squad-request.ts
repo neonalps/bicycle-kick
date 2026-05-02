@@ -1,3 +1,3 @@
 export interface GetSeasonSquadRequestDto {
-    seasonId: number;
+    seasonId: string;
 }

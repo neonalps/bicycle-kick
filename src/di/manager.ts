@@ -164,7 +164,7 @@ export class DependencyManager {
         const seasonMapper = new SeasonMapper(sqlInstance);
         const seasonService = new SeasonService(dateSource, seasonMapper);
         const squadMapper = new SquadMapper(sqlInstance);
-        const squadService = new SquadService(squadMapper, seasonService);
+        const squadService = new SquadService(squadMapper, personService, seasonService);
         const venueMapper = new VenueMapper(sqlInstance);
         const venueService = new VenueService(venueMapper);
         const gameMapper = new GameMapper(sqlInstance, clubMapper, competitionMapper, personMapper, venueMapper);

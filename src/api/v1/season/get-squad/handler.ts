@@ -12,7 +12,7 @@ export class GetSeasonSquadRouteHandler implements RouteHandler<GetSeasonSquadRe
     ) {}
 
     public async handle(_: AuthenticationContext, dto: GetSeasonSquadRequestDto): Promise<GetSeasonSquadResponseDto> {
-        const squad = await this.squadService.getForSeason(dto.seasonId);
+        const squad = await this.squadService.getForSeason(Number(dto.seasonId));
         const squadDto = await this.apiHelper.getSquadDto(squad);
 
         return {

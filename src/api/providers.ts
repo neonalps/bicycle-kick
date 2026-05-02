@@ -13,6 +13,7 @@ import { getVenueRouteProviders } from "./v1/venue/providers";
 import { getStatsRouteProviders } from "./v1/stats/providers";
 import { getManagerRouteProviders } from "./v1/manager/providers";
 import { getCompetitionRouteProviders } from "./v1/competition/providers";
+import { getSquadRouteProviders } from "./v1/squad/providers";
 
 export function getRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
@@ -24,6 +25,7 @@ export function getRouteProviders(services: ApplicationServices): RouteProvider<
         ...getDashboardRouteProviders(services),
         ...getGameRouteProviders(services),
         ...getManagerRouteProviders(services),
+        ...getSquadRouteProviders(services),
         ...getStatsRouteProviders(services),
         ...getOpsRouteProviders(services),
         ...getPersonRouteProviders(services),

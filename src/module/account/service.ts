@@ -110,8 +110,6 @@ export class AccountService {
         validateNotNull(accountId, "accountId");
         validateNotNull(loginAt, "loginAt");
 
-        console.log(`updating latest login at ${new Date().toISOString()}`);
-
         await this.mapper.updateLatestLogin(accountId, loginAt);
     }
 

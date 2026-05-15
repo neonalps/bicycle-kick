@@ -217,7 +217,7 @@ export class StatsMapper {
         return result.map(item => ( { shirt: item.shirt, count: Number(item.shirtCount) } ));
     }
 
-    async getOrderedYellowCardsSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
+    async getOrderedYellowCardsPlayerSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
         const result = await this.sql<PersonSumDaoInterface[]>`
             select
                 p.id as person_id,
@@ -235,6 +235,39 @@ export class StatsMapper {
                 ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` and sq.season_id = g.season_id and (sq."end" is null or sq."end" > now())` : this.sql``}                
             group by
                 p.id
+            order by 
+                sum_value desc
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => ({
+            personId: item.personId,
+            sum: Number(item.sumValue),
+        }));
+    }
+
+    async getOrderedYellowCardsManagerSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
+        const result = await this.sql<PersonSumDaoInterface[]>`
+            select
+                gm.person_id,
+                count(gm.person_id) as sum_value
+            from
+                game_events ge left join
+                game g on ge.game_id = g.id left join
+                game_managers gm on ge.affected_manager = gm.id left join
+                person p on gm.person_id  = p.id
+                ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` left join manager_periods mp on mp.person_id = p.id` : this.sql``}
+            where
+                ge."type" = 'yellowCard'
+                ${queryOptions.onlyForMain !== undefined ? this.sql` and gm.for_main = ${ queryOptions.onlyForMain }` : this.sql``}
+                ${queryOptions.onlySeasons !== undefined ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+                ${queryOptions.onlyCompetitions !== undefined ? this.sql` and g.competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
+                ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` and (mp."end" is null or mp."end" > now())` : this.sql``}
+            group by
+                gm.person_id
             order by 
                 sum_value desc
         `;

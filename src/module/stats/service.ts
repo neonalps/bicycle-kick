@@ -25,6 +25,12 @@ export interface GetTopScorerPaginationParams extends PaginationParams<RankedVal
     seasonIds?: ArrayNonEmpty<SeasonId>;
 }
 
+export interface GetYellowCardsPaginationParams extends PaginationParams<RankedValuePaginationLastSeen> {
+    forMain?: boolean;
+    competitionIds?: ArrayNonEmpty<CompetitionId>;
+    seasonIds?: ArrayNonEmpty<SeasonId>;
+}
+
 export type RankedValuePaginationLastSeen = {
     rankOffset: RankOffset;
     value: number;
@@ -155,7 +161,23 @@ export class StatsService {
     }
 
     async getOrderedYellowCardsSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
-        return await this.mapper.getOrderedYellowCardsSum(queryOptions);
+        const { players, managers } = await promiseAllObject({
+            players: this.getOrderedYellowCardsPlayerSum(queryOptions),
+            managers: this.getOrderedYellowCardsManagerSum(queryOptions),
+        });
+
+        return [
+            ...players,
+            ...managers,
+        ].sort((a: PersonSum, b: PersonSum) => b.sum - a.sum);
+    }
+
+    async getOrderedYellowCardsManagerSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
+        return await this.mapper.getOrderedYellowCardsManagerSum(queryOptions);
+    }
+
+    async getOrderedYellowCardsPlayerSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
+        return await this.mapper.getOrderedYellowCardsPlayerSum(queryOptions);
     }
 
     private resolveRequestedStatsItems(requestedItems: ReadonlyArray<PlayerStatsItem>): ReadonlyArray<PlayerStatsItem> {

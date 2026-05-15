@@ -13,7 +13,7 @@ export class GetActiveSquadMembersRouteHandler implements RouteHandler<void, Cac
     ) {}
 
     public async handle(_: AuthenticationContext, dto: void, headers: Record<ApplicationHeader, string>): Promise<CacheableResponse<GetActiveSquadResponseDto>> {
-        const activeSquadMembers = await this.squadService.getActiveSquadMembers();
+        const activeSquadMembers = await this.squadService.getActiveSquadMembers(true);
 
         const result = activeSquadMembers.map(item => this.apiHelper.convertPersonToSmallDto(item));
 

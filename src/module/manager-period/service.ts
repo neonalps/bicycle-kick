@@ -13,4 +13,8 @@ export class ManagerPeriodService {
         return await this.mapper.getAllPaginated(params);
     }
 
+    async getCurrent(): Promise<ManagerPeriod | null> {
+        return await this.mapper.getCurrent();
+    }
+
 }

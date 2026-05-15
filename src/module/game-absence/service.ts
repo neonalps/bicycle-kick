@@ -8,6 +8,7 @@ import { GameService } from "@src/module/game/service";
 import { isDefined, promiseAllObject } from "@src/util/common";
 import { GameAbsenceReason, GameAbsenceType } from "@src/model/type/game-absence";
 import { PersonSum, StatsService } from "@src/module/stats/service";
+import { StoreGameAbsenceDto } from "@src/model/external/dto/store-game-absence";
 
 export type PotentialGameAbsence = OmitStrict<GameAbsence, 'id'>;
 export type YellowCardSuspensionSequence = number[];
@@ -34,6 +35,15 @@ export class GameAbsenceService {
         }
 
         return await this.mapper.getOrderedAbsencesForGamesMap(gameIds);
+    }
+
+    async putForGame(gameId: GameId, absences: StoreGameAbsenceDto[]): Promise<GameAbsence[]> {
+        validateNotNull(gameId, "gameId");
+        validateNotNull(absences, "absences");
+
+        await this.mapper.putForGame(gameId, absences);
+        
+        return await this.getForGame(gameId);
     }
 
     async findPotentialAbsencesForGame(gameId: GameId): Promise<Array<PotentialGameAbsence>> {

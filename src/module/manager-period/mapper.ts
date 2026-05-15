@@ -40,6 +40,25 @@ export class ManagerPeriodMapper {
         return converted;
     }
 
+    async getCurrent(): Promise<ManagerPeriod | null> {
+        const result = await this.sql<ManagerPeriodDaoInterface[]>`
+            select
+                mp.*
+            from
+                manager_periods mp
+            order by
+                mp.start desc
+            limit
+                1
+        `;
+
+        if (result.length === 0) {
+            return null;
+        }
+
+        return this.convertToEntity(result[0]);
+    }
+
     private determineSortOrder(order: SortOrder) {
         return order === SortOrder.Descending ? this.sql`desc` : this.sql`asc`;
     }

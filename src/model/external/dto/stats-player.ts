@@ -1,3 +1,4 @@
+import { GoalType } from "@src/model/type/goal-type";
 import { SmallClubDto } from "./small-club";
 import { SmallCompetitionDto } from "./small-competition";
 import { SmallSeasonDto } from "./small-season";
@@ -9,6 +10,11 @@ export type PlayerSeasonStatsItemDto = {
 
 export type GoalsAgainstClubStatsItemDto = {
     club: SmallClubDto;
+    goalsScored: number;
+}
+
+export type GoalTypeStatsItemDto = {
+    goalType: GoalType;
     goalsScored: number;
 }
 
@@ -35,6 +41,8 @@ export type PlayerStatsItemDto = {
     yellowCards?: number;
     yellowRedCards?: number;
     redCards?: number;
+    captain?: number;
+    directFreeKicks?: number;
     penaltiesTaken?: [number, number],
     penaltiesFaced?: [number, number],
     psoPenaltiesTaken?: [number, number],

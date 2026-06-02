@@ -34,6 +34,7 @@ export class StatsMapper {
                 sum(gp.yellow_card::int) as yellow_cards,
                 sum(gp.yellow_red_card::int) as yellow_red_cards,
                 sum(gp.red_card::int) as red_cards,
+                sum(gp.is_captain::int) as captain,
                 sum(gp.regulation_penalties_taken) as regulation_penalties_taken,
                 sum(gp.regulation_penalties_scored) as regulation_penalties_scored,
                 sum(gp.regulation_penalties_faced) as regulation_penalties_faced,
@@ -83,7 +84,7 @@ export class StatsMapper {
                 sum(gp.goals_scored) as goals_scored
             from 
                 game_players gp left join
-                game_events ge on gp.scored_by = ge.id
+                game_events ge on ge.scored_by = gp.id
             where
                 gp.person_id in ${ this.sql(playerIds) } and
                 gp.goals_scored > 0 and
@@ -366,6 +367,7 @@ export class StatsMapper {
             yellowCards: convertNumberString(item.yellowCards),
             yellowRedCards: convertNumberString(item.yellowRedCards),
             redCards: convertNumberString(item.redCards),
+            captain: convertNumberString(item.captain),
             regulationPenaltiesTaken: convertNumberString(item.regulationPenaltiesTaken),
             regulationPenaltiesScored: convertNumberString(item.regulationPenaltiesScored),
             regulationPenaltiesFaced: convertNumberString(item.regulationPenaltiesFaced),

@@ -16,6 +16,7 @@ export interface PlayerPerformanceStatsDaoInterface {
     yellowCards: string;
     yellowRedCards: string;
     redCards: string;
+    captain: string;
     regulationPenaltiesTaken: string;
     regulationPenaltiesScored: string;
     regulationPenaltiesFaced: string;

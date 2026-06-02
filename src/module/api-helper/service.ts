@@ -57,8 +57,8 @@ import { GameAttendedService } from "@src/module/game-attended/service";
 import { GameStarService } from "@src/module/game-star/service";
 import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 import { TacticalFormation } from "@src/model/external/dto/tactical-formation";
-import { PlayerCompetitionStatsItemDto, PlayerGoalsAgainstClubStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
-import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, RankedValueResultItem } from "@src/model/internal/stats-player";
+import { GoalTypeStatsItemDto, PlayerCompetitionStatsItemDto, PlayerGoalsAgainstClubStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, GameId, PersonId, SeasonId } from "@src/util/domain-types";
 import { OverallPosition } from "@src/model/type/position-overall";
 import { GameManagerDto } from "@src/model/external/dto/game-manager";
@@ -1228,6 +1228,15 @@ export class ApiHelperService {
             }
         });
     }
+
+    convertGoalTypeStatsItems(items: ReadonlyArray<PlayerGoalTypeStatsItem>): ReadonlyArray<GoalTypeStatsItemDto> {
+        return items.map(item => {
+            return {
+                goalType: item.goalType,
+                goalsScored: item.goalsScored,
+            }
+        })
+    }
     
     convertToPlayerStatsItemDto(stats: PlayerBaseStats): PlayerStatsItemDto {
         const result: PlayerStatsItemDto = {};
@@ -1274,6 +1283,10 @@ export class ApiHelperService {
 
         if (stats.redCards > 0) {
             result.redCards = stats.redCards;
+        }
+
+        if (stats.captain > 0) {
+            result.captain = stats.captain;
         }
 
         if (stats.regulationPenaltiesTaken > 0) {

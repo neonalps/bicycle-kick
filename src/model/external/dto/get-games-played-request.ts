@@ -1,8 +1,11 @@
+import { Tendency } from "@src/model/type/tendency";
 import { PaginationQueryParams } from "@src/module/pagination/constants";
 
 export interface GetGamesPlayedRequestDto extends PaginationQueryParams {
     personId: number;
     forMain?: boolean;
+    onlyManager?: boolean;
+    tendency?: Tendency;
     competitionId?: string;
     opponentId?: string;
     seasonId?: string;

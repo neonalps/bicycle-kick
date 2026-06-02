@@ -75,6 +75,7 @@ export interface PlayerStatsResult {
     playerStats?: Map<PersonId, Map<SeasonId, Map<CompetitionId, PlayerBaseStats>>>;
     playerOpponentStats?: Map<PersonId, PlayerBaseStats>;
     goalsAgainstClub?: Map<PersonId, ReadonlyArray<PlayerGoalsAgainstClubStatsItem>>;
+    goalTypes?: Map<PersonId, PlayerGoalTypeStatsItem[]>;
 }
 
 export class StatsService {
@@ -124,6 +125,8 @@ export class StatsService {
 
         if (requestedStatsItems.includes(PlayerStatsItem.GoalTypes)) {
             const playerGoalTypes = await this.getPlayerGoalTypes(playerIds);
+
+            result.goalTypes = playerGoalTypes;
         }
 
         const seenCompetitions = new Map<CompetitionId, Competition>();
@@ -176,7 +179,7 @@ export class StatsService {
         return await this.mapper.getOrderedYellowCardsManagerSum(queryOptions);
     }
 
-    async getOrderedYellowCardsPlayerSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
+    async getOrderedYellowCardsPlayerSum(queryOptions: QueryOptions = {}, paginationParams?: GetYellowCardsPaginationParams): Promise<PersonSum[]> {
         return await this.mapper.getOrderedYellowCardsPlayerSum(queryOptions);
     }
 
@@ -189,6 +192,7 @@ export class StatsService {
             return [
                 PlayerStatsItem.GoalsAgainstClub,
                 PlayerStatsItem.Performance,
+                PlayerStatsItem.GoalTypes,
             ];
         }
 

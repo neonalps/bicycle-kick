@@ -48,6 +48,8 @@ export class GamePlayerMapper {
         const forMain = isDefined(params.forMain) ? params.forMain : true;
         const competitionIds = params.competitionId ? params.competitionId.split(",") : undefined;
         const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined;
+        const onlyManager = params.onlyManager;
+        const tendency = params.tendency;
         const seasonIds = params.seasonId ? params.seasonId.split(",") : undefined;
         const assistsWithModifier: ValueWithModifier | undefined = params.assists ? parseValueWithModifier(params.assists) : undefined;
         const goalsScoredWithModifier: ValueWithModifier | undefined = params.goalsScored ? parseValueWithModifier(params.goalsScored) : undefined;
@@ -66,33 +68,35 @@ export class GamePlayerMapper {
 
         const result = await this.sql<GamePlayerDaoInterface[]>`
             select
-                gp.*
+                gt.*
             from
-                game g left join
-                game_players gp on gp.game_id = g.id
+                game g
+                ${ !onlyManager ? this.sql` left join game_players gt on gt.game_id = g.id` : this.sql`` }
+                ${ onlyManager ? this.sql` left join game_managers gt on gt.game_id = g.id` : this.sql`` }
             where
-                gp.person_id = ${ personId }
+                gt.person_id = ${ personId }
                 and g.kickoff ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
-                and gp.for_main = ${forMain}
+                and gt.for_main = ${forMain}
                 ${effectiveCompetitionIds.length > 0 ? this.sql` and g.competition_id in ${ this.sql(effectiveCompetitionIds) }` : this.sql``}
                 ${opponentIds ? this.sql` and g.opponent_id in ${ this.sql(opponentIds) }` : this.sql``}
                 ${seasonIds ? this.sql` and g.season_id in ${ this.sql(seasonIds) }` : this.sql``}
-                ${ this.resolveValueWithModifier(minutesPlayedWithModifier, 'gp.minutes_played') }
-                ${ this.resolveValueWithModifier(assistsWithModifier, 'gp.assists') }
-                ${ this.resolveValueWithModifier(goalsScoredWithModifier, 'gp.goals_scored') }
-                ${ this.resolveValueWithModifier(goalsConcededWithModifier, 'gp.goals_conceded') }
-                ${ this.resolveValueWithModifier(regulationPenaltiesFacedWithModifier, 'gp.regulation_penalties_faced') }
-                ${ this.resolveValueWithModifier(regulationPenaltiesSavedWithModifier, 'gp.regulation_penalties_saved') }
-                ${ this.resolveValueWithModifier(regulationPenaltiesTakenWithModifier, 'gp.regulation_penalties_taken') }
-                ${ this.resolveValueWithModifier(regulationPenaltiesScoredWithModifier, 'gp.regulation_penalties_scored') }
-                ${ this.resolveValueWithModifier(psoPenaltiesFacedWithModifier, 'gp.pso_penalties_faced') }
-                ${ this.resolveValueWithModifier(psoPenaltiesSavedWithModifier, 'gp.pso_penalties_saved') }
-                ${ this.resolveValueWithModifier(psoPenaltiesTakenWithModifier, 'gp.pso_penalties_taken') }
-                ${ this.resolveValueWithModifier(psoPenaltiesScoredWithModifier, 'gp.pso_penalties_scored') }
-                ${isDefined(params.yellowCard) ? this.sql` and gp.yellow_card = ${params.yellowCard}` : this.sql``}
-                ${isDefined(params.yellowRedCard) ? this.sql` and gp.yellow_red_card = ${params.yellowRedCard}` : this.sql``}
-                ${isDefined(params.redCard) ? this.sql` and gp.red_card = ${params.redCard}` : this.sql``}
-                ${isDefined(params.shirt) ? this.sql` and gp.shirt = ${params.shirt}` : this.sql``}
+                ${ tendency ? this.sql` and g.result_tendency = ${tendency}` : this.sql`` }
+                ${ this.resolveValueWithModifier(minutesPlayedWithModifier, 'gt.minutes_played') }
+                ${ this.resolveValueWithModifier(assistsWithModifier, 'gt.assists') }
+                ${ this.resolveValueWithModifier(goalsScoredWithModifier, 'gt.goals_scored') }
+                ${ this.resolveValueWithModifier(goalsConcededWithModifier, 'gt.goals_conceded') }
+                ${ this.resolveValueWithModifier(regulationPenaltiesFacedWithModifier, 'gt.regulation_penalties_faced') }
+                ${ this.resolveValueWithModifier(regulationPenaltiesSavedWithModifier, 'gt.regulation_penalties_saved') }
+                ${ this.resolveValueWithModifier(regulationPenaltiesTakenWithModifier, 'gt.regulation_penalties_taken') }
+                ${ this.resolveValueWithModifier(regulationPenaltiesScoredWithModifier, 'gt.regulation_penalties_scored') }
+                ${ this.resolveValueWithModifier(psoPenaltiesFacedWithModifier, 'gt.pso_penalties_faced') }
+                ${ this.resolveValueWithModifier(psoPenaltiesSavedWithModifier, 'gt.pso_penalties_saved') }
+                ${ this.resolveValueWithModifier(psoPenaltiesTakenWithModifier, 'gt.pso_penalties_taken') }
+                ${ this.resolveValueWithModifier(psoPenaltiesScoredWithModifier, 'gt.pso_penalties_scored') }
+                ${isDefined(params.yellowCard) ? this.sql` and gt.yellow_card = ${params.yellowCard}` : this.sql``}
+                ${isDefined(params.yellowRedCard) ? this.sql` and gt.yellow_red_card = ${params.yellowRedCard}` : this.sql``}
+                ${isDefined(params.redCard) ? this.sql` and gt.red_card = ${params.redCard}` : this.sql``}
+                ${isDefined(params.shirt) ? this.sql` and gt.shirt = ${params.shirt}` : this.sql``}
             order by
                 g.kickoff ${ this.determineSortOrder(params.order) }
             limit

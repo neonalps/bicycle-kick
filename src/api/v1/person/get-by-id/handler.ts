@@ -38,10 +38,12 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
             
             const playerPerformanceStatsDetails = performanceStatsDetailsContext.playerStats?.get(person.id) || new Map();
             const goalsAgainstClubsStatsDetails = performanceStatsDetailsContext.goalsAgainstClub?.get(person.id) || [];
+            const goalTypes = performanceStatsDetailsContext.goalTypes?.get(person.id) || [];
 
             response.stats = {
                 performance: this.apiHelper.convertPerformanceStatsDetailsMapToDto(playerPerformanceStatsDetails, performanceStatsDetailsContext.seasons!, performanceStatsDetailsContext.competitions!),
                 goalsAgainstClubs: this.apiHelper.convertGoalsAgainstClubsStatsItems(goalsAgainstClubsStatsDetails, performanceStatsDetailsContext.clubs!),
+                goalTypes: this.apiHelper.convertGoalTypeStatsItems(goalTypes),
             }
 
             const opponentPerformanceStats = performanceStatsDetailsContext.playerOpponentStats?.get(person.id);

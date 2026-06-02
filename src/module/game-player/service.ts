@@ -3,6 +3,7 @@ import { GamePlayerMapper } from "./mapper";
 import { GamePlayer } from "@src/model/internal/game-player";
 import { PaginationParams } from "@src/module/pagination/constants";
 import { DateString, PersonId } from "@src/util/domain-types";
+import { Tendency } from "@src/model/type/tendency";
 
 export interface GetPlayerGamesPlayedPaginationParams extends PaginationParams<DateString> {
     competitionId?: string;
@@ -26,6 +27,8 @@ export interface GetPlayerGamesPlayedPaginationParams extends PaginationParams<D
     psoPenaltiesFaced?: string;
     psoPenaltiesSaved?: string;
     forMain?: boolean;
+    onlyManager?: boolean;
+    tendency?: Tendency;
 }
 
 export class GamePlayerService {

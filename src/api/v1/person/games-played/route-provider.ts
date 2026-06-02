@@ -31,6 +31,8 @@ export class GetPersonGamesPlayedRouteProvider implements RouteProvider<GetGames
                 properties: {
                     playerId: { type: 'string' },
                     forMain: { type: 'boolean' },
+                    onlyManager: { type: 'boolean' },
+                    tendency: { type: 'string', enum: ['w', 'l', 'd'] },
                     competitionId: { type: 'string' },
                     opponentId: { type: 'string' },
                     seasonId: { type: 'string' },

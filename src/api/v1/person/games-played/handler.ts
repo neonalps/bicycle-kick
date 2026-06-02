@@ -49,6 +49,14 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
                 params.opponentId = dto.opponentId;
             }
 
+            if (isDefined(dto.onlyManager)) {
+                params.onlyManager = dto.onlyManager;
+            }
+
+            if (isDefined(dto.tendency)) {
+                params.tendency = dto.tendency;
+            }
+
             if (isDefined(dto.competitionId)) {
                 params.competitionId = dto.competitionId;
             }
@@ -144,6 +152,14 @@ export class GetPersonGamesPlayedRouteHandler implements RouteHandler<GetGamesPl
 
         if (isDefined(oldParams.opponentId)) {
             newParams.opponentId = oldParams.opponentId;
+        }
+
+        if (isDefined(oldParams.onlyManager)) {
+            newParams.onlyManager = oldParams.onlyManager;
+        }
+
+        if (isDefined(oldParams.tendency)) {
+            newParams.tendency = oldParams.tendency;
         }
 
         if (isDefined(oldParams.competitionId)) {

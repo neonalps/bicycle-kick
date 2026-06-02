@@ -31,6 +31,7 @@ export interface PlayerBaseStats {
     yellowCards: number;
     yellowRedCards: number;
     redCards: number;
+    captain: number;
     regulationPenaltiesTaken: number;
     regulationPenaltiesScored: number;
     regulationPenaltiesFaced: number;

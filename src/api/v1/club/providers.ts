@@ -11,7 +11,7 @@ import { UpdateClubByIdRouteProvider } from "./update-by-id/route-provider";
 export function getClubRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
     const createClubHandler = new CreateClubRouteHandler(services.apiHelperService, services.clubService);
-    const getClubByIdHandler = new GetClubByIdRouteHandler(services.apiHelperService, services.clubService, services.externalProviderService, services.gameService, getMainClubId());
+    const getClubByIdHandler = new GetClubByIdRouteHandler(services.apiHelperService, services.clubService, services.externalProviderService, services.gameService, services.venueService, getMainClubId());
     const updateClubByIdHandler = new UpdateClubByIdRouteHandler(services.apiHelperService, services.clubService);
 
     return [

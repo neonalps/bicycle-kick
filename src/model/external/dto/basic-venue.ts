@@ -1,3 +1,4 @@
+import { BasicClubDto } from "./basic-club";
 import { VenueFlavorDto } from "./venue-flavor";
 
 export interface BasicVenueDto {
@@ -11,4 +12,5 @@ export interface BasicVenueDto {
     latitude?: number;
     longitude?: number;
     flavors: VenueFlavorDto[];
+    homeVenueFor?: BasicClubDto[];
 }

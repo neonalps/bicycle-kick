@@ -4,7 +4,7 @@ import { CreateClub } from "@src/model/internal/create-club";
 import { ClubDaoInterface } from "@src/model/internal/interface/club.interface";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { UpdateClub } from "@src/model/internal/update-club";
-import { ClubId } from "@src/util/domain-types";
+import { ClubId, VenueId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
 
@@ -37,6 +37,15 @@ export class ClubMapper {
         }
 
         return this.convertToEntity(result[0]);
+    }
+
+    async getAllWithHomeVenue(venueId: VenueId): Promise<Club[]> {
+        const result = await this.sql<ClubDaoInterface[]>`select * from club where home_venue_id = ${ venueId } order by id`;
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
     }
 
     async getMultipleByIds(ids: number[]): Promise<Club[]> {

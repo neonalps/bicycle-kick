@@ -1,7 +1,7 @@
 import { Club } from "@src/model/internal/club";
 import { ClubMapper } from "./mapper";
 import { validateNotBlank, validateNotNull } from "@src/util/validation";
-import { ClubId } from "@src/util/domain-types";
+import { ClubId, VenueId } from "@src/util/domain-types";
 import { CreateClub } from "@src/model/internal/create-club";
 import { normalizeForSearch } from "@src/util/search";
 import { isDefined } from "@src/util/common";
@@ -45,6 +45,12 @@ export class ClubService {
         validateNotNull(id, "id");
 
         return await this.mapper.getById(id);
+    }
+
+    async getAllWithHomeVenue(venueId: VenueId): Promise<Club[]> {
+        validateNotNull(venueId, "venueId");
+
+        return await this.mapper.getAllWithHomeVenue(venueId);
     }
 
     async requireById(id: ClubId): Promise<Club> {

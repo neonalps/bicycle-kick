@@ -240,7 +240,7 @@ export class SearchService {
     private convertVenueFlavor(item: VenueFlavor): SearchResultItemDto {
         const result: SearchResultItemDto = {
             type: SearchEntity.Venue,
-            entityId: item.id,
+            entityId: item.venueId,
             title: `${item.name} (${item.city})`,
         }
 

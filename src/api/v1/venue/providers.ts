@@ -10,7 +10,7 @@ import { GetVenueByIdRouteProvider } from "./get-by-id/route-provider";
 export function getVenueRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
     const createVenueHandler = new CreateVenueRouteHandler(services.apiHelperService, services.venueService);
-    const getVenueByIdHandler = new GetVenueByIdRouteHandler(services.apiHelperService, services.venueService);
+    const getVenueByIdHandler = new GetVenueByIdRouteHandler(services.apiHelperService, services.clubService, services.venueService);
     const updateVenueByIdHandler = new UpdateVenueByIdRouteHandler(services.apiHelperService, services.venueService);
 
     return [

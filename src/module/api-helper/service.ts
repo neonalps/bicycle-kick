@@ -1007,6 +1007,20 @@ export class ApiHelperService {
     }
 
     async convertClubToBasicDto(club: Club): Promise<BasicClubDto> {
+        const baseClub = this.convertClubToBasicDtoWithoutHomeVenue(club);
+
+        if (isDefined(club.homeVenueId)) {
+            const venueResult = await promiseAllObject({
+                venue: this.venueService.getById(club.homeVenueId),
+                flavors: this.venueService.getFlavorsForVenue(club.homeVenueId),
+            });
+            baseClub.homeVenue = this.convertVenueToBasicDto(venueResult.venue as Venue, venueResult.flavors);
+        }
+
+        return baseClub;
+    }
+
+    convertClubToBasicDtoWithoutHomeVenue(club: Club): BasicClubDto {
         const basicClub: BasicClubDto = {
             id: club.id,
             name: club.name,
@@ -1033,14 +1047,6 @@ export class ApiHelperService {
 
         if (isDefined(club.district)) {
             basicClub.district = club.district;
-        }
-
-        if (isDefined(club.homeVenueId)) {
-            const venueResult = await promiseAllObject({
-                venue: this.venueService.getById(club.homeVenueId),
-                flavors: this.venueService.getFlavorsForVenue(club.homeVenueId),
-            });
-            basicClub.homeVenue = this.convertVenueToBasicDto(venueResult.venue as Venue, venueResult.flavors);
         }
 
         return basicClub;

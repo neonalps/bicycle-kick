@@ -2,6 +2,7 @@ import { Sql } from "@src/db";
 import { SeasonTitleDaoInterface } from "@src/model/internal/interface/season-title.interface";
 import { SeasonTitle } from "@src/model/internal/season-title";
 import { isDefined } from "@src/util/common";
+import { CompetitionId } from "@src/util/domain-types";
 
 export class SeasonTitlesMapper {
 
@@ -25,6 +26,32 @@ export class SeasonTitlesMapper {
                 ${isDefined(to) ? this.sql` and coalesce(st.victory_date, g.kickoff) <= ${ to }` : this.sql``}
             order by
                 effective_victory_date asc nulls last
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
+    }
+
+    async getTitlesForCompetition(competitionId: CompetitionId): Promise<SeasonTitle[]> {
+        const result = await this.sql<SeasonTitleDaoInterface[]>`
+            select
+                st.id,
+                st.season_id,
+                st.competition_id,
+                st.victory_date,
+                st.victory_game,
+                st.title_count,
+                coalesce(st.victory_date, g.kickoff) as effective_victory_date
+            from
+                season_titles st left join
+                game g on st.victory_game = g.id
+            where
+                st.competition_id = ${competitionId}
+            order by
+                effective_victory_date desc
         `;
 
         if (result.length === 0) {

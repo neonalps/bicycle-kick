@@ -1,6 +1,7 @@
 import { DateString, GameId, SeasonTitleId } from "@src/util/domain-types";
 import { SmallSeasonDto } from "./small-season";
 import { SmallCompetitionDto } from "./small-competition";
+import { OmitStrict } from "@src/util/types";
 
 export interface SeasonTitleDto {
     id: SeasonTitleId;
@@ -10,3 +11,5 @@ export interface SeasonTitleDto {
     victoryDate?: DateString;
     victoryGameId?: GameId;
 }
+
+export type CompetitionTitleDto = OmitStrict<SeasonTitleDto, 'competition'>;

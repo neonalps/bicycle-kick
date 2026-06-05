@@ -86,7 +86,7 @@ import { RankedPersonResultItemDto } from "@src/model/external/dto/player-compet
 import { BasicCompetitionDto } from "@src/model/external/dto/basic-competition";
 import { RecordSummaryDto } from "@src/model/external/dto/record-summary";
 import { SeasonTitle } from "@src/model/internal/season-title";
-import { SeasonTitleDto } from "@src/model/external/dto/season-title";
+import { CompetitionTitleDto, SeasonTitleDto } from "@src/model/external/dto/season-title";
 import { GameAbsence } from "@src/model/internal/game-absence";
 import { GameAbsenceDto } from "@src/model/external/dto/game-absence";
 import { GameAbsenceService, PotentialGameAbsence } from "@src/module/game-absence/service";
@@ -863,7 +863,34 @@ export class ApiHelperService {
         }
     }
 
-    private async convertSeasonTitlesToDto(titles: Nullish<Array<SeasonTitle>>): Promise<Array<SeasonTitleDto>> {
+    async convertCompetitionTitleDtos(titles: Nullish<Array<SeasonTitle>>): Promise<Array<CompetitionTitleDto>> {
+        if (isNotDefined(titles) || titles.length === 0) {
+            return [];
+        }
+
+        const seasonIds = uniqueArrayElements(titles.map(item => item.seasonId));
+        const seasonMap = await this.seasonService.getMapByIds(seasonIds);
+
+        return titles.map(item => {
+            const result: CompetitionTitleDto = {
+                id: item.id,
+                season: this.convertSeasonToSmallDto(ensureNotNullish(seasonMap.get(item.seasonId))),
+                titleCount: item.titleCount,
+            };
+
+            if (isDefined(item.victoryDate)) {
+                result.victoryDate = item.victoryDate.toISOString();
+            }
+            
+            if (isDefined(item.victoryGame)) {
+                result.victoryGameId = item.victoryGame;
+            }
+
+            return result;
+        });
+    }
+
+    async convertSeasonTitlesToDto(titles: Nullish<Array<SeasonTitle>>): Promise<Array<SeasonTitleDto>> {
         if (isNotDefined(titles) || titles.length === 0) {
             return [];
         }

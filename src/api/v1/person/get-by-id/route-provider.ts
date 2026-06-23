@@ -27,6 +27,7 @@ export class GetPersonByIdRouteProvider implements RouteProvider<GetPersonByIdRe
                 type: 'object',
                 required: [],
                 properties: {
+                    includeContract: { type: 'boolean' },
                     includeStatistics: { type: 'boolean' },
                 },
                 additionalProperties: false,

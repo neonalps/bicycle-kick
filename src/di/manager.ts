@@ -99,6 +99,8 @@ import { SeasonTitlesMapper } from "@src/module/season-titles/mapper";
 import { SeasonTitlesService } from "@src/module/season-titles/service";
 import { GameAbsenceMapper } from "@src/module/game-absence/mapper";
 import { GameAbsenceService } from "@src/module/game-absence/service";
+import { PersonContractMapper } from "@src/module/person-contracts/mapper";
+import { PersonContractService } from "@src/module/person-contracts/service";
 
 export class DependencyManager {
 
@@ -228,6 +230,9 @@ export class DependencyManager {
         const managerPeriodMapper = new ManagerPeriodMapper(sqlInstance, gameService, seasonTitlesService);
         const managerPeriodService = new ManagerPeriodService(managerPeriodMapper);
 
+        const personContractMapper = new PersonContractMapper(sqlInstance);
+        const personContractService = new PersonContractService(personContractMapper);
+
         const squadMapper = new SquadMapper(sqlInstance);
         const squadService = new SquadService(squadMapper, managerPeriodService, personService, seasonService);
 
@@ -316,6 +321,7 @@ export class DependencyManager {
             paginationService: paginationService,
             permissionService: permissionService,
             personService: personService,
+            personContactService: personContractService,
             searchService: searchService,
             seasonService: seasonService,
             seasonTitlesService: seasonTitlesService,

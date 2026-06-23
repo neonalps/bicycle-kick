@@ -1,4 +1,5 @@
 export interface GetPersonByIdRequestDto {
-    personId: number;
+    personId: string;
+    includeContract?: boolean;
     includeStatistics?: boolean;
 }

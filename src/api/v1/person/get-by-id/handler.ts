@@ -3,10 +3,12 @@ import { GetPersonByIdResponseDto } from "@src/model/external/dto/get-person-by-
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { ExternalProviderService } from "@src/module/external-provider/service";
 import { GameService } from "@src/module/game/service";
+import { PersonContractService } from "@src/module/person-contracts/service";
 import { PersonService } from "@src/module/person/service";
 import { StatsService } from "@src/module/stats/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
-import { promiseAllObject } from "@src/util/common";
+import { isDefined, promiseAllObject } from "@src/util/common";
+import { PersonId } from "@src/util/domain-types";
 
 export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequestDto, GetPersonByIdResponseDto> {
 
@@ -15,13 +17,16 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
         private readonly externalProviderService: ExternalProviderService,
         private readonly gameService: GameService,
         private readonly personService: PersonService,
+        private readonly personContractService: PersonContractService,
         private readonly statsService: StatsService,
     ) {}
 
     public async handle(_: AuthenticationContext, dto: GetPersonByIdRequestDto): Promise<GetPersonByIdResponseDto> {
+        const personId: PersonId = Number(dto.personId);
+
         const { person, externalProviderPersons } = await promiseAllObject({
-            person: this.personService.requireById(dto.personId),
-            externalProviderPersons: this.externalProviderService.getExternalProvidersForPerson(dto.personId),
+            person: this.personService.requireById(personId),
+            externalProviderPersons: this.externalProviderService.getExternalProvidersForPerson(personId),
         });
 
         const response: GetPersonByIdResponseDto = {
@@ -30,7 +35,14 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
 
         let isReferee = false;
 
-        if (dto.includeStatistics === true) {
+        if (dto.includeContract) {
+            const potentialContract = await this.personContractService.getCurrentForPerson(personId);
+            if (isDefined(potentialContract)) {
+                response.contract = this.apiHelper.convertContractForPersonDto(potentialContract);
+            }
+        }
+
+        if (dto.includeStatistics) {
             const { performanceStatsDetailsContext, refereeGames } = await promiseAllObject({
                 performanceStatsDetailsContext: this.statsService.getPlayerStats([person.id], {}),
                 refereeGames: this.gameService.getOrderedGamesForReferee(person.id),

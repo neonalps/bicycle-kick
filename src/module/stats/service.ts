@@ -4,7 +4,7 @@ import { StatsMapper } from "./mapper";
 import { ArrayNonEmpty, getOrThrow, isDefined, isNotDefined, promiseAllObject, uniqueArrayElements } from "@src/util/common";
 import { validateNotNull } from "@src/util/validation";
 import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem, ShirtDistributionItem } from "@src/model/internal/stats-player";
-import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, PersonId, SeasonId, Shirt } from "@src/util/domain-types";
 import { combinePlayerBaseStats, getEmptyPlayerBaseStats } from "./util";
 import { Competition } from "@src/model/internal/competition";
 import { Season } from "@src/model/internal/season";
@@ -161,6 +161,10 @@ export class StatsService {
         validateNotNull(personId, "personId");
 
         return await this.mapper.getShirtDistribution(personId);
+    }
+
+    async getShirtWornBy(shirt: Shirt): Promise<void> {
+
     }
 
     async getOrderedYellowCardsSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {

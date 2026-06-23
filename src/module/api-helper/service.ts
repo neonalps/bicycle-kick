@@ -91,6 +91,8 @@ import { GameAbsence } from "@src/model/internal/game-absence";
 import { GameAbsenceDto } from "@src/model/external/dto/game-absence";
 import { GameAbsenceService, PotentialGameAbsence } from "@src/module/game-absence/service";
 import { PotentialGameAbsenceDto } from "@src/model/external/dto/game-absence-potential";
+import { PersonContract } from "@src/model/internal/person-contract";
+import { ContractForPersonDto } from "@src/model/external/dto/person-contract";
 
 export class ApiHelperService {
 
@@ -861,6 +863,22 @@ export class ApiHelperService {
             loss: summary.loss,
             avgPointsFixed: summary.avgPoints.toFixed(3),
         }
+    }
+
+    convertContractForPersonDto(contract: PersonContract): ContractForPersonDto {
+        const result: ContractForPersonDto = {
+            id: contract.id,
+        };
+
+        if (isDefined(contract.contractUntil)) {
+            result.contractUntil = contract.contractUntil.toISOString();
+        }
+
+        if (isDefined(contract.onLoanUntil)) {
+            result.onLoanUntil = contract.onLoanUntil.toISOString();
+        }
+
+        return result;
     }
 
     async convertCompetitionTitleDtos(titles: Nullish<Array<SeasonTitle>>): Promise<Array<CompetitionTitleDto>> {

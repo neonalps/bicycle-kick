@@ -27,6 +27,7 @@ import { ManagerPeriodService } from "@src/module/manager-period/service";
 import { MatchdayDetailsService } from "@src/module/matchday-details/service";
 import { PaginationService } from "@src/module/pagination/service";
 import { PermissionService } from "@src/module/permission/service";
+import { PersonContractService } from "@src/module/person-contracts/service";
 import { PersonService } from "@src/module/person/service";
 import { SearchService } from "@src/module/search/service";
 import { SeasonTitlesService } from "@src/module/season-titles/service";
@@ -68,6 +69,7 @@ export interface ApplicationServices {
     paginationService: PaginationService,
     permissionService: PermissionService,
     personService: PersonService,
+    personContactService: PersonContractService,
     searchService: SearchService,
     seasonService: SeasonService,
     seasonTitlesService: SeasonTitlesService,

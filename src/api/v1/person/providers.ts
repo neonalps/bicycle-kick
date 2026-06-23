@@ -13,7 +13,7 @@ export function getPersonRouteProviders(services: ApplicationServices): RoutePro
 
     const createPersonRouteHandler = new CreatePersonRouteHandler(services.apiHelperService, services.personService);
     const updatePersonByIdRouteHandler = new UpdatePersonByIdRouteHandler(services.apiHelperService, services.personService);
-    const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(services.apiHelperService, services.externalProviderService, services.gameService, services.personService, services.statsService);
+    const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(services.apiHelperService, services.externalProviderService, services.gameService, services.personService, services.personContactService, services.statsService);
     const getPersonGamesPlayedRouteHandler = new GetPersonGamesPlayedRouteHandler(services.apiHelperService, services.gamePlayerService, services.paginationService);
 
     return [

@@ -11,7 +11,7 @@ export class PersonContractMapper {
 
     async getCurrentForPerson(personId: PersonId): Promise<Nullish<PersonContract>> {
         const result = await this.sql<PersonContractDaoInterface[]>`select * from person_contracts where person_id = ${ personId }`;
-        if (result.length !== 0) {
+        if (result.length === 0) {
             return null;
         }
 

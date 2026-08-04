@@ -1,5 +1,6 @@
 import { BasicGameDto } from "./basic-game";
 import { BasicPersonDto } from "./basic-person";
+import { ManagerPeriodForPersonDto } from "./manager-period";
 import { ContractForPersonDto } from "./person-contract";
 import { ShirtDistributionItemDto } from "./shirt-distribution-item";
 import { GoalsAgainstClubStatsItemDto, GoalTypeStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "./stats-player";
@@ -15,6 +16,7 @@ export interface GetPersonByIdResponseDto {
         goalTypes?: ReadonlyArray<GoalTypeStatsItemDto>;
         refereeGames?: ReadonlyArray<BasicGameDto>;
         shirtDistribution?: ReadonlyArray<ShirtDistributionItemDto>;
+        managerPeriods?: ReadonlyArray<ManagerPeriodForPersonDto>;
     },
     externalLinks?: ReadonlyArray<ExternalProviderLinkDto>;
 }

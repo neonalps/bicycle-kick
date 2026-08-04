@@ -77,7 +77,7 @@ import { AccountProfileDto } from "@src/model/external/dto/account-profile";
 import { ProfileSettings } from "@src/model/internal/profile-settings";
 import { ProfileSettingsDto } from "@src/model/external/dto/profile-settings";
 import { ManagerPeriod } from "@src/model/internal/manager-period";
-import { ManagerPeriodDto } from "@src/model/external/dto/manager-period";
+import { ManagerPeriodDto, ManagerPeriodForPersonDto } from "@src/model/external/dto/manager-period";
 import { DateSource } from "@src/util/date";
 import { Nullish } from "@src/util/types";
 import { VenueFlavor } from "@src/model/internal/venue-flavor";
@@ -816,20 +816,49 @@ export class ApiHelperService {
         return periodResult;
     }
 
-    convertExternalProviderPersonLinks(person: Person, externalProviderPersons: ReadonlyArray<ExternalProviderPerson>, isReferee = false): ExternalProviderLinkDto[] {
+    async convertManagerPeriodsToDtosForPerson(periods: ManagerPeriod[]): Promise<ManagerPeriodForPersonDto[]> {
+        if (periods.length === 0) {
+            return [];
+        }
+        
+        const periodResult: ManagerPeriodForPersonDto[] = [];
+
+        for (const period of periods) {
+            const converted: ManagerPeriodForPersonDto = {
+                id: period.id,
+                start: period.start.toISOString(),
+                summary: this.convertRecordSummaryToDto(period.summary),
+                titles: await this.convertSeasonTitlesToDto(period.titles),
+            };
+
+            if (isDefined(period.end)) {
+                converted.end = period.end.toISOString();
+            }
+
+            if (period.interim === true) {
+                converted.interim = period.interim;
+            }
+
+            periodResult.push(converted);
+        }
+
+        return periodResult;
+    }
+
+    convertExternalProviderPersonLinks(person: Person, externalProviderPersons: ReadonlyArray<ExternalProviderPerson>, isManager = false, isReferee = false): ExternalProviderLinkDto[] {
         return externalProviderPersons.map(item => ({
             provider: item.externalProvider,
-            link: this.getExternalProviderPersonLink(item.externalProvider, person, item.externalId, isReferee),
+            link: this.getExternalProviderPersonLink(item.externalProvider, person, item.externalId, isManager, isReferee),
         }))
     }
 
-    private getExternalProviderPersonLink(provider: ExternalProvider, person: Person, externalPersonId: string, isReferee: boolean): string {
+    private getExternalProviderPersonLink(provider: ExternalProvider, person: Person, externalPersonId: string, isManager: boolean, isReferee: boolean): string {
         switch (provider) {
             case 'sofascore':
                 const nameWithId = `${normalizeForSearch([person.firstName, person.lastName].join(' ').replaceAll(' ', '-'))}/${externalPersonId}`;
                 return isReferee ?
                  `https://www.sofascore.com/referee/${nameWithId}` :
-                 `https://www.sofascore.com/football/player/${nameWithId}`
+                 isManager ? `https://www.sofascore.com/manager/${nameWithId}` : `https://www.sofascore.com/football/player/${nameWithId}`
             default:
                 throw new Error(`Unhandled external provider ${provider}`);
         }

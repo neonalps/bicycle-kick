@@ -1,4 +1,4 @@
-import { DateString } from "@src/util/domain-types";
+import { DateString, PersonId } from "@src/util/domain-types";
 import { PaginationParams } from "@src/module/pagination/constants";
 import { ManagerPeriodMapper } from "./mapper";
 import { ManagerPeriod } from "@src/model/internal/manager-period";
@@ -15,6 +15,10 @@ export class ManagerPeriodService {
 
     async getCurrent(): Promise<ManagerPeriod | null> {
         return await this.mapper.getCurrent();
+    }
+
+    async getForPerson(personId: PersonId): Promise<ManagerPeriod[]> {
+        return await this.mapper.getForPerson(personId);
     }
 
 }

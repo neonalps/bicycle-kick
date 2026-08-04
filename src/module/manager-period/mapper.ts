@@ -6,6 +6,7 @@ import { SortOrder } from "@src/module/pagination/constants";
 import { GameService } from "@src/module/game/service";
 import { isDefined } from "@src/util/common";
 import { SeasonTitlesService } from "@src/module/season-titles/service";
+import { PersonId } from "@src/util/domain-types";
 
 export class ManagerPeriodMapper {
 
@@ -56,7 +57,30 @@ export class ManagerPeriodMapper {
             return null;
         }
 
-        return this.convertToEntity(result[0]);
+        return await this.convertToEntity(result[0]);
+    }
+
+    async getForPerson(personId: PersonId): Promise<ManagerPeriod[]> {
+        const result = await this.sql<ManagerPeriodDaoInterface[]>`
+            select
+                mp.*
+            from
+                manager_periods mp
+            where
+                mp.person_id = ${personId}
+            order by
+                mp.start desc
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        const converted: ManagerPeriod[] = [];
+        for (const item of result) {
+            converted.push(await this.convertToEntity(item));
+        }
+        return converted;
     }
 
     private determineSortOrder(order: SortOrder) {

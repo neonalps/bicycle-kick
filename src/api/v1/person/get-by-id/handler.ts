@@ -3,6 +3,7 @@ import { GetPersonByIdResponseDto } from "@src/model/external/dto/get-person-by-
 import { ApiHelperService } from "@src/module/api-helper/service";
 import { ExternalProviderService } from "@src/module/external-provider/service";
 import { GameService } from "@src/module/game/service";
+import { ManagerPeriodService } from "@src/module/manager-period/service";
 import { PersonContractService } from "@src/module/person-contracts/service";
 import { PersonService } from "@src/module/person/service";
 import { StatsService } from "@src/module/stats/service";
@@ -16,6 +17,7 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
         private readonly apiHelper: ApiHelperService,
         private readonly externalProviderService: ExternalProviderService,
         private readonly gameService: GameService,
+        private readonly managerPeriodService: ManagerPeriodService,
         private readonly personService: PersonService,
         private readonly personContractService: PersonContractService,
         private readonly statsService: StatsService,
@@ -34,6 +36,7 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
         }
 
         let isReferee = false;
+        let isManager = false;
 
         if (dto.includeContract) {
             const potentialContract = await this.personContractService.getCurrentForPerson(personId);
@@ -43,9 +46,10 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
         }
 
         if (dto.includeStatistics) {
-            const { performanceStatsDetailsContext, refereeGames } = await promiseAllObject({
+            const { performanceStatsDetailsContext, refereeGames, managerPeriods } = await promiseAllObject({
                 performanceStatsDetailsContext: this.statsService.getPlayerStats([person.id], {}),
                 refereeGames: this.gameService.getOrderedGamesForReferee(person.id),
+                managerPeriods: this.managerPeriodService.getForPerson(person.id),
             });
             
             const playerPerformanceStatsDetails = performanceStatsDetailsContext.playerStats?.get(person.id) || new Map();
@@ -69,10 +73,15 @@ export class GetPersonByIdRouteHandler implements RouteHandler<GetPersonByIdRequ
             } else {
                 response.stats.shirtDistribution = await this.statsService.getShirtDistribution(person.id);
             }
+
+            if (managerPeriods.length > 0) {
+                isManager = true;
+                response.stats.managerPeriods = await this.apiHelper.convertManagerPeriodsToDtosForPerson(managerPeriods);
+            }
         }
 
         if (externalProviderPersons.length > 0) {
-            response.externalLinks = this.apiHelper.convertExternalProviderPersonLinks(person, externalProviderPersons, isReferee);
+            response.externalLinks = this.apiHelper.convertExternalProviderPersonLinks(person, externalProviderPersons, isManager, isReferee);
         }
         
         return response;

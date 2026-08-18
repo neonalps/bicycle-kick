@@ -22,9 +22,12 @@ import { FindPotentialGameAbsencesHandler } from "./find-potential-absences/hand
 import { FindPotentialGameAbsencesRouteProvider } from "./find-potential-absences/route-provider";
 import { StoreGameAbsencesHandler } from "./store-absences/handler";
 import { StoreGameAbsencesRouteProvider } from "./store-absences/route-provider";
+import { GetGamesPaginatedRouteHandler } from "./get-all-paginated/handler";
+import { GetGamesPaginatedRouteProvider } from "./get-all-paginated/route-provider";
 
 export function getGameRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
+    const getGamesHandler = new GetGamesPaginatedRouteHandler(services.apiHelperService, services.gameService, services.paginationService);
     const getGameByIdHandler = new GetGameByIdRouteHandler(services.apiHelperService, services.gameService);
     const createGameHandler = new CreateGameRouteHandler(services.apiHelperService, services.gameService);
     const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(services.gameService);
@@ -38,6 +41,7 @@ export function getGameRouteProviders(services: ApplicationServices): RouteProvi
     const loadExternalMatchdayDetailsHandler = new GetMatchdayDetailsRouteHandler(services.apiHelperService, services.matchdayDetailsService);
 
     return [
+        new GetGamesPaginatedRouteProvider(getGamesHandler),
         new GetGameByIdRouteProvider(getGameByIdHandler),
         new CreateGameRouteProvider(createGameHandler),
         new DeleteGameByIdRouteProvider(deleteGameByIdHandler),

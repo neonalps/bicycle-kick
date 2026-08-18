@@ -47,6 +47,7 @@ import { ExternalProvider } from "@src/model/type/external-provider";
 import { UpdateGameDto } from "@src/model/internal/update-game";
 import { GameRefereeDaoInterface } from "@src/model/internal/interface/game-referee.interface";
 import { QueryOptions } from "@src/model/internal/query-options";
+import { GetGamesPaginationParams } from "./service";
 
 export class GameMapper {
 
@@ -94,6 +95,36 @@ export class GameMapper {
         }
 
         return result.map(item => item.id);
+    }
+
+    async getGamesPaginated(params: GetGamesPaginationParams): Promise<Game[]> {
+        const competitionIds = params.competitionId ? params.competitionId.split(",") : undefined;
+        const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined;
+        const tendency = params.tendency;
+        const seasonIds = params.seasonId ? params.seasonId.split(",") : undefined;
+
+        const result = await this.sql<GameDaoInterface[]>`
+            select
+                g.*
+            from
+                game g
+            where
+                g.kickoff ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
+                ${ competitionIds ? this.sql` and g.competition_id in ${ this.sql(competitionIds) }` : this.sql``}
+                ${ opponentIds ? this.sql` and g.opponent_id in ${ this.sql(opponentIds) }` : this.sql``}
+                ${ seasonIds ? this.sql` and g.season_id in ${ this.sql(seasonIds) }` : this.sql``}
+                ${ tendency ? this.sql` and g.result_tendency = ${tendency}` : this.sql`` }
+            order by
+                g.kickoff ${ this.determineSortOrder(params.order) }
+            limit
+                ${ params.limit }
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => this.convertToEntity(item));
     }
 
     async getGamesInPeriod(from: Date, to: Date | null, queryOptions?: QueryOptions): Promise<Game[]> {

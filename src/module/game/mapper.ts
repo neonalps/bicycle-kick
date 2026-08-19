@@ -101,6 +101,9 @@ export class GameMapper {
         const competitionIds = params.competitionId ? params.competitionId.split(",") : undefined;
         const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined;
         const tendency = params.tendency;
+        const status = params.status;
+        const isHomeGame = params.isHomeGame;
+        const isNeutralGround = params.isNeutralGround;
         const seasonIds = params.seasonId ? params.seasonId.split(",") : undefined;
 
         const result = await this.sql<GameDaoInterface[]>`
@@ -110,10 +113,13 @@ export class GameMapper {
                 game g
             where
                 g.kickoff ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
+                ${ isDefined(isHomeGame) ? this.sql` and g.is_home_team = ${isHomeGame}` : this.sql``}
+                ${ isDefined(isNeutralGround) ? this.sql` and g.is_neutral_ground = ${isNeutralGround}` : this.sql``}
                 ${ competitionIds ? this.sql` and g.competition_id in ${ this.sql(competitionIds) }` : this.sql``}
                 ${ opponentIds ? this.sql` and g.opponent_id in ${ this.sql(opponentIds) }` : this.sql``}
                 ${ seasonIds ? this.sql` and g.season_id in ${ this.sql(seasonIds) }` : this.sql``}
                 ${ tendency ? this.sql` and g.result_tendency = ${tendency}` : this.sql`` }
+                ${ status ? this.sql` and g.status = ${status}` : this.sql`` }
             order by
                 g.kickoff ${ this.determineSortOrder(params.order) }
             limit

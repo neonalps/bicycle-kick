@@ -19,7 +19,7 @@ export class GameAttendedMapper {
     }
 
     async getGameAttended(accountId: AccountId, gameIds: GameId[]): Promise<GameId[]> {
-        const result = await this.sql<{ gameId: GameId }[]>`select game_id from game_attended where account_id = ${accountId} and game_id in ${gameIds}`;
+        const result = await this.sql<{ gameId: GameId }[]>`select game_id from game_attended where account_id = ${accountId} and game_id in ${ this.sql(gameIds) }`;
         if (result.length === 0) {
             return [];
         }
@@ -37,7 +37,7 @@ export class GameAttendedMapper {
     }
 
     async getGameAttendedCount(gameIds: GameId[]): Promise<Map<GameId, number>> {
-        const result = await this.sql<GameAttendedCount[]>`select game_id, count(game_id) as game_id_count from game_attended where game_id in ${gameIds} group by game_id`
+        const result = await this.sql<GameAttendedCount[]>`select game_id, count(game_id) as game_id_count from game_attended where game_id in ${ this.sql(gameIds) } group by game_id`
         if (result.length === 0) {
             return new Map();
         }

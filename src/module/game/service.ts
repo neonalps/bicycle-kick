@@ -10,12 +10,16 @@ import { RefereeRole } from "@src/model/external/dto/referee-role";
 import { UpdateGameRequestDto } from "@src/model/external/dto/update-game-request";
 import { assertUnreachable } from "@src/util/common";
 import { Tendency } from "@src/model/type/tendency";
+import { GameStatus } from "@src/model/type/game-status";
 
 export interface GetGamesPaginationParams extends PaginationParams<DateString> {
     competitionId?: string;
     opponentId?: string;
     seasonId?: string;
     tendency?: Tendency;
+    status?: GameStatus;
+    isHomeGame?: boolean;
+    isNeutralGround?: boolean;
 }
 
 export class GameService {

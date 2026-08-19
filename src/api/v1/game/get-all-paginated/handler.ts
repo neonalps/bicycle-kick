@@ -1,27 +1,49 @@
-import { BasicGameDto } from "@src/model/external/dto/basic-game";
 import { GetGamesRequestDto } from "@src/model/external/dto/get-games-request";
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
+import { UserBasicGameDto } from "@src/model/external/dto/user-basic-game";
 import { ApiHelperService } from "@src/module/api-helper/service";
+import { GameAttendedService } from "@src/module/game-attended/service";
+import { GameStarService } from "@src/module/game-star/service";
 import { GameService, GetGamesPaginationParams } from "@src/module/game/service";
 import { MAX_DATE, MIN_DATE, SortOrder } from "@src/module/pagination/constants";
 import { PaginationService } from "@src/module/pagination/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
-import { isDefined } from "@src/util/common";
+import { isDefined, promiseAllObject, requireNonNull } from "@src/util/common";
 
-export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesRequestDto, PaginatedResponseDto<BasicGameDto>> {
+export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesRequestDto, PaginatedResponseDto<UserBasicGameDto>> {
 
     constructor(
         private readonly apiHelperService: ApiHelperService,
         private readonly gameService: GameService,
+        private readonly gameAttendedService: GameAttendedService,
+        private readonly gameStarService: GameStarService,
         private readonly paginationService: PaginationService,
     ) {}
 
-    public async handle(_: AuthenticationContext, dto: GetGamesRequestDto): Promise<PaginatedResponseDto<BasicGameDto>> {
+    public async handle(authContext: AuthenticationContext, dto: GetGamesRequestDto): Promise<PaginatedResponseDto<UserBasicGameDto>> {
         this.paginationService.validateQueryParams(dto);
         const paginationParams = this.getPaginationParams(dto);
 
         const orderedGames = await this.gameService.getGamesPaginated(paginationParams);
-        const responseItems = await this.apiHelperService.getOrderedBasicGameDtos(orderedGames);
+        const responseItems: UserBasicGameDto[] = await this.apiHelperService.getOrderedBasicGameDtos(orderedGames);
+
+        const accountId = requireNonNull(authContext.account).id;
+        const gameIds = orderedGames.map(item => item.id);
+
+        const { attended, starred } = await promiseAllObject({
+            attended: this.gameAttendedService.getGameAttended(accountId, gameIds),
+            starred: this.gameStarService.getGameStars(accountId, gameIds),
+        });
+
+        for (const responseItem of responseItems) {
+            if (attended.includes(responseItem.id)) {
+                responseItem.attended = true;
+            }
+
+            if (starred.includes(responseItem.id)) {
+                responseItem.favourite = true;
+            }
+        }
 
         return {
             nextPageKey: this.buildNextPageKey(responseItems, paginationParams),
@@ -49,6 +71,10 @@ export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesReque
                 params.tendency = dto.tendency;
             }
 
+            if (isDefined(dto.status)) {
+                params.status = dto.status;
+            }
+
             if (isDefined(dto.competitionId)) {
                 params.competitionId = dto.competitionId;
             }
@@ -57,13 +83,21 @@ export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesReque
                 params.seasonId = dto.seasonId;
             }
 
+            if (isDefined(dto.isHomeGame)) {
+                params.isHomeGame = dto.isHomeGame;
+            }
+
+            if (isDefined(dto.isNeutralGround)) {
+                params.isNeutralGround = dto.isNeutralGround;
+            }
+
             return params;
         }
 
         return this.paginationService.decode<GetGamesPaginationParams>(dto.nextPageKey);
     }
 
-    private buildNextPageKey(items: BasicGameDto[], oldParams: GetGamesPaginationParams): string | undefined {
+    private buildNextPageKey(items: UserBasicGameDto[], oldParams: GetGamesPaginationParams): string | undefined {
         if (items.length < oldParams.limit) {
             return;
         }
@@ -82,12 +116,24 @@ export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesReque
             newParams.tendency = oldParams.tendency;
         }
 
+        if (isDefined(oldParams.status)) {
+            newParams.status = oldParams.status;
+        }
+
         if (isDefined(oldParams.competitionId)) {
             newParams.competitionId = oldParams.competitionId;
         }
 
         if (isDefined(oldParams.seasonId)) {
             newParams.seasonId = oldParams.seasonId;
+        }
+
+        if (isDefined(oldParams.isHomeGame)) {
+            newParams.isHomeGame = oldParams.isHomeGame;
+        }
+
+        if (isDefined(oldParams.isNeutralGround)) {
+            newParams.isNeutralGround = oldParams.isNeutralGround;
         }
 
         return this.paginationService.encode(newParams);

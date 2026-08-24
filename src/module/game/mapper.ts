@@ -39,7 +39,7 @@ import { CreateGameEventDaoInterface } from "@src/model/internal/interface/game-
 import { CreatePenaltyShootOutGameEventDto } from "@src/model/external/dto/create-game-event-pso";
 import { PsoResult } from "@src/model/type/pso-result";
 import { normalizeForSearch } from "@src/util/search";
-import { ClubId, CompetitionId, DateString, GameId, PersonId, SeasonId, VenueFlavorId, VenueId } from "@src/util/domain-types";
+import { AccountId, ClubId, CompetitionId, DateString, GameId, PersonId, SeasonId, VenueFlavorId, VenueId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import { ScoreTuple } from "@src/model/internal/score";
 import { RefereeRole } from "@src/model/external/dto/referee-role";
@@ -97,7 +97,7 @@ export class GameMapper {
         return result.map(item => item.id);
     }
 
-    async getGamesPaginated(params: GetGamesPaginationParams): Promise<Game[]> {
+    async getGamesPaginated(params: GetGamesPaginationParams, accountId: AccountId): Promise<Game[]> {
         const competitionIds = params.competitionId ? params.competitionId.split(",") : undefined;
         const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined;
         const tendency = params.tendency;
@@ -106,11 +106,16 @@ export class GameMapper {
         const isNeutralGround = params.isNeutralGround;
         const seasonIds = params.seasonId ? params.seasonId.split(",") : undefined;
 
+        const needsGameAttendedJoin = isDefined(params.hasAccountAttended);
+        const needsGameStarredJoin = isDefined(params.hasAccountStarred);
+
         const result = await this.sql<GameDaoInterface[]>`
             select
                 g.*
             from
                 game g
+                ${ needsGameAttendedJoin ? this.sql` right join game_attended ga on ga.game_id = g.id and ga.account_id = ${ accountId }` : this.sql`` }
+                ${ needsGameStarredJoin ? this.sql` right join game_stars gs on gs.game_id = g.id and gs.account_id = ${ accountId }` : this.sql`` }
             where
                 g.kickoff ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
                 ${ isDefined(isHomeGame) ? this.sql` and g.is_home_team = ${isHomeGame}` : this.sql``}

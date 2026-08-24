@@ -10,4 +10,6 @@ export interface GetGamesRequestDto extends PaginationQueryParams {
     status?: GameStatus;
     isHomeGame?: boolean;
     isNeutralGround?: boolean;
+    hasAccountAttended?: boolean;
+    hasAccountStarred?: boolean;
 }

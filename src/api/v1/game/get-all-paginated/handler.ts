@@ -24,10 +24,11 @@ export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesReque
         this.paginationService.validateQueryParams(dto);
         const paginationParams = this.getPaginationParams(dto);
 
-        const orderedGames = await this.gameService.getGamesPaginated(paginationParams);
+        const accountId = requireNonNull(authContext.account).id;
+
+        const orderedGames = await this.gameService.getGamesPaginated(paginationParams, accountId);
         const responseItems: UserBasicGameDto[] = await this.apiHelperService.getOrderedBasicGameDtos(orderedGames);
 
-        const accountId = requireNonNull(authContext.account).id;
         const gameIds = orderedGames.map(item => item.id);
 
         const { attended, starred } = await promiseAllObject({
@@ -91,6 +92,14 @@ export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesReque
                 params.isNeutralGround = dto.isNeutralGround;
             }
 
+            if (isDefined(dto.hasAccountAttended)) {
+                params.hasAccountAttended = dto.hasAccountAttended;
+            }
+
+            if (isDefined(dto.hasAccountStarred)) {
+                params.hasAccountStarred = dto.hasAccountStarred;
+            }
+
             return params;
         }
 
@@ -134,6 +143,14 @@ export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesReque
 
         if (isDefined(oldParams.isNeutralGround)) {
             newParams.isNeutralGround = oldParams.isNeutralGround;
+        }
+
+        if (isDefined(oldParams.hasAccountAttended)) {
+            newParams.hasAccountAttended = oldParams.hasAccountAttended;
+        }
+
+        if (isDefined(oldParams.hasAccountStarred)) {
+            newParams.hasAccountStarred = oldParams.hasAccountStarred;
         }
 
         return this.paginationService.encode(newParams);

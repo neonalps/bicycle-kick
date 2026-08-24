@@ -35,6 +35,8 @@ export class GetGamesPaginatedRouteProvider implements RouteProvider<GetGamesReq
                     seasonId: { type: 'string' },
                     isHomeGame: { type: 'boolean' },
                     isNeutralGround: { type: 'boolean' },
+                    hasAccountAttended: { type: 'boolean' },
+                    hasAccountStarred: { type: 'boolean' },
                     ...PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES,
                 },
                 additionalProperties: false,

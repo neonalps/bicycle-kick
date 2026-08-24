@@ -4,7 +4,7 @@ import { validateNotNull } from "@src/util/validation";
 import { GetSeasonGamesPaginationParams, SeasonService } from "@src/module/season/service";
 import { CreateGameRequestDto } from "@src/model/external/dto/create-game-request";
 import { QueryOptions } from "@src/model/internal/query-options";
-import { ClubId, DateString, GameId, PersonId } from "@src/util/domain-types";
+import { AccountId, ClubId, DateString, GameId, PersonId } from "@src/util/domain-types";
 import { PaginationParams, SortOrder } from "@src/module/pagination/constants";
 import { RefereeRole } from "@src/model/external/dto/referee-role";
 import { UpdateGameRequestDto } from "@src/model/external/dto/update-game-request";
@@ -20,6 +20,8 @@ export interface GetGamesPaginationParams extends PaginationParams<DateString> {
     status?: GameStatus;
     isHomeGame?: boolean;
     isNeutralGround?: boolean;
+    hasAccountAttended?: boolean;
+    hasAccountStarred?: boolean;
 }
 
 export class GameService {
@@ -141,13 +143,13 @@ export class GameService {
         return await this.mapper.getPreviousGames(from, take, queryOptions);
     }
 
-    async getGamesPaginated(params: GetGamesPaginationParams): Promise<Game[]> {
+    async getGamesPaginated(params: GetGamesPaginationParams, accountId: AccountId): Promise<Game[]> {
         validateNotNull(params, "params");
         validateNotNull(params.limit, "params.limit");
         validateNotNull(params.order, "params.order");
         validateNotNull(params.lastSeen, "params.lastSeen");
 
-        return await this.mapper.getGamesPaginated(params);
+        return await this.mapper.getGamesPaginated(params, accountId);
     }
 
     async getLastFinishedGames(

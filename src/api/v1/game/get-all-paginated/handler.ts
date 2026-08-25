@@ -2,6 +2,7 @@ import { GetGamesRequestDto } from "@src/model/external/dto/get-games-request";
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
 import { UserBasicGameDto } from "@src/model/external/dto/user-basic-game";
 import { ApiHelperService } from "@src/module/api-helper/service";
+import { CompetitionService } from "@src/module/competition/service";
 import { GameAttendedService } from "@src/module/game-attended/service";
 import { GameStarService } from "@src/module/game-star/service";
 import { GameService, GetGamesPaginationParams } from "@src/module/game/service";
@@ -9,11 +10,13 @@ import { MAX_DATE, MIN_DATE, SortOrder } from "@src/module/pagination/constants"
 import { PaginationService } from "@src/module/pagination/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
 import { isDefined, promiseAllObject, requireNonNull } from "@src/util/common";
+import { CompetitionId } from "@src/util/domain-types";
 
 export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesRequestDto, PaginatedResponseDto<UserBasicGameDto>> {
 
     constructor(
         private readonly apiHelperService: ApiHelperService,
+        private readonly competitionService: CompetitionService,
         private readonly gameService: GameService,
         private readonly gameAttendedService: GameAttendedService,
         private readonly gameStarService: GameStarService,
@@ -24,9 +27,17 @@ export class GetGamesPaginatedRouteHandler implements RouteHandler<GetGamesReque
         this.paginationService.validateQueryParams(dto);
         const paginationParams = this.getPaginationParams(dto);
 
+        // we have to overwrite the competitionId property with the effective competition IDs
+        const clonedParams = { ...paginationParams };
+        if (clonedParams.competitionId) {
+            const deserializedCompetitionIds: CompetitionId[] = clonedParams.competitionId.split(",").map(item => Number(item));
+            const effectiveCompetitionIds = await this.competitionService.getEffectiveCompetitionIds(deserializedCompetitionIds);
+            clonedParams.competitionId = effectiveCompetitionIds.join(",");
+        }
+
         const accountId = requireNonNull(authContext.account).id;
 
-        const orderedGames = await this.gameService.getGamesPaginated(paginationParams, accountId);
+        const orderedGames = await this.gameService.getGamesPaginated(clonedParams, accountId);
         const responseItems: UserBasicGameDto[] = await this.apiHelperService.getOrderedBasicGameDtos(orderedGames);
 
         const gameIds = orderedGames.map(item => item.id);

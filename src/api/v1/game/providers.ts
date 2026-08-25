@@ -27,7 +27,7 @@ import { GetGamesPaginatedRouteProvider } from "./get-all-paginated/route-provid
 
 export function getGameRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
-    const getGamesHandler = new GetGamesPaginatedRouteHandler(services.apiHelperService, services.gameService, services.gameAttendedService, services.gameStarService, services.paginationService);
+    const getGamesHandler = new GetGamesPaginatedRouteHandler(services.apiHelperService, services.competitionService, services.gameService, services.gameAttendedService, services.gameStarService, services.paginationService);
     const getGameByIdHandler = new GetGameByIdRouteHandler(services.apiHelperService, services.gameService);
     const createGameHandler = new CreateGameRouteHandler(services.apiHelperService, services.gameService);
     const deleteGameByIdHandler = new DeleteGameByIdRouteHandler(services.gameService);

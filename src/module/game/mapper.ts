@@ -114,8 +114,8 @@ export class GameMapper {
                 g.*
             from
                 game g
-                ${ needsGameAttendedJoin ? this.sql` right join game_attended ga on ga.game_id = g.id and ga.account_id = ${ accountId }` : this.sql`` }
-                ${ needsGameStarredJoin ? this.sql` right join game_stars gs on gs.game_id = g.id and gs.account_id = ${ accountId }` : this.sql`` }
+                ${ needsGameAttendedJoin ? this.sql` left join game_attended ga on ga.game_id = g.id and ga.account_id = ${ accountId }` : this.sql`` }
+                ${ needsGameStarredJoin ? this.sql` left join game_stars gs on gs.game_id = g.id and gs.account_id = ${ accountId }` : this.sql`` }
             where
                 g.kickoff ${params.order === SortOrder.Ascending ? this.sql`>` : this.sql`<`} ${ params.lastSeen }
                 ${ isDefined(isHomeGame) ? this.sql` and g.is_home_team = ${isHomeGame}` : this.sql``}
@@ -125,6 +125,8 @@ export class GameMapper {
                 ${ seasonIds ? this.sql` and g.season_id in ${ this.sql(seasonIds) }` : this.sql``}
                 ${ tendency ? this.sql` and g.result_tendency = ${tendency}` : this.sql`` }
                 ${ status ? this.sql` and g.status = ${status}` : this.sql`` }
+                ${ needsGameAttendedJoin ? this.sql` and ga.id is ${ params.hasAccountAttended ? this.sql`not` : this.sql`` } null` : this.sql`` }
+                ${ needsGameStarredJoin ? this.sql` and gs.id is ${ params.hasAccountStarred ? this.sql`not` : this.sql`` } null` : this.sql`` }
             order by
                 g.kickoff ${ this.determineSortOrder(params.order) }
             limit

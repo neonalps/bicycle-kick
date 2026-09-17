@@ -762,19 +762,19 @@ export class ApiHelperService {
                 dto.redCard = item.redCard;
             }
 
-            if (item.regulationPenaltiesTaken && item.regulationPenaltiesScored) {
+            if (item.regulationPenaltiesTaken && isDefined(item.regulationPenaltiesScored)) {
                 dto.regulationPenaltiesTaken = [item.regulationPenaltiesTaken, item.regulationPenaltiesScored];
             }
 
-            if (item.regulationPenaltiesFaced && item.regulationPenaltiesSaved) {
+            if (item.regulationPenaltiesFaced && isDefined(item.regulationPenaltiesSaved)) {
                 dto.regulationPenaltiesFaced = [item.regulationPenaltiesFaced, item.regulationPenaltiesSaved];
             }
 
-            if (item.psoPenaltiesTaken && item.psoPenaltiesScored) {
+            if (item.psoPenaltiesTaken && isDefined(item.psoPenaltiesScored)) {
                 dto.psoPenaltiesTaken = [item.psoPenaltiesTaken, item.psoPenaltiesScored];
             }
 
-            if (item.psoPenaltiesFaced && item.psoPenaltiesSaved) {
+            if (item.psoPenaltiesFaced && isDefined(item.psoPenaltiesSaved)) {
                 dto.psoPenaltiesFaced = [item.psoPenaltiesFaced, item.psoPenaltiesSaved];
             }
 

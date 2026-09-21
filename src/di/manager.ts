@@ -179,7 +179,7 @@ export class DependencyManager {
         };
 
         const gameAbsenceMapper = new GameAbsenceMapper(sqlInstance);
-        const gameAbsenceService = new GameAbsenceService(gameAbsenceMapper, competitionService, gameService, statsService);
+        const gameAbsenceService = new GameAbsenceService(gameAbsenceMapper, competitionService, gameService, gameEventService, statsService);
 
         const apiHelperService = new ApiHelperService(
             apiConfig, 

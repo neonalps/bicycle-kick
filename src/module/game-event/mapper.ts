@@ -18,7 +18,8 @@ import { ExpulsionReason } from "@src/model/type/expulsion-reason";
 import { GoalType } from "@src/model/type/goal-type";
 import { PenaltyMissedReason } from "@src/model/type/penalty-missed-reason";
 import { PsoResult } from "@src/model/type/pso-result";
-import { GameId } from "@src/util/domain-types";
+import { GameId, PersonId } from "@src/util/domain-types";
+import { SentOffPerson } from "./service";
 
 export class GameEventMapper {
 
@@ -53,6 +54,57 @@ export class GameEventMapper {
         }
 
         return resultMap;
+    }
+
+    async findSentOffMainPlayers(gameId: GameId): Promise<SentOffPerson[]> {
+        // find all sent-off players
+        const firstResult = await this.sql<{ gamePlayerId: number, sentOffType: GameEventType.YellowRedCard | GameEventType.RedCard }[]>`
+            select
+                ge.affected_player as game_player_id,
+                ge.type as sent_off_type
+            from
+                game_events ge
+            where
+                ge.game_id = ${ gameId } and
+                (ge.type = ${ GameEventType.YellowRedCard } or ge.type = ${ GameEventType.RedCard })
+        `;
+
+        if (firstResult.length === 0) {
+            return [];
+        }
+
+        // check whether they play for main
+        const secondResult = await this.sql<{ gamePlayerId: number, personId: PersonId }[]>`
+            select
+                gp.id as game_player_id,
+                gp.person_id
+            from
+                game_players gp
+            where
+                gp.game_id = ${ gameId } and
+                gp.id in ${ this.sql(firstResult.map(item => item.gamePlayerId)) } and
+                gp.for_main = true
+        `;
+
+        if (secondResult.length === 0) {
+            return [];
+        }
+
+        const sentOffResult: SentOffPerson[] = [];
+
+        for (const resultItem of firstResult) {
+            const matchingForMainItem = secondResult.find(item => item.gamePlayerId === resultItem.gamePlayerId);
+            if (!matchingForMainItem) {
+                continue;
+            }
+
+            sentOffResult.push({
+                personId: matchingForMainItem.personId,
+                sentOffType: resultItem.sentOffType,
+            });
+        }
+
+        return sentOffResult;
     }
 
     private convertToEntity(item: GameEventDaoInterface): GameEvent {

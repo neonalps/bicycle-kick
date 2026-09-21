@@ -1,7 +1,13 @@
 import { GameEvent } from "@src/model/internal/game-event";
 import { GameEventMapper } from "./mapper";
 import { validateNotNull } from "@src/util/validation";
-import { GameId } from "@src/util/domain-types";
+import { GameId, PersonId } from "@src/util/domain-types";
+import { GameEventType } from "@src/model/external/dto/game-event-type";
+
+export type SentOffPerson = {
+    personId: PersonId;
+    sentOffType: GameEventType.YellowRedCard | GameEventType.RedCard;
+}
 
 export class GameEventService {
 
@@ -18,6 +24,12 @@ export class GameEventService {
         }
 
         return await this.mapper.getOrderedEventsForGamesMap(gameIds);
+    }
+
+    async findSentOffMainPlayers(gameId: GameId): Promise<SentOffPerson[]> {
+        validateNotNull(gameId, "gameId");
+
+        return await this.mapper.findSentOffMainPlayers(gameId);
     }
 
 }

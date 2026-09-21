@@ -92,7 +92,7 @@ export class VenueMapper {
 
     async searchForVenueFlavor(parts: string[]): Promise<VenueFlavor[]> {
         const results = await Promise.all(parts.map(part => this.findFlavorByNormalizedSearchValue(part)));
-        const matchedIds = results.flat().map(item => item.id);    
+        const matchedIds = results.flat().map(item => item.id);
         return await this.getMultipleFlavorsByIdsResult(groupByOccurrenceAndGetLargest(matchedIds));
     }
 
@@ -110,7 +110,7 @@ export class VenueMapper {
         return await this.sql<VenueDaoInterface[]>`select * from venue where id in ${ this.sql(ids) }`;
     }
 
-    private async getMultipleFlavorsByIdsResult(ids: number[]): Promise<VenueFlavorDaoInterface[]> {
+    private async getMultipleFlavorsByIdsResult(ids: VenueFlavorId[]): Promise<VenueFlavorDaoInterface[]> {
         return await this.sql<VenueFlavorDaoInterface[]>`select vf.*, v.city from venue_flavor vf left join venue v on vf.venue_id = v.id where vf.id in ${ this.sql(ids) }`;
     }
 

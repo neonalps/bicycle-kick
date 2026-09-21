@@ -1,8 +1,7 @@
 import { Sql } from "@src/db";
-import { CreateGameAbsence } from "@src/model/internal/create-game-absence";
 import { GameAbsence } from "@src/model/internal/game-absence";
 import { GameAbsenceDaoInterface } from "@src/model/internal/interface/game-absence.interface";
-import { CompetitionId, GameAbsenceId, GameId, PersonId, SeasonId } from "@src/util/domain-types";
+import { CompetitionId, GameId, PersonId, SeasonId } from "@src/util/domain-types";
 import { GameAbsenceType } from "@src/model/type/game-absence";
 import { OmitStrict } from "@src/util/types";
 import { StoreGameAbsenceDto } from "@src/model/external/dto/store-game-absence";
@@ -40,7 +39,7 @@ export class GameAbsenceMapper {
         }
     
         return resultMap;
-    }
+    } 
 
     async findYellowCardSuspensionsForCompetition(potentiallySuspendedPersons: PersonId[], relevantCompetitionIds: CompetitionId[], seasonId: SeasonId): Promise<GameAbsence[]> {
         const result = await this.sql<GameAbsenceDaoInterface[]>`

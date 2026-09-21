@@ -1,5 +1,5 @@
 import { GameAbsenceId, GameId, PersonId } from "@src/util/domain-types";
-import { GameAbsenceReason, GameAbsenceType } from "../type/game-absence";
+import { GameAbsenceReason, GameAbsenceType } from "@src/model/type/game-absence";
 
 export interface GameAbsence {
     id: GameAbsenceId;

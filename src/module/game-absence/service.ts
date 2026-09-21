@@ -9,6 +9,7 @@ import { isDefined, promiseAllObject } from "@src/util/common";
 import { GameAbsenceReason, GameAbsenceType } from "@src/model/type/game-absence";
 import { PersonSum, StatsService } from "@src/module/stats/service";
 import { StoreGameAbsenceDto } from "@src/model/external/dto/store-game-absence";
+import { GameEventService } from "@src/module/game-event/service";
 
 export type PotentialGameAbsence = OmitStrict<GameAbsence, 'id'>;
 export type YellowCardSuspensionSequence = number[];
@@ -19,6 +20,7 @@ export class GameAbsenceService {
         private readonly mapper: GameAbsenceMapper,
         private readonly competitionService: CompetitionService,
         private readonly gameService: GameService,
+        private readonly gameEventService: GameEventService,
         private readonly statsService: StatsService,
     ) {}
 
@@ -58,7 +60,12 @@ export class GameAbsenceService {
             relevantCompetitionIds: this.competitionService.getRelevantCompetitionIds(game.competitionId),
         });
 
-        const { previousGameArray: [previousGame], competitionYellowCards } = await promiseAllObject({
+        const { previousCompetitionGames: [previousCompetitionGame], previousGameArray: [previousGame], competitionYellowCards } = await promiseAllObject({
+            previousCompetitionGames: this.gameService.getPreviousGames(new Date(game.kickoff), 1, {
+                onlyForMain: true,
+                onlyCompetitions: relevantCompetitionIds,
+                onlyActiveSquadMembers: true,
+            }),
             previousGameArray: this.gameService.getPreviousGames(new Date(game.kickoff), 1, {
                 // we do not filter for competition here, as we really want the previous game in this season
                 onlySeasons: [game.seasonId],
@@ -86,12 +93,25 @@ export class GameAbsenceService {
             potentialGameAbsences.push(...atRiskPersons.map(item => this.convertToPotentialYellowCardGameAbsence(item, game.id, GameAbsenceType.AtRisk)));
         }
 
+        // if in the previous competition game someone was sent of with a yellow-red card, we suggest they are suspended
+        if (previousCompetitionGame) {
+            const sentOffMainPlayers = await this.gameEventService.findSentOffMainPlayers(previousCompetitionGame.id);
+            potentialGameAbsences.push(...sentOffMainPlayers.map((sentOffPlayer, idx) => ({ 
+                personId: sentOffPlayer.personId,
+                gameId: gameId,
+                sortOrder: idx,
+                absenceType: GameAbsenceType.Suspended,
+                absenceReason: sentOffPlayer.sentOffType as unknown as GameAbsenceReason,
+             })));
+        }
+
         // get all injured players from the last game
         // get all exempt players from the last game
         const previousGameAbsences = await this.getForGame(previousGame.id);
         potentialGameAbsences.push(...previousGameAbsences.filter(absence => [GameAbsenceType.Injured, GameAbsenceType.Exempt].includes(absence.absenceType)));
 
-        return potentialGameAbsences;
+        // re-assign the sort index again since the above logic does not know the sort order
+        return potentialGameAbsences.map((item, idx) => ({ ...item, sortOrder: idx }));
     }
 
     private findPlayersForSuspensionSequenceOffset(yellowCardPersonList: PersonSum[], suspensionSequence: YellowCardSuspensionSequence, targetOffset = 0): PersonSum[] {

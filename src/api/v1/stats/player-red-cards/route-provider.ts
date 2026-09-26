@@ -34,7 +34,7 @@ export class GetPlayerRedCardsStatsRouteProvider implements RouteProvider<GetPla
         return {
             name: 'GetPlayerRedCardsStats',
             method: 'GET',
-            path: '/api/v1/stats/player-yellow-red-cards',
+            path: '/api/v1/stats/player-red-cards',
             schema,
             handler: this.handler,
             authenticated: true,

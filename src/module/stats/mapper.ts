@@ -4,7 +4,9 @@ import { QueryOptions } from "@src/model/internal/query-options";
 import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem, ShirtDistributionItem } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
 import { CompetitionId, PersonId } from "@src/util/domain-types";
-import { GetPlayerAppearancesPaginationParams, GetTopScorerPaginationParams, PersonSum, RankedValuePaginationLastSeen } from "./service";
+import { GetPlayerAppearancesPaginationParams, GetTopScorerPaginationParams, GetCardsPaginationParams, PersonSum, RankedValuePaginationLastSeen } from "./service";
+import { RowList } from "postgres";
+import { PaginationParams } from "../pagination/constants";
 
 type PersonSumDaoInterface = {
     personId: PersonId;
@@ -218,11 +220,14 @@ export class StatsMapper {
         return result.map(item => ( { shirt: item.shirt, count: Number(item.shirtCount) } ));
     }
 
-    async getOrderedYellowCardsPlayerSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
-        const result = await this.sql<PersonSumDaoInterface[]>`
+    async getOrderedYellowCardsPlayerSum(queryOptions: QueryOptions = {}, params: GetCardsPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {
+        const result = await this.sql<RankedResultItemDaoInterface[]>`
             select
+                rank() over (
+                    order by sum(case when gp.yellow_card = true and gp.red_card = false and gp.yellow_red_card = false then 1 else 0 end) desc
+                ) ranking_position,
                 p.id as person_id,
-                sum(case when gp.yellow_card = true and gp.red_card = false and gp.yellow_red_card = false then 1 else 0 end) as sum_value
+                sum(case when gp.yellow_card = true and gp.red_card = false and gp.yellow_red_card = false then 1 else 0 end) as value
             from 
                 game_players gp left join
                 game g on gp.game_id = g.id left join
@@ -236,18 +241,109 @@ export class StatsMapper {
                 ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` and sq.season_id = g.season_id and (sq."end" is null or sq."end" > now())` : this.sql``}                
             group by
                 p.id
+            ${isDefined(params.lastSeen) ? this.sql`having (sum(case when gp.yellow_card = true and gp.red_card = false and gp.yellow_red_card = false then 1 else 0 end), p.id) < (${ params.lastSeen.value }, ${ params.lastSeen.personId })` : this.sql``}
             order by 
-                sum_value desc
+                sum(case when gp.yellow_card = true and gp.red_card = false and gp.yellow_red_card = false then 1 else 0 end) desc
+            limit ${params.limit}
         `;
 
         if (result.length === 0) {
             return [];
         }
 
-        return result.map(item => ({
-            personId: item.personId,
-            sum: Number(item.sumValue),
-        }));
+        const convertedResult: RankedValueResultItem[] = [];
+
+        const displayRankOffset = params.lastSeen.rankOffset.display;
+        for (const item of result) {
+            const currentItemValue = Number(item.value);            
+            const isValueSameAsLastSeen = currentItemValue === params.lastSeen.value && params.lastSeen.value > 0;
+            const currentRankValue = isValueSameAsLastSeen ? displayRankOffset : Number(item.rankingPosition) + params.lastSeen.rankOffset.effective;
+
+            convertedResult.push({
+                rank: currentRankValue,
+                personId: item.personId,
+                value: currentItemValue,
+            })
+        }
+        return convertedResult;
+    }
+
+    async getOrderedYellowRedCardsPlayerSum(queryOptions: QueryOptions = {}, params: GetCardsPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {
+        const result = await this.sql<RankedResultItemDaoInterface[]>`
+            select
+                rank() over (
+                    order by sum(case when gp.yellow_red_card = true then 1 else 0 end) desc
+                ) ranking_position,
+                p.id as person_id,
+                sum(case when gp.yellow_red_card = true then 1 else 0 end) as value
+            from 
+                game_players gp left join
+                game g on gp.game_id = g.id left join
+                person p on gp.person_id = p.id
+                ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` left join squad sq on sq.person_id = gp.person_id` : this.sql``}
+            where
+                1 = 1
+                ${queryOptions.onlyForMain !== undefined ? this.sql` and gp.for_main = ${ queryOptions.onlyForMain }` : this.sql``}
+                ${queryOptions.onlySeasons !== undefined ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+                ${queryOptions.onlyCompetitions !== undefined ? this.sql` and g.competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
+                ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` and sq.season_id = g.season_id and (sq."end" is null or sq."end" > now())` : this.sql``}                
+            group by
+                p.id
+            ${isDefined(params.lastSeen) ? this.sql`having (sum(case when gp.yellow_red_card = true then 1 else 0 end), p.id) < (${ params.lastSeen.value }, ${ params.lastSeen.personId })` : this.sql``}
+            order by 
+                sum(case when gp.yellow_red_card = true then 1 else 0 end) desc
+            limit ${params.limit}
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        const convertedResult: RankedValueResultItem[] = [];
+
+        const displayRankOffset = params.lastSeen.rankOffset.display;
+        for (const item of result) {
+            const currentItemValue = Number(item.value);            
+            const isValueSameAsLastSeen = currentItemValue === params.lastSeen.value && params.lastSeen.value > 0;
+            const currentRankValue = isValueSameAsLastSeen ? displayRankOffset : Number(item.rankingPosition) + params.lastSeen.rankOffset.effective;
+
+            convertedResult.push({
+                rank: currentRankValue,
+                personId: item.personId,
+                value: currentItemValue,
+            })
+        }
+        return convertedResult;
+    }
+
+    async getOrderedRedCardsPlayerSum(queryOptions: QueryOptions = {}, params: GetCardsPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {
+        const result = await this.sql<RankedResultItemDaoInterface[]>`
+            select
+                rank() over (
+                    order by sum(case when gp.red_card = true then 1 else 0 end) desc
+                ) ranking_position,
+                p.id as person_id,
+                sum(case when gp.red_card = true then 1 else 0 end) as value
+            from 
+                game_players gp left join
+                game g on gp.game_id = g.id left join
+                person p on gp.person_id = p.id
+                ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` left join squad sq on sq.person_id = gp.person_id` : this.sql``}
+            where
+                1 = 1
+                ${queryOptions.onlyForMain !== undefined ? this.sql` and gp.for_main = ${ queryOptions.onlyForMain }` : this.sql``}
+                ${queryOptions.onlySeasons !== undefined ? this.sql` and g.season_id in ${ this.sql(queryOptions.onlySeasons) }` : this.sql``}
+                ${queryOptions.onlyCompetitions !== undefined ? this.sql` and g.competition_id in ${ this.sql(queryOptions.onlyCompetitions) }` : this.sql``}
+                ${queryOptions.onlyActiveSquadMembers !== undefined ? this.sql` and sq.season_id = g.season_id and (sq."end" is null or sq."end" > now())` : this.sql``}                
+            group by
+                p.id
+            ${isDefined(params.lastSeen) ? this.sql`having (sum(case when gp.red_card = true then 1 else 0 end), p.id) < (${ params.lastSeen.value }, ${ params.lastSeen.personId })` : this.sql``}
+            order by 
+                sum(case when gp.red_card = true then 1 else 0 end) desc
+            limit ${params.limit}
+        `;
+
+        return this.convertRankedValueResult(result, params);
     }
 
     async getOrderedYellowCardsManagerSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {
@@ -350,6 +446,29 @@ export class StatsMapper {
         }
 
         return result.map(item => item.effectiveCompetitionId);
+    }
+
+    private convertRankedValueResult(result: RowList<RankedResultItemDaoInterface[]>, params: PaginationParams<RankedValuePaginationLastSeen>) {
+        if (result.length === 0) {
+            return [];
+        }
+
+        const convertedResult: RankedValueResultItem[] = [];
+        const displayRankOffset = params.lastSeen.rankOffset.display;
+
+        for (const item of result) {
+            const currentItemValue = Number(item.value);            
+            const isValueSameAsLastSeen = currentItemValue === params.lastSeen.value && params.lastSeen.value > 0;
+            const currentRankValue = isValueSameAsLastSeen ? displayRankOffset : Number(item.rankingPosition) + params.lastSeen.rankOffset.effective;
+
+            convertedResult.push({
+                rank: currentRankValue,
+                personId: item.personId,
+                value: currentItemValue,
+            })
+        }
+
+        return convertedResult;
     }
 
     private convertPlayerPerformanceStatsToEntity(item: PlayerPerformanceStatsDaoInterface): PlayerSeasonCompetitionStats {

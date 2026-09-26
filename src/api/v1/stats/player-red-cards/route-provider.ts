@@ -1,17 +1,17 @@
 import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { requireNonNull } from "@src/util/common";
 import { Capability } from "@src/model/internal/capabilities";
-import { GetPlayerYellowCardsStatsRouteHandler } from "./handler";
+import { GetPlayerRedCardsStatsRouteHandler } from "./handler";
 import { PaginatedResponseDto } from "@src/model/external/dto/paginated-response";
 import { PAGINATED_REQUEST_QUERYSTRING_SCHEMA_PROPERTIES } from "@src/module/pagination/constants";
 import { GetPlayerCardsRequestDto } from "@src/model/external/dto/get-player-cards-request";
 import { GetPlayerCardsResponseDto } from "@src/model/external/dto/get-player-cards-response";
 
-export class GetPlayerYellowCardsStatsRouteProvider implements RouteProvider<GetPlayerCardsRequestDto, PaginatedResponseDto<GetPlayerCardsResponseDto>> {
+export class GetPlayerRedCardsStatsRouteProvider implements RouteProvider<GetPlayerCardsRequestDto, PaginatedResponseDto<GetPlayerCardsResponseDto>> {
 
-    private readonly handler: GetPlayerYellowCardsStatsRouteHandler;
+    private readonly handler: GetPlayerRedCardsStatsRouteHandler;
 
-    constructor(handler: GetPlayerYellowCardsStatsRouteHandler) {
+    constructor(handler: GetPlayerRedCardsStatsRouteHandler) {
         this.handler = requireNonNull(handler);
     }
 
@@ -32,9 +32,9 @@ export class GetPlayerYellowCardsStatsRouteProvider implements RouteProvider<Get
         };
 
         return {
-            name: 'GetPlayerYellowCardsStats',
+            name: 'GetPlayerRedCardsStats',
             method: 'GET',
-            path: '/api/v1/stats/player-yellow-cards',
+            path: '/api/v1/stats/player-yellow-red-cards',
             schema,
             handler: this.handler,
             authenticated: true,

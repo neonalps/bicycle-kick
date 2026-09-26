@@ -13,7 +13,7 @@ import { AuthenticationContext, RouteHandler } from "@src/router/types";
 import { ArrayNonEmpty, isDefined, splitNonEmptyArrayString } from "@src/util/common";
 import { CompetitionId } from "@src/util/domain-types";
 
-export class GetPlayerYellowCardsStatsRouteHandler implements RouteHandler<GetPlayerCardsRequestDto, PaginatedResponseDto<GetPlayerCardsResponseDto>> {
+export class GetPlayerRedCardsStatsRouteHandler implements RouteHandler<GetPlayerCardsRequestDto, PaginatedResponseDto<GetPlayerCardsResponseDto>> {
 
     constructor(
         private readonly apiHelperService: ApiHelperService,
@@ -31,7 +31,7 @@ export class GetPlayerYellowCardsStatsRouteHandler implements RouteHandler<GetPl
 
         const paginationParams = this.getPaginationParams(request);
 
-        const paginatedResult = await this.statsService.getOrderedYellowCardsPlayerSum(
+        const paginatedResult = await this.statsService.getOrderedRedCardsPlayerSum(
             {
                 onlyForMain: paginationParams.forMain,
                 onlyCompetitions: isDefined(paginationParams.competitionIds) ? await this.competitionService.getEffectiveCompetitionIds(paginationParams.competitionIds) : undefined,

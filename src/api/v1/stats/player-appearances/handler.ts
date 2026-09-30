@@ -9,7 +9,7 @@ import { PaginationService } from "@src/module/pagination/service";
 import { GetPlayerAppearancesPaginationParams, RankedValuePaginationLastSeen, StatsService } from "@src/module/stats/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
 import { ArrayNonEmpty, isDefined, splitNonEmptyArrayString } from "@src/util/common";
-import { CompetitionId } from "@src/util/domain-types";
+import { CompetitionId, SeasonId } from "@src/util/domain-types";
 
 export class GetPlayerAppearanceStatsRouteHandler implements RouteHandler<GetPlayerAppearancesRequestDto, PaginatedResponseDto<GetPlayerAppearancesResponseDto>> {
 
@@ -33,6 +33,7 @@ export class GetPlayerAppearanceStatsRouteHandler implements RouteHandler<GetPla
             {
                 onlyForMain: paginationParams.forMain,
                 onlyCompetitions: isDefined(paginationParams.competitionIds) ? await this.competitionService.getEffectiveCompetitionIds(paginationParams.competitionIds) : undefined,
+                onlySeasons: isDefined(paginationParams.seasonIds) ? paginationParams.seasonIds : undefined,
             }, paginationParams);
         const responseItems = await this.apiHelperService.convertRankedPlayerResultItemToDto([...paginatedResult]);
 
@@ -57,6 +58,10 @@ export class GetPlayerAppearanceStatsRouteHandler implements RouteHandler<GetPla
 
             if (isDefined(dto.competitions)) {
                 params.competitionIds = splitNonEmptyArrayString(dto.competitions).map(item => Number(item)) as ArrayNonEmpty<CompetitionId>;
+            }
+
+            if (isDefined(dto.seasons)) {
+                params.seasonIds = splitNonEmptyArrayString(dto.seasons).map(item => Number(item)) as ArrayNonEmpty<SeasonId>;
             }
 
             return params;
@@ -86,6 +91,10 @@ export class GetPlayerAppearanceStatsRouteHandler implements RouteHandler<GetPla
 
         if (isDefined(oldParams.competitionIds)) {
             newParams.competitionIds = oldParams.competitionIds;
+        }
+
+        if (isDefined(oldParams.seasonIds)) {
+            newParams.seasonIds = oldParams.seasonIds;
         }
 
         return this.paginationService.encode(newParams);

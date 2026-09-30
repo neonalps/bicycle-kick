@@ -8,10 +8,10 @@ import { ApiHelperService } from "@src/module/api-helper/service";
 import { CompetitionService } from "@src/module/competition/service";
 import { MAX_NUMBER, RankOffset, SortOrder } from "@src/module/pagination/constants";
 import { PaginationService } from "@src/module/pagination/service";
-import { GetTopScorerPaginationParams, RankedValuePaginationLastSeen, StatsService } from "@src/module/stats/service";
+import { GetCardsPaginationParams, RankedValuePaginationLastSeen, StatsService } from "@src/module/stats/service";
 import { AuthenticationContext, RouteHandler } from "@src/router/types";
 import { ArrayNonEmpty, isDefined, splitNonEmptyArrayString } from "@src/util/common";
-import { CompetitionId } from "@src/util/domain-types";
+import { CompetitionId, SeasonId } from "@src/util/domain-types";
 
 export class GetPlayerYellowCardsStatsRouteHandler implements RouteHandler<GetPlayerCardsRequestDto, PaginatedResponseDto<GetPlayerCardsResponseDto>> {
 
@@ -35,6 +35,7 @@ export class GetPlayerYellowCardsStatsRouteHandler implements RouteHandler<GetPl
             {
                 onlyForMain: paginationParams.forMain,
                 onlyCompetitions: isDefined(paginationParams.competitionIds) ? await this.competitionService.getEffectiveCompetitionIds(paginationParams.competitionIds) : undefined,
+                onlySeasons: isDefined(paginationParams.seasonIds) ? paginationParams.seasonIds : undefined,
             }, paginationParams);
         const responseItems = await this.apiHelperService.convertRankedPlayerResultItemToDto([...paginatedResult]);
 
@@ -44,13 +45,13 @@ export class GetPlayerYellowCardsStatsRouteHandler implements RouteHandler<GetPl
         }
     }
 
-    private getPaginationParams(dto: GetPlayerGoalsRequestDto): GetTopScorerPaginationParams {
+    private getPaginationParams(dto: GetPlayerGoalsRequestDto): GetCardsPaginationParams {
         if (!dto.nextPageKey) {
             const order: SortOrder = dto.order === SortOrder.Ascending ? SortOrder.Ascending : SortOrder.Descending;
             const limit: number = dto.limit || 30;
             const lastSeen: RankedValuePaginationLastSeen = order === SortOrder.Ascending ? { value: -1, personId: 0, rankOffset: { display: 0, effective: 0 } } : { value: MAX_NUMBER, personId: MAX_NUMBER, rankOffset: { display: 0, effective: 0 } };
 
-            const params: GetTopScorerPaginationParams = {
+            const params: GetCardsPaginationParams = {
                 order,
                 limit,
                 lastSeen,
@@ -61,13 +62,17 @@ export class GetPlayerYellowCardsStatsRouteHandler implements RouteHandler<GetPl
                 params.competitionIds = splitNonEmptyArrayString(dto.competitions).map(item => Number(item)) as ArrayNonEmpty<CompetitionId>;
             }
 
+            if (isDefined(dto.seasons)) {
+                params.seasonIds = splitNonEmptyArrayString(dto.seasons).map(item => Number(item)) as ArrayNonEmpty<SeasonId>;
+            }
+
             return params;
         }
 
-        return this.paginationService.decode<GetTopScorerPaginationParams>(dto.nextPageKey);
+        return this.paginationService.decode<GetCardsPaginationParams>(dto.nextPageKey);
     }
 
-    private buildNextPageKey(items: RankedPersonResultItemDto[], oldParams: GetTopScorerPaginationParams): string | undefined {
+    private buildNextPageKey(items: RankedPersonResultItemDto[], oldParams: GetCardsPaginationParams): string | undefined {
         if (items.length < oldParams.limit) {
             return;
         }
@@ -79,7 +84,7 @@ export class GetPlayerYellowCardsStatsRouteHandler implements RouteHandler<GetPl
             effective: lastElement.rank + items.filter(item => item.value === lastElement.value).length - 1,
         }
 
-        const newParams: GetTopScorerPaginationParams = {
+        const newParams: GetCardsPaginationParams = {
             limit: oldParams.limit,
             order: oldParams.order,
             lastSeen: { value: lastElement.value, personId: lastElement.person.id, rankOffset: rankOffset },
@@ -88,6 +93,10 @@ export class GetPlayerYellowCardsStatsRouteHandler implements RouteHandler<GetPl
 
         if (isDefined(oldParams.competitionIds)) {
             newParams.competitionIds = oldParams.competitionIds;
+        }
+
+        if (isDefined(oldParams.seasonIds)) {
+            newParams.seasonIds = oldParams.seasonIds;
         }
 
         return this.paginationService.encode(newParams);

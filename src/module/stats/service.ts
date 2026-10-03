@@ -3,7 +3,7 @@ import { SeasonService } from "@src/module/season/service";
 import { StatsMapper } from "./mapper";
 import { ArrayNonEmpty, getOrThrow, isDefined, isNotDefined, promiseAllObject, uniqueArrayElements } from "@src/util/common";
 import { validateNotNull } from "@src/util/validation";
-import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem, ShirtDistributionItem } from "@src/model/internal/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem, ShirtDistributionItem, ShirtWornBy } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, PersonId, SeasonId, Shirt } from "@src/util/domain-types";
 import { combinePlayerBaseStats, getEmptyPlayerBaseStats } from "./util";
 import { Competition } from "@src/model/internal/competition";
@@ -77,6 +77,9 @@ export interface PlayerStatsResult {
     goalsAgainstClub?: Map<PersonId, ReadonlyArray<PlayerGoalsAgainstClubStatsItem>>;
     goalTypes?: Map<PersonId, PlayerGoalTypeStatsItem[]>;
 }
+
+export type ShirtWornBySortMode = 'temporal' | 'frequency';
+export const ELIGIBLE_SHIRT_WORN_BY_SORT_MODES = ['temporal', 'frequency'];
 
 export class StatsService {
 
@@ -163,8 +166,11 @@ export class StatsService {
         return await this.mapper.getShirtDistribution(personId);
     }
 
-    async getShirtWornBy(shirt: Shirt): Promise<void> {
+    async getShirtWornBy(shirt: Shirt, sortMode: ShirtWornBySortMode = 'temporal'): Promise<ShirtWornBy[]> {
+        validateNotNull(shirt, "shirt");
+        validateNotNull(sortMode, "sortMode");
 
+        return await this.mapper.getShirtWornBy(shirt, sortMode);
     }
 
     async getOrderedYellowCardsSum(queryOptions: QueryOptions = {}): Promise<PersonSum[]> {

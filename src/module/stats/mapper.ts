@@ -1,10 +1,10 @@
 import { Sql } from "@src/db";
 import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerGoalTypeStatsDaoInterface, PlayerPerformanceStatsDaoInterface, RankedResultItemDaoInterface } from "@src/model/internal/interface/stats-player";
 import { QueryOptions } from "@src/model/internal/query-options";
-import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem, ShirtDistributionItem } from "@src/model/internal/stats-player";
+import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem, ShirtDistributionItem, ShirtWornBy } from "@src/model/internal/stats-player";
 import { ArrayNonEmpty, convertNumberString, isDefined } from "@src/util/common";
-import { CompetitionId, PersonId } from "@src/util/domain-types";
-import { GetPlayerAppearancesPaginationParams, GetTopScorerPaginationParams, GetCardsPaginationParams, PersonSum, RankedValuePaginationLastSeen } from "./service";
+import { CompetitionId, DateString, PersonId, Shirt } from "@src/util/domain-types";
+import { GetPlayerAppearancesPaginationParams, GetTopScorerPaginationParams, GetCardsPaginationParams, PersonSum, RankedValuePaginationLastSeen, ShirtWornBySortMode } from "./service";
 import { RowList } from "postgres";
 import { PaginationParams } from "../pagination/constants";
 
@@ -218,6 +218,42 @@ export class StatsMapper {
         }
 
         return result.map(item => ( { shirt: item.shirt, count: Number(item.shirtCount) } ));
+    }
+
+    async getShirtWornBy(shirt: Shirt, sortMode: ShirtWornBySortMode = 'temporal'): Promise<ShirtWornBy[]> {
+        const result = await this.sql<Array<{ 
+            personId: PersonId; 
+            firstWorn: DateString,
+            lastWorn: DateString, 
+            wornCount: string,
+         }>>`
+            select
+                gp.person_id,
+                min(g.kickoff) as first_worn,
+                max(g.kickoff) as last_worn,
+                count(g.kickoff) as worn_count
+            from
+                game_players gp left join
+                game g on g.id = gp.game_id
+            where
+                gp.for_main = true
+                and gp.shirt = ${ shirt }
+            group by
+                gp.person_id
+            order by 
+                ${ sortMode === 'temporal' ? this.sql('first_worn') : this.sql('worn_count') } desc
+        `;
+
+        if (result.length === 0) {
+            return [];
+        }
+
+        return result.map(item => ({
+            personId: item.personId,
+            firstWorn: new Date(item.firstWorn),
+            lastWorn: new Date(item.lastWorn),
+            wornCount: Number(item.wornCount),
+        }));
     }
 
     async getOrderedYellowCardsPlayerSum(queryOptions: QueryOptions = {}, params: GetCardsPaginationParams): Promise<ReadonlyArray<RankedValueResultItem>> {

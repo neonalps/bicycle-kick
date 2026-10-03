@@ -17,9 +17,10 @@ export class GetShirtStatsRouteProvider implements RouteProvider<GetShirtStatsRe
         const schema: RequestSchema = {
             querystring: {
                 type: 'object',
-                required: [],
+                required: ['shirt'],
                 properties: {
                     shirt: { type: 'string' },
+                    sortMode: { type: 'string' },
                 },
                 additionalProperties: false,
             }

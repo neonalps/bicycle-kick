@@ -61,7 +61,7 @@ export class PersonService {
         return person;
     }
 
-    async getMapByIds(ids: PersonId[]): Promise<Map<number, Person>> {
+    async getMapByIds(ids: PersonId[]): Promise<Map<PersonId, Person>> {
         validateNotNull(ids, "ids");
         if (ids.length === 0) {
             return new Map();

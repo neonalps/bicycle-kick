@@ -1,5 +1,5 @@
-import { PersonResultItemDto } from "./player-competition-stats";
+import { ShirtWornByDto } from "./shirt-worn-by";
 
 export interface GetShirtStatsResponseDto {
-    wornBy: Array<PersonResultItemDto>;
+    wornBy: Array<ShirtWornByDto>;
 }

@@ -1,4 +1,4 @@
-import { ClubId, CompetitionId, PersonId, SeasonId } from "@src/util/domain-types";
+import { ClubId, CompetitionId, PersonId, SeasonId, Shirt } from "@src/util/domain-types";
 import { Competition } from "./competition";
 import { Season } from "./season";
 import { Club } from "./club";
@@ -62,8 +62,15 @@ export interface PlayerGoalsAgainstClubStatsItem {
 }
 
 export interface ShirtDistributionItem {
-    shirt: number;
+    shirt: Shirt;
     count: number;
+}
+
+export interface ShirtWornBy {
+    personId: PersonId;
+    firstWorn: Date;
+    lastWorn: Date;
+    wornCount: number;
 }
 
 export interface PlayerGoalTypeStatsItem {

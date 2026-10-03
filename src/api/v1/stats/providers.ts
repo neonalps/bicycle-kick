@@ -23,7 +23,7 @@ export function getStatsRouteProviders(services: ApplicationServices): RouteProv
     const getPlayerYellowCardsStatsRouteHandler = new GetPlayerYellowCardsStatsRouteHandler(services.apiHelperService, services.competitionService, services.paginationService, services.statsService);
     const getPlayerYellowRedCardsStatsRouteHandler = new GetPlayerYellowRedCardsStatsRouteHandler(services.apiHelperService, services.competitionService, services.paginationService, services.statsService);
     const getPlayerRedCardsStatsRouteHandler = new GetPlayerRedCardsStatsRouteHandler(services.apiHelperService, services.competitionService, services.paginationService, services.statsService);
-    const getOverallShirtStatsRouteHandler = new GetShirtStatsRouteHandler(services.statsService);
+    const getOverallShirtStatsRouteHandler = new GetShirtStatsRouteHandler(services.apiHelperService, services.personService, services.statsService);
 
     return [
         new GetApplicationStatsRouteProvider(getOverallApplicationStatsRouteHandler),

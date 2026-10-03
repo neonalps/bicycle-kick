@@ -58,7 +58,7 @@ import { GameStarService } from "@src/module/game-star/service";
 import { BasicVenueDto } from "@src/model/external/dto/basic-venue";
 import { TacticalFormation } from "@src/model/external/dto/tactical-formation";
 import { GoalTypeStatsItemDto, PlayerCompetitionStatsItemDto, PlayerGoalsAgainstClubStatsItemDto, PlayerSeasonStatsItemDto, PlayerStatsItemDto } from "@src/model/external/dto/stats-player";
-import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem } from "@src/model/internal/stats-player";
+import { PlayerBaseStats, PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, RankedValueResultItem, ShirtWornBy } from "@src/model/internal/stats-player";
 import { ClubId, CompetitionId, GameId, PersonId, SeasonId } from "@src/util/domain-types";
 import { OverallPosition } from "@src/model/type/position-overall";
 import { GameManagerDto } from "@src/model/external/dto/game-manager";
@@ -93,6 +93,7 @@ import { GameAbsenceService, PotentialGameAbsence } from "@src/module/game-absen
 import { PotentialGameAbsenceDto } from "@src/model/external/dto/game-absence-potential";
 import { PersonContract } from "@src/model/internal/person-contract";
 import { ContractForPersonDto } from "@src/model/external/dto/person-contract";
+import { ShirtWornByDto } from "@src/model/external/dto/shirt-worn-by";
 
 export class ApiHelperService {
 
@@ -1055,6 +1056,18 @@ export class ApiHelperService {
                 gameMinuteFormat: account.gameMinuteFormat,
             }),
         };
+    }
+
+    convertShirtWornBy(wornBy: ShirtWornBy[], personMap: Map<PersonId, Person>): ShirtWornByDto[] {
+        return wornBy.map(item => {
+            const person = getOrThrow(personMap, item.personId, `failed to find person with ID ${item.personId} in map`);
+            return {
+                person: this.convertPersonToBasicDto(person),
+                firstWorn: item.firstWorn.toISOString(),
+                lastWorn: item.lastWorn.toISOString(),
+                wornCount: item.wornCount,
+            };
+        });
     }
 
     convertProfileSettingsToDto(publicId: string, profileSettings: ProfileSettings): ProfileSettingsDto {

@@ -1,3 +1,3 @@
 export interface GetCompetitionByIdRequestDto {
-    id: string;
+    competitionId: string;
 }

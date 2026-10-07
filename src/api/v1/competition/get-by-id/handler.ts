@@ -16,7 +16,7 @@ export class GetCompetitionByIdRouteHandler implements RouteHandler<GetCompetiti
     ) {}
 
     public async handle(_: AuthenticationContext, dto: GetCompetitionByIdRequestDto): Promise<CompetitionResponseDto> {
-        const competitionId: CompetitionId = Number(dto.id);
+        const competitionId: CompetitionId = Number(dto.competitionId);
 
         const { competition, titles } = await promiseAllObject({
             competition: this.competitionService.requireById(competitionId),

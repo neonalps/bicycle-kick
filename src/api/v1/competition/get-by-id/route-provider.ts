@@ -13,7 +13,16 @@ export class GetCompetitionByIdRouteProvider implements RouteProvider<GetCompeti
     }
 
     provide(): RouteDefinition<GetCompetitionByIdRequestDto, CompetitionResponseDto> {
-        const schema: RequestSchema = {};
+        const schema: RequestSchema = {
+            params: {
+                type: 'object',
+                required: [ 'competitionId' ],
+                properties: {
+                    competitionId: { type: 'string' },
+                },
+                additionalProperties: false,
+            },
+        };
 
         return {
             name: 'GetCompetitionById',

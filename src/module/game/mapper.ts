@@ -77,10 +77,10 @@ export class GameMapper {
         return result.map(item => this.convertToEntity(item));
     }
 
-    async getMapByIds(ids: number[]): Promise<Map<number, Game>> {
+    async getMapByIds(ids: GameId[]): Promise<Map<GameId, Game>> {
         const result = await this.getMultipleByIdsResult(ids);
 
-        const resultMap = new Map<number, Game>();
+        const resultMap = new Map<GameId, Game>();
         result.forEach(resultItem => {
             const entityItem = this.convertToEntity(resultItem);
             resultMap.set(entityItem.id, entityItem);

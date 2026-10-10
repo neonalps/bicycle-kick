@@ -919,6 +919,9 @@ export class ApiHelperService {
         const seasonIds = uniqueArrayElements(titles.map(item => item.seasonId));
         const seasonMap = await this.seasonService.getMapByIds(seasonIds);
 
+        const victoryGameIds = titles.map(item => item.victoryGame).filter(item => item !== undefined);
+        const victoryGamesMap = await this.gameService.getMapByIds(victoryGameIds);
+
         return titles.map(item => {
             const result: CompetitionTitleDto = {
                 id: item.id,
@@ -931,7 +934,7 @@ export class ApiHelperService {
             }
             
             if (isDefined(item.victoryGame)) {
-                result.victoryGameId = item.victoryGame;
+                // TODO victory game here
             }
 
             return result;
@@ -964,7 +967,8 @@ export class ApiHelperService {
             }
             
             if (isDefined(item.victoryGame)) {
-                result.victoryGameId = item.victoryGame;
+                // TODO victory game here
+                //result.victoryGame = item.victoryGame;
             }
 
             return result;

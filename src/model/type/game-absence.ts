@@ -11,11 +11,14 @@ export enum GameAbsenceReason {
     // injury
     Ankle = "ankle",
     Back = "back",
+    BrokenFoot = "brokenFoot",
     CruciaLigament = "cruciateLigamentRupture",
     Muscle = "muscle",
+    PubicBone = "pubicBone",
     Shoulder = "shoulder",
     Thigh = "thigh",
     // suspension
     YellowCard = "yellowCard",
+    YellowRedCard = "yellowRedCard",
     RedCard = "redCard",
 }

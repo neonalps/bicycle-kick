@@ -45,13 +45,22 @@ export class GameService {
         return game;
     }
 
-    async getMultipleByIds(ids: number[]): Promise<Game[]> {
+    async getMultipleByIds(ids: GameId[]): Promise<Game[]> {
         validateNotNull(ids, "ids");
         if (ids.length === 0) {
             return [];
         }
 
         return await this.mapper.getMultipleByIds(ids);
+    }
+
+    async getMapByIds(ids: GameId[]): Promise<Map<GameId, Game>> {
+        validateNotNull(ids, "ids");
+        if (ids.length === 0) {
+            return new Map();
+        }
+
+        return await this.mapper.getMapByIds(ids);
     }
 
     async getOrderedIdsForSeasonPaginated(seasonId: number, params: GetSeasonGamesPaginationParams): Promise<number[]> {

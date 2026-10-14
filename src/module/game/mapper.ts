@@ -100,7 +100,7 @@ export class GameMapper {
     async getGamesPaginated(params: GetGamesPaginationParams, accountId: AccountId): Promise<Game[]> {
         const competitionIds = params.competitionId ? params.competitionId.split(",") : undefined;
         const opponentIds = params.opponentId ? params.opponentId.split(",") : undefined;
-        const tendency = params.tendency;
+        const tendencies = params.tendency ? params.tendency.split(",") : undefined;
         const status = params.status;
         const isHomeGame = params.isHomeGame;
         const isNeutralGround = params.isNeutralGround;
@@ -123,7 +123,7 @@ export class GameMapper {
                 ${ competitionIds ? this.sql` and g.competition_id in ${ this.sql(competitionIds) }` : this.sql``}
                 ${ opponentIds ? this.sql` and g.opponent_id in ${ this.sql(opponentIds) }` : this.sql``}
                 ${ seasonIds ? this.sql` and g.season_id in ${ this.sql(seasonIds) }` : this.sql``}
-                ${ tendency ? this.sql` and g.result_tendency = ${tendency}` : this.sql`` }
+                ${ tendencies ? this.sql` and g.result_tendency in ${ this.sql(tendencies) }` : this.sql`` }
                 ${ status ? this.sql` and g.status = ${status}` : this.sql`` }
                 ${ needsGameAttendedJoin ? this.sql` and ga.id is ${ params.hasAccountAttended ? this.sql`not` : this.sql`` } null` : this.sql`` }
                 ${ needsGameStarredJoin ? this.sql` and gs.id is ${ params.hasAccountStarred ? this.sql`not` : this.sql`` } null` : this.sql`` }

@@ -29,7 +29,7 @@ export class GetGamesPaginatedRouteProvider implements RouteProvider<GetGamesReq
                         GameStatus.Postponed,
                         GameStatus.Scheduled,
                     ] },
-                    tendency: { type: 'string', enum: ['w', 'l', 'd'] },
+                    tendency: { type: 'string' },
                     competitionId: { type: 'string' },
                     opponentId: { type: 'string' },
                     seasonId: { type: 'string' },

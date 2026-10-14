@@ -920,7 +920,8 @@ export class ApiHelperService {
         const seasonMap = await this.seasonService.getMapByIds(seasonIds);
 
         const victoryGameIds = titles.map(item => item.victoryGame).filter(item => item !== undefined);
-        const victoryGamesMap = await this.gameService.getMapByIds(victoryGameIds);
+        const victoryGames = await this.gameService.getMultipleByIds(victoryGameIds);
+        const victoryGameDtos = await this.getOrderedBasicGameDtos(victoryGames);
 
         return titles.map(item => {
             const result: CompetitionTitleDto = {
@@ -934,7 +935,7 @@ export class ApiHelperService {
             }
             
             if (isDefined(item.victoryGame)) {
-                // TODO victory game here
+                result.victoryGame = ensureNotNullish(victoryGameDtos.find(victoryGameItem => victoryGameItem.id === item.victoryGame))
             }
 
             return result;

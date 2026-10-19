@@ -83,7 +83,7 @@ export class StatsMapper {
             select 
                 gp.person_id as person_id,
                 ge.goal_type as goal_type,
-                sum(gp.goals_scored) as goals_scored
+                count(ge.goal_type) as goals_scored
             from 
                 game_players gp left join
                 game_events ge on ge.scored_by = gp.id
@@ -94,7 +94,7 @@ export class StatsMapper {
             group by
                 gp.person_id, ge.goal_type
             order by
-                sum(gp.goals_scored) desc
+                goals_scored desc
         `;
 
         if (result.length === 0) {

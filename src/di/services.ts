@@ -34,6 +34,7 @@ import { SeasonTitlesService } from "@src/module/season-titles/service";
 import { SeasonService } from "@src/module/season/service";
 import { SquadService } from "@src/module/squad/service";
 import { StatsService } from "@src/module/stats/service";
+import { StorageService } from "@src/module/storage/service";
 import { VenueService } from "@src/module/venue/service";
 import { DateSource } from "@src/util/date";
 import { TimeSource } from "@src/util/time";
@@ -76,6 +77,7 @@ export interface ApplicationServices {
     sofascoreGameImporter: SofascoreGameImporter,
     sofascoreGameProvider: SofascoreGameProvider,
     statsService: StatsService,
+    storageService: StorageService,
     squadService: SquadService,
     timeSource: TimeSource,
     uuidSource: UuidSource,

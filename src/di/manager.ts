@@ -48,7 +48,7 @@ import { PersonMapper } from "@src/module/person/mapper";
 import { SeasonMapper } from "@src/module/season/mapper";
 import { DateSource } from "@src/util/date";
 import { ApiConfig } from "@src/api/v1/config";
-import { getAuthTokenConfig, getCdnBaseUrl, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig, getMailServiceConfig, getSofascoreMainClubId } from "@src/config";
+import { getAuthTokenConfig, getBunnyClientConfig, getCdnBaseUrl, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig, getMailServiceConfig, getSofascoreMainClubId } from "@src/config";
 import { CryptoService } from "@src/module/crypto/service";
 import { AccountService } from "@src/module/account/service";
 import { AccountMapper } from "@src/module/account/mapper";
@@ -101,6 +101,8 @@ import { GameAbsenceMapper } from "@src/module/game-absence/mapper";
 import { GameAbsenceService } from "@src/module/game-absence/service";
 import { PersonContractMapper } from "@src/module/person-contracts/mapper";
 import { PersonContractService } from "@src/module/person-contracts/service";
+import { BunnyClient } from "@src/module/storage/bunny.client";
+import { StorageService } from "@src/module/storage/service";
 
 export class DependencyManager {
 
@@ -241,6 +243,9 @@ export class DependencyManager {
             [ExternalProvider.Weltfussball, new WeltfussballClient(httpClient)],
         ]);
 
+        const bunnyClient = new BunnyClient(getBunnyClientConfig(), httpClient);
+        const storageService = new StorageService(bunnyClient);
+
         const matchdayDetailsService = new MatchdayDetailsService({ mainClubId: 1, clients: matchdayProviders }, clubService, competitionService, gameService, externalProviderService, seasonService);
 
         const globalResolveConfig: GlobalResolveServiceConfig = {
@@ -328,6 +333,7 @@ export class DependencyManager {
             sofascoreGameImporter: sofascoreGameImporter,
             sofascoreGameProvider: sofascoreGameProvider,
             statsService: statsService,
+            storageService: storageService,
             squadService: squadService,
             timeSource: timeSource,
             uuidSource: uuidSource,

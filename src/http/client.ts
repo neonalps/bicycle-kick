@@ -17,6 +17,10 @@ export class HttpClient {
         return this.performRequest(url, { ...options, method: HTTP_METHOD.POST });
     };
 
+    put = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>> & { textOnly?: boolean }): Promise<HttpResponse<T>> => {
+        return this.performRequest(url, { ...options, method: HTTP_METHOD.PUT });
+    };
+
     private performRequest = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>> & { textOnly?: boolean }): Promise<HttpResponse<T>> => {
         const { statusCode, body } = await request(url, options);
 

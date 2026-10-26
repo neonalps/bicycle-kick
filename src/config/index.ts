@@ -3,6 +3,7 @@ import { HttpMethod } from "@src/http/constants";
 import { GoogleOAuthClientConfig } from "@src/module/auth/oauth/google/client";
 import { TokenConfig } from "@src/module/auth/service";
 import { MailServiceConfig } from "@src/module/mail/service";
+import { BunnyClientConfig } from "@src/module/storage/bunny.client";
 import { checkValidHttpMethod, getAllowedHttpMethods } from "@src/util/common";
 import dotenv from "dotenv";
 import * as env from "env-var";
@@ -26,6 +27,9 @@ const mailConfigSmtpHost = env.get("MAIL_CONFIG_SMTP_HOST").required().asString(
 const mailConfigSmtpPort = env.get('MAIL_CONFIG_SMTP_PORT').required().asPortNumber();
 const mailConfigSmtpUsername = env.get("MAIL_CONFIG_SMTP_USERNAME").required().asString();
 const mailConfigSmtpPassword = env.get("MAIL_CONFIG_SMTP_PASSWORD").required().asString();
+
+const bunnyAccessKey = env.get("BUNNY_ACCESS_KEY").required().asString();
+const bunnyStorageZoneName = env.get("BUNNY_STORAGE_ZONE_NAME").required().asString();
 
 const authTokenAudience = env.get("AUTH_TOKEN_AUDIENCE").required().asString();
 const authTokenIssuer = env.get("AUTH_TOKEN_ISSUER").required().asString();
@@ -74,7 +78,12 @@ const googleOAuthConfig: GoogleOAuthClientConfig = {
     redirectUrl: env.get("OAUTH_GOOGLE_REDIRECT_URL").required().asString(),
     tokenUrl: env.get("OAUTH_GOOGLE_TOKEN_URL").required().asString(),
     userProfileUrl: env.get("OAUTH_GOOGLE_USER_PROFILE_URL").required().asString()
-}
+};
+
+const bunnyClientConfig: BunnyClientConfig = {
+    accessKey: bunnyAccessKey,
+    storageZoneName: bunnyStorageZoneName,
+};
 
 export const getNodeEnv = () => nodeEnv;
 export const getAuthTokenConfig = () => authTokenConfig;
@@ -89,3 +98,4 @@ export const getServerHost = () => serverHost;
 export const getServerPort = () => serverPort;
 export const getGoogleOAuthConfig = () => googleOAuthConfig;
 export const getMailServiceConfig = () => mailConfig;
+export const getBunnyClientConfig = () => bunnyClientConfig;

@@ -103,6 +103,7 @@ import { PersonContractMapper } from "@src/module/person-contracts/mapper";
 import { PersonContractService } from "@src/module/person-contracts/service";
 import { BunnyClient } from "@src/module/storage/bunny.client";
 import { StorageService } from "@src/module/storage/service";
+import { NoopClient } from "@src/module/storage/noop.client";
 
 export class DependencyManager {
 
@@ -244,7 +245,8 @@ export class DependencyManager {
         ]);
 
         const bunnyClient = new BunnyClient(getBunnyClientConfig(), httpClient);
-        const storageService = new StorageService(bunnyClient);
+        const noopClient = new NoopClient();
+        const storageService = new StorageService(bunnyClient, noopClient);
 
         const matchdayDetailsService = new MatchdayDetailsService({ mainClubId: 1, clients: matchdayProviders }, clubService, competitionService, gameService, externalProviderService, seasonService);
 

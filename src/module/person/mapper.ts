@@ -26,7 +26,7 @@ export class PersonMapper {
 
     async updateById(personId: PersonId, updatePerson: UpdatePerson, tx?: postgres.TransactionSql): Promise<PersonId> {
         const query = tx || this.sql;
-        const result = await query`update person set ${ query(updatePerson, 'firstName', 'lastName', 'avatar', 'birthday', 'deathday', 'nationalities', 'normalizedSearch') } where id = ${ personId } returning id`;
+        const result = await query`update person set ${ query(updatePerson, 'firstName', 'lastName', 'birthday', 'deathday', 'nationalities', 'normalizedSearch') } where id = ${ personId } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to update person`);
         }

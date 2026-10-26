@@ -15,7 +15,6 @@ export class UpdatePersonByIdRouteHandler implements RouteHandler<UpdatePersonRe
         const updatedPerson = await this.personService.updateById(dto.personId, {
             lastName: dto.lastName,
             firstName: dto.firstName,
-            avatar: dto.avatar,
             birthday: dto.birthday,
             deathday: dto.deathday,
             nationalities: dto.nationalities,

@@ -6,6 +6,7 @@ import { normalizeForSearch } from "@src/util/search";
 import { UpdatePerson } from "@src/model/internal/update-person";
 import { PersonId } from "@src/util/domain-types";
 import { ArrayNonEmpty } from "@src/util/common";
+import { OmitStrict } from "@src/util/types";
 
 export class PersonService {
 
@@ -26,7 +27,7 @@ export class PersonService {
         return createdPerson;
     }
 
-    async updateById(personId: PersonId, updatePerson: Omit<UpdatePerson, 'normalizedSearch'>): Promise<Person> {
+    async updateById(personId: PersonId, updatePerson: OmitStrict<UpdatePerson, 'normalizedSearch'>): Promise<Person> {
         validateNotNull(personId, "personId");
         validateNotNull(updatePerson, "updatePerson");
         validateNotBlank(updatePerson.lastName, "updatePerson.lastName");

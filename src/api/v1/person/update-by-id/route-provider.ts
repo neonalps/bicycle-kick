@@ -31,7 +31,6 @@ export class UpdatePersonByIdRouteProvider implements RouteProvider<UpdatePerson
                     lastName: { type: 'string' },
                     birthday: { type: 'string' },
                     deathday: { type: 'string' },
-                    avatar: { type: 'string' },
                     nationalities: { type: 'array', items: { type: 'string' } },
                 },
                 additionalProperties: false,

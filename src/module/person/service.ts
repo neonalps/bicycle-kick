@@ -62,6 +62,19 @@ export class PersonService {
         return person;
     }
 
+    async setPersonAvatar(id: PersonId, avatarFilename: string): Promise<void> {
+        validateNotNull(id, "id");
+        validateNotBlank(avatarFilename, "avatarFilename");
+
+        await this.mapper.setPersonAvatar(id, avatarFilename);
+    }
+
+    async removePersonAvatar(id: PersonId): Promise<void> {
+        validateNotNull(id, "id");
+
+        await this.mapper.removePersonAvatar(id);
+    }
+
     async getMapByIds(ids: PersonId[]): Promise<Map<PersonId, Person>> {
         validateNotNull(ids, "ids");
         if (ids.length === 0) {

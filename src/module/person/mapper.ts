@@ -58,6 +58,14 @@ export class PersonMapper {
         return resultMap;
     }
 
+    async setPersonAvatar(id: PersonId, avatar: string): Promise<void> {
+        await this.sql`update person set avatar = ${ avatar } where id = ${ id }`;
+    }
+
+    async removePersonAvatar(id: PersonId): Promise<void> {
+        await this.sql`update person set avatar = null where id = ${ id }`;
+    }
+
     async search(parts: string[]): Promise<Person[]> {
         const results = await Promise.all(parts.map(part => this.findByNormalizedSearchValue(part)));
         const matchedIds = results.flat().map(item => item.id);

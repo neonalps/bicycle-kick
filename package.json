@@ -24,6 +24,7 @@
   "dependencies": {
     "@fastify/cors": "^10.0.2",
     "@fastify/jwt": "^9.0.4",
+    "@fastify/multipart": "^10.1.6",
     "dotenv": "^16.4.7",
     "env-var": "^7.5.0",
     "fastify": "^5.2.1",

@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { SquadDaoInterface } from "@src/model/internal/interface/squad.interface";
 import { SquadMember } from "@src/model/internal/squad-member";
 import { PersonId, SeasonId } from "@src/util/domain-types";

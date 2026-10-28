@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { Competition } from "@src/model/internal/competition";
 import { CreateCompetition } from "@src/model/internal/create-competition";
 import { CompetitionDaoInterface } from "@src/model/internal/interface/competition.interface";

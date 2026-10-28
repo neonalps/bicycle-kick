@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { AccountId, GameId } from "@src/util/domain-types";
 
 type GameStarCount = {

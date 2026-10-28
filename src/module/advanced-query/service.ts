@@ -17,7 +17,7 @@ import { OrderModifier } from "@src/module/advanced-query/order/modifier";
 import { LimitModifier } from "@src/module/advanced-query/limit/modifier";
 import { GameEvent } from "@src/model/internal/game-event";
 import { GameEventPostProcessingFilter } from "@src/module/advanced-query/post-processor/game-event-processing-filter";
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { GameService } from "@src/module/game/service";
 import { Game } from "@src/model/internal/game";
 import { AdvancedQueryResult } from "@src/module/advanced-query/result";

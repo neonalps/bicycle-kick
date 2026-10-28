@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { ManagerPeriod } from "@src/model/internal/manager-period";
 import { GetManagerPeriodsPaginationParams } from "./service";
 import { ManagerPeriodDaoInterface } from "@src/model/internal/interface/manager-period.interface";

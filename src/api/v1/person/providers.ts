@@ -8,6 +8,8 @@ import { CreatePersonRouteHandler } from "./create/handler";
 import { CreatePersonRouteProvider } from "./create/route-provider";
 import { UpdatePersonByIdRouteHandler } from "./update-by-id/handler";
 import { UpdatePersonByIdRouteProvider } from "./update-by-id/route-provider";
+import { RemovePersonAvatarRouteHandler } from "./remove-avatar/handler";
+import { RemovePersonAvatarRouteProvider } from "./remove-avatar/route-provider";
 
 export function getPersonRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
 
@@ -15,11 +17,13 @@ export function getPersonRouteProviders(services: ApplicationServices): RoutePro
     const updatePersonByIdRouteHandler = new UpdatePersonByIdRouteHandler(services.apiHelperService, services.personService);
     const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(services.apiHelperService, services.externalProviderService, services.gameService, services.managerPeriodService, services.personService, services.personContactService, services.statsService);
     const getPersonGamesPlayedRouteHandler = new GetPersonGamesPlayedRouteHandler(services.apiHelperService, services.gamePlayerService, services.paginationService);
+    const removePersonAvatarHandler = new RemovePersonAvatarRouteHandler(services.personService);
 
     return [
         new CreatePersonRouteProvider(createPersonRouteHandler),
         new UpdatePersonByIdRouteProvider(updatePersonByIdRouteHandler),
         new GetPersonByIdRouteProvider(getPlayerByIdRouteHandler),
         new GetPersonGamesPlayedRouteProvider(getPersonGamesPlayedRouteHandler),
+        new RemovePersonAvatarRouteProvider(removePersonAvatarHandler),
     ];
 }

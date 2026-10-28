@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { ApplicationStatsResponseDto } from "@src/model/external/dto/overall-application-stats-response";
 import { convertNumberString, promiseAllObject, requireSingleArrayElement } from "@src/util/common";
 

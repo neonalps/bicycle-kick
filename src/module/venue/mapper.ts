@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { CreateVenue } from "@src/model/internal/create-venue";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { VenueFlavorDaoInterface } from "@src/model/internal/interface/venue-flavor.interface";

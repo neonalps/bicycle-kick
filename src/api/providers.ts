@@ -14,13 +14,14 @@ import { getStatsRouteProviders } from "./v1/stats/providers";
 import { getManagerRouteProviders } from "./v1/manager/providers";
 import { getCompetitionRouteProviders } from "./v1/competition/providers";
 import { getSquadRouteProviders } from "./v1/squad/providers";
+import { ApplicationConfig } from "@src/config/manager";
 
-export function getRouteProviders(services: ApplicationServices): RouteProvider<any, any>[] {
+export function getRouteProviders(services: ApplicationServices, config: ApplicationConfig): RouteProvider<any, any>[] {
 
     return [
         ...getAccountRouteProviders(services),
-        ...getAuthRouteProviders(services),
-        ...getClubRouteProviders(services),
+        ...getAuthRouteProviders(services, config.authTokenConfig),
+        ...getClubRouteProviders(services, config.mainClubId),
         ...getCompetitionRouteProviders(services),
         ...getDashboardRouteProviders(services),
         ...getGameRouteProviders(services),

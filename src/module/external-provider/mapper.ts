@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { ExternalProviderClub } from "@src/model/internal/external-provider-club";
 import { ExternalProviderPerson } from "@src/model/internal/external-provider-person";
 import { ExternalProviderClubDaoInterface } from "@src/model/internal/interface/external-provider-club.interface copy";

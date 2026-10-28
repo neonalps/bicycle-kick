@@ -4,11 +4,11 @@
         "lib": [
             "es2024"
         ],
-        "types": ["node", "jest"],
+        "types": ["node"],
         "paths": {
-            "@src/*": ["src/*"]
+            "@src/*": ["./src/*"],
+            "*": ["./*"],
         },
-        "baseUrl": ".",
         "module": "commonjs",
         "rootDir": "src",
         "resolveJsonModule": true,

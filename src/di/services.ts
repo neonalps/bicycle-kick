@@ -1,3 +1,4 @@
+import { ApplicationConfigManager } from "@src/config/manager";
 import { AccountService } from "@src/module/account/service";
 import { AdvancedQueryService } from "@src/module/advanced-query/service";
 import { ApiHelperService } from "@src/module/api-helper/service";

@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { PersonContractDaoInterface } from "@src/model/internal/interface/person-contract.interface";
 import { PersonContract } from "@src/model/internal/person-contract";
 import { isDefined } from "@src/util/common";

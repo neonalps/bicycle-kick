@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { GameEventType } from "@src/model/external/dto/game-event-type";
 import { GameEvent } from "@src/model/internal/game-event";
 import { ExtraTimeGameEvent } from "@src/model/internal/game-event-extra-time";

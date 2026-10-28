@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { PlayerGoalsAgainstClubStatsDaoInterface, PlayerGoalTypeStatsDaoInterface, PlayerPerformanceStatsDaoInterface, RankedResultItemDaoInterface } from "@src/model/internal/interface/stats-player";
 import { QueryOptions } from "@src/model/internal/query-options";
 import { PlayerGoalsAgainstClubStatsItem, PlayerGoalTypeStatsItem, PlayerSeasonCompetitionStats, RankedValueResultItem, ShirtDistributionItem, ShirtWornBy } from "@src/model/internal/stats-player";

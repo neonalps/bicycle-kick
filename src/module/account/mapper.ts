@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { Account } from "@src/model/internal/account";
 import { AccountDaoInterface } from "@src/model/internal/interface/account.interface";
 import { IdInterface } from "@src/model/internal/interface/id.interface";

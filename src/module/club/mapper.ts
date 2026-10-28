@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { Club } from "@src/model/internal/club";
 import { CreateClub } from "@src/model/internal/create-club";
 import { ClubDaoInterface } from "@src/model/internal/interface/club.interface";

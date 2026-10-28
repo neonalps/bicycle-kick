@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { GamePlayer } from "@src/model/internal/game-player";
 import { GamePlayerDaoInterface } from "@src/model/internal/interface/game-player.interface";
 import { SortOrder } from "@src/module/pagination/constants";

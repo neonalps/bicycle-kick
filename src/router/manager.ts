@@ -2,7 +2,6 @@ import { FastifyError, FastifyInstance, FastifyReply, FastifyRequest, FastifySch
 import fastifyJwt from "@fastify/jwt";
 import { ApplicationHeader, AuthenticationContext, RequestSchema, ResponseSchema, RouteDefinition, RouteProvider } from "./types";
 import { HttpMethod } from "@src/http/constants";
-import logger from "@src/log";
 import { IllegalStateError } from "@src/api/error/illegal-state";
 import { isDefined, requireNonNull } from "@src/util/common";
 import { AuthenticationError } from "@src/api/error/authentication";
@@ -98,7 +97,6 @@ export class RouteManager {
                     }
 
                     console.error(ex);
-                    logger.error(`Error while handling ${route.path} (${route.name}): ${ex}`);
                     this.sendErrorResponse(reply, route, 500, ex);
                 }
             },

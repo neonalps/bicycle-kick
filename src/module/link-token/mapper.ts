@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { CreateLinkToken } from "@src/model/internal/create-link-token";
 import { LinkTokenDaoInterface } from "@src/model/internal/interface/link-token.interface";
 import { LinkToken } from "@src/model/internal/link-token";

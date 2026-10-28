@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { GameAbsence } from "@src/model/internal/game-absence";
 import { GameAbsenceDaoInterface } from "@src/model/internal/interface/game-absence.interface";
 import { CompetitionId, GameId, PersonId, SeasonId } from "@src/util/domain-types";

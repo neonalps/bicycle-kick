@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { requireNonNull } from "@src/util/common";
 
 export class AdvancedQueryMapper {

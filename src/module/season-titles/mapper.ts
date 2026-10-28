@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { SeasonTitleDaoInterface } from "@src/model/internal/interface/season-title.interface";
 import { SeasonTitle } from "@src/model/internal/season-title";
 import { isDefined } from "@src/util/common";

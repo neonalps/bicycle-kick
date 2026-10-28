@@ -1,4 +1,4 @@
-import { Sql } from "@src/db";
+import { Sql } from "@src/db/manager";
 import { Game } from "@src/model/internal/game";
 import { GameDaoInterface } from "@src/model/internal/interface/game.interface";
 import { GameStatus } from "@src/model/type/game-status";

@@ -33,7 +33,7 @@ import { MinuteFilterProvider } from "@src/module/advanced-query/provider/minute
 import { PlayerSentOffGameEventFilterProvider } from "@src/module/advanced-query/provider/player-sent-off-game-event";
 import { PlayerGoalScoredFilterProvider } from "@src/module/advanced-query/provider/player-goal-scored";
 import { GlobalResolveService, GlobalResolveServiceConfig } from "@src/module/advanced-query/global-resolver/service";
-import sql from "@src/db";
+import { Sql } from "@src/db/manager";
 import { GameService } from "@src/module/game/service";
 import { GameMapper } from "@src/module/game/mapper";
 import { GameEventMapper } from "@src/module/game-event/mapper";
@@ -48,7 +48,6 @@ import { PersonMapper } from "@src/module/person/mapper";
 import { SeasonMapper } from "@src/module/season/mapper";
 import { DateSource } from "@src/util/date";
 import { ApiConfig } from "@src/api/v1/config";
-import { getAuthTokenConfig, getBunnyClientConfig, getCdnBaseUrl, getCryptoKey, getFrontendBaseUrl, getGoogleOAuthConfig, getMailServiceConfig, getSofascoreMainClubId } from "@src/config";
 import { CryptoService } from "@src/module/crypto/service";
 import { AccountService } from "@src/module/account/service";
 import { AccountMapper } from "@src/module/account/mapper";
@@ -104,12 +103,16 @@ import { PersonContractService } from "@src/module/person-contracts/service";
 import { BunnyClient } from "@src/module/storage/bunny.client";
 import { StorageService } from "@src/module/storage/service";
 import { NoopClient } from "@src/module/storage/noop.client";
+import { ApplicationConfig } from "@src/config/manager";
 
 export class DependencyManager {
 
     private readonly applicationServices: ApplicationServices;
 
-    constructor() {
+    constructor(
+        private readonly applicationConfig: ApplicationConfig,
+        private readonly sqlInstance: Sql,
+    ) {
         this.applicationServices = this.initializeApplicationServices();
     }
 
@@ -119,13 +122,11 @@ export class DependencyManager {
 
     private initializeApplicationServices(): ApplicationServices {
 
-        const sqlInstance = sql;
-
         const cryptoService = new CryptoService({
             encryptionAlgorithm: "aes256",
             hmacAlgorithm: "sha256",
             ivSize: 16,
-            cryptoKey: getCryptoKey(),
+            cryptoKey: this.applicationConfig.cryptoKey,
         });
 
         const base64Utils = new Base64Utils();
@@ -135,53 +136,53 @@ export class DependencyManager {
 
         const httpClient = new HttpClient();
 
-        const tokenConfig = getAuthTokenConfig();   
+        const tokenConfig = this.applicationConfig.authTokenConfig;
 
-        const googleOAuthClient = new GoogleOAuthClient(getGoogleOAuthConfig(), httpClient);
+        const googleOAuthClient = new GoogleOAuthClient(this.applicationConfig.googleOAuthConfig, httpClient);
 
-        const accountMapper = new AccountMapper(sqlInstance);
+        const accountMapper = new AccountMapper(this.sqlInstance);
         const accountService = new AccountService(accountMapper, uuidSource);
         const cacheService = new CacheService();
-        const clubMapper = new ClubMapper(sqlInstance);
+        const clubMapper = new ClubMapper(this.sqlInstance);
         const clubService = new ClubService(clubMapper);
-        const competitionMapper = new CompetitionMapper(sqlInstance);
+        const competitionMapper = new CompetitionMapper(this.sqlInstance);
         const competitionService = new CompetitionService(competitionMapper);
-        const gameAttendedMapper = new GameAttendedMapper(sqlInstance);
+        const gameAttendedMapper = new GameAttendedMapper(this.sqlInstance);
         const gameAttendedService = new GameAttendedService(gameAttendedMapper);
-        const gameEventMapper = new GameEventMapper(sqlInstance);
+        const gameEventMapper = new GameEventMapper(this.sqlInstance);
         const gameEventService = new GameEventService(gameEventMapper);
-        const gameManagerMapper = new GameManagerMapper(sqlInstance);
+        const gameManagerMapper = new GameManagerMapper(this.sqlInstance);
         const gameManagerService = new GameManagerService(gameManagerMapper);
-        const gamePlayerMapper = new GamePlayerMapper(sqlInstance, competitionService);
+        const gamePlayerMapper = new GamePlayerMapper(this.sqlInstance, competitionService);
         const gamePlayerService = new GamePlayerService(gamePlayerMapper);
-        const gameRefereeMapper = new GameRefereeMapper(sqlInstance);
+        const gameRefereeMapper = new GameRefereeMapper(this.sqlInstance);
         const gameRefereeService = new GameRefereeService(gameRefereeMapper);
-        const gameStarMapper = new GameStarMapper(sqlInstance);
+        const gameStarMapper = new GameStarMapper(this.sqlInstance);
         const gameStarService = new GameStarService(gameStarMapper);
-        const linkTokenMapper = new LinkTokenMapper(sqlInstance);
+        const linkTokenMapper = new LinkTokenMapper(this.sqlInstance);
         const linkTokenService = new LinkTokenService(linkTokenMapper, timeSource, tokenConfig, uuidSource);
 
         const authService = new AuthService(accountService, linkTokenService, tokenConfig, timeSource);
 
         const oAuthService = new OAuthService(accountService, authService, googleOAuthClient);
-        const personMapper = new PersonMapper(sqlInstance);
+        const personMapper = new PersonMapper(this.sqlInstance);
         const personService = new PersonService(personMapper);
-        const seasonMapper = new SeasonMapper(sqlInstance);
+        const seasonMapper = new SeasonMapper(this.sqlInstance);
         const seasonService = new SeasonService(dateSource, seasonMapper);
-        const venueMapper = new VenueMapper(sqlInstance);
+        const venueMapper = new VenueMapper(this.sqlInstance);
         const venueService = new VenueService(venueMapper);
-        const gameMapper = new GameMapper(sqlInstance, clubMapper, competitionMapper, personMapper, venueMapper);
+        const gameMapper = new GameMapper(this.sqlInstance, clubMapper, competitionMapper, personMapper, venueMapper);
         const gameService = new GameService(gameMapper, seasonService);
 
-        const statsMapper = new StatsMapper(sqlInstance);
+        const statsMapper = new StatsMapper(this.sqlInstance);
         const statsService = new StatsService(statsMapper, clubService, competitionService, seasonService);
 
         const apiConfig: ApiConfig = {
-            cdnBaseUrl: getCdnBaseUrl(),
-            baseUrl: getFrontendBaseUrl(),
+            cdnBaseUrl: this.applicationConfig.cdnBaseUrl,
+            baseUrl: this.applicationConfig.frontendBaseUrl,
         };
 
-        const gameAbsenceMapper = new GameAbsenceMapper(sqlInstance);
+        const gameAbsenceMapper = new GameAbsenceMapper(this.sqlInstance);
         const gameAbsenceService = new GameAbsenceService(gameAbsenceMapper, competitionService, gameService, gameEventService, statsService);
 
         const apiHelperService = new ApiHelperService(
@@ -202,7 +203,7 @@ export class DependencyManager {
             venueService
         );
 
-        const applicationStatsMapper = new ApplicationStatsMapper(sqlInstance);
+        const applicationStatsMapper = new ApplicationStatsMapper(this.sqlInstance);
         const applicationStatsService = new ApplicationStatsService(applicationStatsMapper);
 
         const searchService = new SearchService(apiConfig, clubService, competitionService, gameService, personService, seasonService, venueService);
@@ -211,7 +212,7 @@ export class DependencyManager {
         const permissionService = new PermissionService();
 
         const sofascoreGameProvider = new SofascoreGameProvider({ mainTeamName: ["Sturm Graz"] }, timeSource);
-        const sofascoreGameImporter = new SofascoreGameImporter(getSofascoreMainClubId(), sofascoreGameProvider, timeSource);
+        const sofascoreGameImporter = new SofascoreGameImporter(this.applicationConfig.sofascoreMainClubId, sofascoreGameProvider, timeSource);
 
         const dashboardService = new DashboardService(competitionService, dateSource, gameService, personService, seasonService, statsService);
 
@@ -224,19 +225,19 @@ export class DependencyManager {
             batchSize: 50,
         };
 
-        const externalProviderMapper = new ExternalProviderMapper(sqlInstance);
+        const externalProviderMapper = new ExternalProviderMapper(this.sqlInstance);
         const externalProviderService = new ExternalProviderService(externalProviderMapper, personService);
 
-        const seasonTitlesMapper = new SeasonTitlesMapper(sqlInstance);
+        const seasonTitlesMapper = new SeasonTitlesMapper(this.sqlInstance);
         const seasonTitlesService = new SeasonTitlesService(seasonTitlesMapper);
 
-        const managerPeriodMapper = new ManagerPeriodMapper(sqlInstance, gameService, seasonTitlesService);
+        const managerPeriodMapper = new ManagerPeriodMapper(this.sqlInstance, gameService, seasonTitlesService);
         const managerPeriodService = new ManagerPeriodService(managerPeriodMapper);
 
-        const personContractMapper = new PersonContractMapper(sqlInstance);
+        const personContractMapper = new PersonContractMapper(this.sqlInstance);
         const personContractService = new PersonContractService(personContractMapper);
 
-        const squadMapper = new SquadMapper(sqlInstance);
+        const squadMapper = new SquadMapper(this.sqlInstance);
         const squadService = new SquadService(squadMapper, managerPeriodService, personService, seasonService);
 
         const matchdayProviders = new Map<ExternalProvider, MatchdayDetailsProvider>([
@@ -244,7 +245,7 @@ export class DependencyManager {
             [ExternalProvider.Weltfussball, new WeltfussballClient(httpClient)],
         ]);
 
-        const bunnyClient = new BunnyClient(getBunnyClientConfig(), httpClient);
+        const bunnyClient = new BunnyClient(this.applicationConfig.bunnyClientConfig, httpClient);
         const noopClient = new NoopClient();
         const storageService = new StorageService(bunnyClient, noopClient);
 
@@ -292,9 +293,9 @@ export class DependencyManager {
         filterProviders.set(FilterName.TeamPenaltyMissed, new TeamPenaltyMissedFilterProvider());
         filterProviders.set(FilterName.Turnaround, new TurnaroundFilterProvider());
 
-        const advancedQueryService = new AdvancedQueryService(advancedQueryConfig, idResolvers, filterProviders, gameService, sqlInstance, uuidSource);
+        const advancedQueryService = new AdvancedQueryService(advancedQueryConfig, idResolvers, filterProviders, gameService, this.sqlInstance, uuidSource);
 
-        const mailService = new MailService(getMailServiceConfig());
+        const mailService = new MailService(this.applicationConfig.mailServiceConfig);
 
         const magicLinkService = new MagicLinkService(linkTokenService, mailService, { frontendBaseUrl: apiConfig.baseUrl });
 

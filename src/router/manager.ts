@@ -1,5 +1,6 @@
 import { FastifyError, FastifyInstance, FastifyReply, FastifyRequest, FastifySchema } from "fastify";
 import fastifyJwt from "@fastify/jwt";
+import multipart from '@fastify/multipart'
 import { ApplicationHeader, AuthenticationContext, RequestSchema, ResponseSchema, RouteDefinition, RouteProvider } from "./types";
 import { HttpMethod } from "@src/http/constants";
 import { IllegalStateError } from "@src/api/error/illegal-state";
@@ -31,6 +32,16 @@ export class RouteManager {
                 allowedAud: audience,
                 allowedIss: issuer,
             }
+        });
+    }
+
+    public static async registerFormMultipart(server: FastifyInstance): Promise<void> {
+        await server.register(multipart, {
+            limits: {
+                fileSize: 5 * 1024 * 1024,         // 5 MB, stream errors with 413 once exceeded (throwFileSizeLimit defaults to true)
+                files: 1,
+                fields: 5,
+            },
         });
     }
 

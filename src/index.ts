@@ -18,6 +18,7 @@ const start = async () =>  {
   const applicationServices = new DependencyManager(applicationConfig, dbManager.requireInstance()).getServices();
   const authTokenConfig = applicationConfig.authTokenConfig;
   RouteManager.registerJwtParser(server, authTokenConfig.signingKey, authTokenConfig.issuer, authTokenConfig.audience);
+  await RouteManager.registerFormMultipart(server);
   RouteManager.registerRoutes(server, getRouteProviders(applicationServices, applicationConfig), { accountService: applicationServices.accountService, permissionService: applicationServices.permissionService });
   await CorsManager.registerCorsConfig(server, applicationConfig.corsConfig);
 

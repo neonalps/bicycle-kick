@@ -25,6 +25,7 @@ export type ApplicationConfig = {
     cdnBaseUrl: string;
     mainClubId: number;
     sofascoreMainClubId: number;
+    useBunnyForUploadsInDevelopment?: boolean;
 }
 
 export class ApplicationConfigManager {
@@ -106,6 +107,8 @@ export class ApplicationConfigManager {
             storageZoneName: bunnyStorageZoneName,
         };
 
+        const useBunnyForUploadsInDevelopment = env.get("BUNNY_USE_FOR_UPLOADS_IN_DEVELOPMENT").asBool();
+
         return {
             nodeEnv,
             serverHost,
@@ -121,6 +124,7 @@ export class ApplicationConfigManager {
             cdnBaseUrl,
             mainClubId,
             sofascoreMainClubId,
+            useBunnyForUploadsInDevelopment,
         }
 
     }

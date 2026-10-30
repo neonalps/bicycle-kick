@@ -122,6 +122,9 @@ export class DependencyManager {
 
     private initializeApplicationServices(): ApplicationServices {
 
+        const isProductionEnvironment = this.applicationConfig.nodeEnv === 'production';
+        const isDevelopmentEnvironment = this.applicationConfig.nodeEnv === 'development';
+
         const cryptoService = new CryptoService({
             encryptionAlgorithm: "aes256",
             hmacAlgorithm: "sha256",
@@ -247,7 +250,9 @@ export class DependencyManager {
 
         const bunnyClient = new BunnyClient(this.applicationConfig.bunnyClientConfig, httpClient);
         const noopClient = new NoopClient();
-        const storageService = new StorageService(bunnyClient, noopClient);
+
+        const shouldUseBunny = isProductionEnvironment || (isDevelopmentEnvironment && this.applicationConfig.useBunnyForUploadsInDevelopment);
+        const storageService = new StorageService(shouldUseBunny ? bunnyClient : noopClient);
 
         const matchdayDetailsService = new MatchdayDetailsService({ mainClubId: 1, clients: matchdayProviders }, clubService, competitionService, gameService, externalProviderService, seasonService);
 

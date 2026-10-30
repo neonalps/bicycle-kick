@@ -33,6 +33,7 @@ export class SetPersonAvatarRouteProvider implements RouteProvider<SetPersonAvat
             schema,
             handler: this.handler,
             authenticated: true,
+            fileUpload: true,
             requiredCapabilities: [
                 Capability.WritePerson,
             ],

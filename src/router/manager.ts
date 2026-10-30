@@ -96,7 +96,7 @@ export class RouteManager {
                 }
 
                 try {
-                    const response = await route.handler.handle(principal, body, applicationHeaders);
+                    const response = await route.handler.handle(principal, body, applicationHeaders, route.fileUpload ? (await request.file()) : undefined);
                     this.sendSuccessResponse(reply, route, response);
                 } catch (ex) {
                     if (ex instanceof AuthenticationError) {

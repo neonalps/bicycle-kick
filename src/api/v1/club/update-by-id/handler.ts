@@ -15,8 +15,6 @@ export class UpdateClubByIdRouteHandler implements RouteHandler<UpdateClubByIdRe
         const updatedClub = await this.clubService.updateById(dto.clubId, {
             name: dto.name,
             shortName: dto.shortName,
-            iconLarge: dto.iconLarge,
-            iconSmall: dto.iconSmall,
             city: dto.city,
             district: dto.district,
             countryCode: dto.countryCode,

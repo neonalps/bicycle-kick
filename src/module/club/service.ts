@@ -6,12 +6,13 @@ import { CreateClub } from "@src/model/internal/create-club";
 import { normalizeForSearch } from "@src/util/search";
 import { isDefined } from "@src/util/common";
 import { UpdateClub } from "@src/model/internal/update-club";
+import { OmitStrict } from "@src/util/types";
 
 export class ClubService {
 
     constructor(private readonly mapper: ClubMapper) {}
 
-    async create(createClub: Omit<CreateClub, 'normalizedSearch'>): Promise<Club> {
+    async create(createClub: OmitStrict<CreateClub, 'normalizedSearch' | 'iconSmall' | 'iconLarge'>): Promise<Club> {
         validateNotNull(createClub, "createClub");
         validateNotBlank(createClub.name, "createClub.name");
         validateNotBlank(createClub.shortName, "createClub.shortName");
@@ -30,7 +31,7 @@ export class ClubService {
         return createdClub;
     }
 
-    async updateById(clubId: ClubId, updateClub: Omit<UpdateClub, 'normalizedSearch'>): Promise<Club> {
+    async updateById(clubId: ClubId, updateClub: OmitStrict<UpdateClub, 'normalizedSearch' | 'iconSmall' | 'iconLarge'>): Promise<Club> {
         validateNotNull(updateClub, "updateClub");
 
         await this.mapper.updateById(clubId, {
@@ -51,6 +52,19 @@ export class ClubService {
         validateNotNull(venueId, "venueId");
 
         return await this.mapper.getAllWithHomeVenue(venueId);
+    }
+
+    async setClubAvatar(id: ClubId, avatarFilename: string): Promise<void> {
+        validateNotNull(id, "id");
+        validateNotBlank(avatarFilename, "avatarFilename");
+
+        await this.mapper.setClubAvatar(id, avatarFilename);
+    }
+
+    async removeClubAvatar(id: ClubId): Promise<void> {
+        validateNotNull(id, "id");
+
+        await this.mapper.removeClubAvatar(id);
     }
 
     async requireById(id: ClubId): Promise<Club> {

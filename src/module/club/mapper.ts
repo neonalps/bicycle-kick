@@ -14,7 +14,7 @@ export class ClubMapper {
 
     async create(create: CreateClub, tx?: postgres.TransactionSql): Promise<number> {
         const query = tx || this.sql;
-        const result = await query`insert into club ${ query(create, 'name', 'shortName', 'city', 'countryCode', 'district', 'homeVenueId', 'iconLarge', 'iconSmall', 'primaryColour', 'secondaryColour', 'normalizedSearch') } returning id`;
+        const result = await query`insert into club ${ query(create, 'name', 'shortName', 'city', 'countryCode', 'district', 'homeVenueId', 'primaryColour', 'secondaryColour', 'normalizedSearch') } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to create club`);
         }
@@ -23,7 +23,7 @@ export class ClubMapper {
     
     async updateById(clubId: ClubId, update: UpdateClub, tx?: postgres.TransactionSql): Promise<number> {
         const query = tx || this.sql;
-        const result = await query`update club set ${ query(update, 'name', 'shortName', 'city', 'countryCode', 'district', 'homeVenueId', 'iconLarge', 'iconSmall', 'primaryColour', 'secondaryColour', 'normalizedSearch') } where id = ${ clubId } returning id`;
+        const result = await query`update club set ${ query(update, 'name', 'shortName', 'city', 'countryCode', 'district', 'homeVenueId', 'primaryColour', 'secondaryColour', 'normalizedSearch') } where id = ${ clubId } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to update club`);
         }
@@ -64,6 +64,14 @@ export class ClubMapper {
             resultMap.set(entityItem.id, entityItem);
         }
         return resultMap;
+    }
+
+    async setClubAvatar(id: ClubId, avatar: string): Promise<void> {
+        await this.sql`update club set avatar = ${ avatar } where id = ${ id }`;
+    }
+
+    async removeClubAvatar(id: ClubId): Promise<void> {
+        await this.sql`update club set avatar = null where id = ${ id }`;
     }
 
     async search(parts: string[]): Promise<Club[]> {

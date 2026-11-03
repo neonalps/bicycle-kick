@@ -15,8 +15,6 @@ export class CreateClubRouteHandler implements RouteHandler<CreateClubRequestDto
         const createdClub = await this.clubService.create({
             name: dto.name,
             shortName: dto.shortName,
-            iconLarge: dto.iconLarge,
-            iconSmall: dto.iconSmall,
             city: dto.city,
             district: dto.district,
             countryCode: dto.countryCode,

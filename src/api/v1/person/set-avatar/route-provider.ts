@@ -1,7 +1,6 @@
 import { RequestSchema, RouteDefinition, RouteProvider } from "@src/router/types";
 import { requireNonNull } from "@src/util/common";
 import { Capability } from "@src/model/internal/capabilities";
-import { RemovePersonAvatarRequestDto } from "@src/model/external/dto/remove-person-avatar-request";
 import { SetPersonAvatarRequestDto } from "@src/model/external/dto/set-person-avatar-request";
 import { BasicPersonDto } from "@src/model/external/dto/basic-person";
 import { SetPersonAvatarRouteHandler } from "./handler";
@@ -14,7 +13,7 @@ export class SetPersonAvatarRouteProvider implements RouteProvider<SetPersonAvat
         this.handler = requireNonNull(handler);
     }
 
-    provide(): RouteDefinition<RemovePersonAvatarRequestDto, BasicPersonDto> {
+    provide(): RouteDefinition<SetPersonAvatarRequestDto, BasicPersonDto> {
         const schema: RequestSchema = {
             params: {
                 type: 'object',

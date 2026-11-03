@@ -4,8 +4,6 @@ export interface UpdateClubByIdRequestDto {
     clubId: ClubId;
     name: string;
     shortName: string;
-    iconSmall?: string;
-    iconLarge?: string;
     primaryColour?: string;
     secondaryColour?: string;
     city: string;

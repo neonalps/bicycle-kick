@@ -8,6 +8,7 @@ import { StorageService } from "@src/module/storage/service";
 import { SetClubAvatarRequestDto } from "@src/model/external/dto/set-club-avatar-request";
 import { BasicClubDto } from "@src/model/external/dto/basic-club";
 import { ClubService } from "@src/module/club/service";
+import { assertValidFileType, getClubStorageFile, getFileTypeFromFilename, getFullPathFromFile } from "@src/module/storage/util";
 
 export class SetClubAvatarRouteHandler implements RouteHandler<SetClubAvatarRequestDto, BasicClubDto> {
 
@@ -25,12 +26,14 @@ export class SetClubAvatarRouteHandler implements RouteHandler<SetClubAvatarRequ
         const uploadedFile = ensureNotNullish(file, `No upload file was passed`);
         await this.clubService.requireById(clubId);
 
-        const fileType = uploadedFile.filename.substring(uploadedFile.filename.lastIndexOf('.') + 1);
-        const avatarFilename = `${SetClubAvatarRouteHandler.CLUB_FOLDER}/${clubId}.${fileType}`;
+        const fileType = getFileTypeFromFilename(uploadedFile.filename);
+        assertValidFileType(fileType, ['jpg', 'png', 'webp']);
+        
+        const storageFile = getClubStorageFile(clubId, fileType);
 
-        await this.storageService.uploadFile(SetClubAvatarRouteHandler.CLUB_FOLDER, `${clubId}.${fileType}`, uploadedFile.file);
+        await this.storageService.uploadFile(storageFile, uploadedFile.file);
 
-        await this.clubService.setClubAvatar(clubId, avatarFilename);
+        await this.clubService.setClubAvatar(clubId, getFullPathFromFile(storageFile));
         
         const updatedClub = await this.clubService.requireById(clubId);
         return this.apiHelper.convertClubToBasicDto(updatedClub);

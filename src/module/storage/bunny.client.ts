@@ -1,6 +1,7 @@
 import { HttpClient } from "@src/http/client";
 import { StorageClient } from "./client";
 import { BusboyFileStream } from "node_modules/@fastify/busboy/types";
+import { StorageFile } from "./service";
 
 export interface BunnyClientConfig {
     accessKey: string;
@@ -14,8 +15,8 @@ export class BunnyClient implements StorageClient {
         private readonly httpClient: HttpClient,
     ) {}
 
-    async uploadFile(path: string, filename: string, fileStream: BusboyFileStream): Promise<void> {
-        const response = await this.httpClient.put(`https://storage.bunnycdn.com/${this.config.storageZoneName}/${path}/${filename}`, 
+    async uploadFile(file: StorageFile, fileStream: BusboyFileStream): Promise<void> {
+        const response = await this.httpClient.put(`https://storage.bunnycdn.com/${this.config.storageZoneName}/${file.path}/${file.filename}`, 
             {
                 headers: {
                     'AccessKey': this.config.accessKey,
@@ -27,6 +28,20 @@ export class BunnyClient implements StorageClient {
 
         if (response.statusCode !== 201) {
             throw new Error(`Failed to upload file: ${response.errorMessage}`);
+        }
+    }
+
+    async removeFile(file: StorageFile): Promise<void> {
+        const response = await this.httpClient.delete(`https://storage.bunnycdn.com/${this.config.storageZoneName}/${file.path}/${file.filename}`, 
+            {
+                headers: {
+                    'AccessKey': this.config.accessKey,
+                },
+            }
+        );
+
+        if (response.statusCode !== 200) {
+            throw new Error(`Failed to remove file: ${response.errorMessage}`);
         }
     }
 

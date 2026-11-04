@@ -15,7 +15,7 @@ export function getClubRouteProviders(services: ApplicationServices, mainClubId:
 
     const createClubHandler = new CreateClubRouteHandler(services.apiHelperService, services.clubService);
     const getClubByIdHandler = new GetClubByIdRouteHandler(services.apiHelperService, services.clubService, services.externalProviderService, services.gameService, services.venueService, mainClubId);
-    const removeClubAvatarHandler = new RemoveClubAvatarRouteHandler(services.clubService);
+    const removeClubAvatarHandler = new RemoveClubAvatarRouteHandler(services.clubService, services.storageService);
     const setClubAvatarHandler = new SetClubAvatarRouteHandler(services.apiHelperService, services.clubService, services.storageService);
     const updateClubByIdHandler = new UpdateClubByIdRouteHandler(services.apiHelperService, services.clubService);
 

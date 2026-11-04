@@ -1,5 +1,7 @@
 import { BusboyFileStream } from "node_modules/@fastify/busboy/types";
+import { StorageFile } from "./service";
 
 export interface StorageClient {
-    uploadFile(path: string, filename: string, stream: BusboyFileStream): Promise<void>;
+    uploadFile(file: StorageFile, stream: BusboyFileStream): Promise<void>;
+    removeFile(file: StorageFile): Promise<void>;
 }

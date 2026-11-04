@@ -67,11 +67,11 @@ export class ClubMapper {
     }
 
     async setClubAvatar(id: ClubId, avatar: string): Promise<void> {
-        await this.sql`update club set avatar = ${ avatar } where id = ${ id }`;
+        await this.sql`update club set icon_small = ${ avatar } where id = ${ id }`;
     }
 
     async removeClubAvatar(id: ClubId): Promise<void> {
-        await this.sql`update club set avatar = null where id = ${ id }`;
+        await this.sql`update club set icon_small = null where id = ${ id }`;
     }
 
     async search(parts: string[]): Promise<Club[]> {

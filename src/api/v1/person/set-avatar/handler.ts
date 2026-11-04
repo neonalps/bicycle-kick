@@ -8,10 +8,9 @@ import { Nullish } from "@src/util/types";
 import { MultipartFile } from '@fastify/multipart'
 import { ensureNotNullish } from "@src/util/common";
 import { StorageService } from "@src/module/storage/service";
+import { assertValidFileType, getFileTypeFromFilename, getFullPathFromFile, getPersonStorageFile } from "@src/module/storage/util";
 
 export class SetPersonAvatarRouteHandler implements RouteHandler<SetPersonAvatarRequestDto, BasicPersonDto> {
-
-    private static readonly PERSON_FOLDER = `p`;
 
     constructor(
         private readonly apiHelper: ApiHelperService,
@@ -25,12 +24,14 @@ export class SetPersonAvatarRouteHandler implements RouteHandler<SetPersonAvatar
         const uploadedFile = ensureNotNullish(file, `No upload file was passed`);
         await this.personService.requireById(personId);
 
-        const fileType = uploadedFile.filename.substring(uploadedFile.filename.lastIndexOf('.') + 1);
-        const avatarFilename = `${SetPersonAvatarRouteHandler.PERSON_FOLDER}/${personId}.${fileType}`;
+        const fileType = getFileTypeFromFilename(uploadedFile.filename);
+        assertValidFileType(fileType, ['jpg', 'png', 'webp']);
+        
+        const storageFile = getPersonStorageFile(personId, fileType);
 
-        await this.storageService.uploadFile(SetPersonAvatarRouteHandler.PERSON_FOLDER, `${personId}.${fileType}`, uploadedFile.file);
+        await this.storageService.uploadFile(storageFile, uploadedFile.file);
 
-        await this.personService.setPersonAvatar(personId, avatarFilename);
+        await this.personService.setPersonAvatar(personId, getFullPathFromFile(storageFile));
         
         const updatedPerson = await this.personService.requireById(personId);
         return this.apiHelper.convertPersonToBasicDto(updatedPerson);

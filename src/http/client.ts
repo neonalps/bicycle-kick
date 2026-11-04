@@ -17,6 +17,10 @@ export class HttpClient {
         return this.performRequest(url, { ...options, method: HTTP_METHOD.POST });
     };
 
+    delete = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>> & { textOnly?: boolean }): Promise<HttpResponse<T>> => {
+        return this.performRequest(url, { ...options, method: HTTP_METHOD.DELETE });
+    };
+
     put = async <T> (url: string, options?: { dispatcher?: Dispatcher } & Omit<Dispatcher.RequestOptions, 'origin' | 'path' | 'method'> & Partial<Pick<Dispatcher.RequestOptions, 'method'>> & { textOnly?: boolean }): Promise<HttpResponse<T>> => {
         return this.performRequest(url, { ...options, method: HTTP_METHOD.PUT });
     };

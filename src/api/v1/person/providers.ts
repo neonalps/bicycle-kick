@@ -19,7 +19,7 @@ export function getPersonRouteProviders(services: ApplicationServices): RoutePro
     const updatePersonByIdRouteHandler = new UpdatePersonByIdRouteHandler(services.apiHelperService, services.personService);
     const getPlayerByIdRouteHandler = new GetPersonByIdRouteHandler(services.apiHelperService, services.externalProviderService, services.gameService, services.managerPeriodService, services.personService, services.personContactService, services.statsService);
     const getPersonGamesPlayedRouteHandler = new GetPersonGamesPlayedRouteHandler(services.apiHelperService, services.gamePlayerService, services.paginationService);
-    const removePersonAvatarHandler = new RemovePersonAvatarRouteHandler(services.personService);
+    const removePersonAvatarHandler = new RemovePersonAvatarRouteHandler(services.personService, services.storageService);
     const setPersonAvatarHandler = new SetPersonAvatarRouteHandler(services.apiHelperService, services.personService, services.storageService);
 
     return [

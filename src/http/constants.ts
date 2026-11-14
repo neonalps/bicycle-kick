@@ -4,6 +4,11 @@ export const HTTP_METHOD: Record<string, HttpMethod> = {
     GET: 'GET',
     HEAD: 'HEAD',
     POST: 'POST',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
+    TRACE: 'TRACE',
+    PATCH: 'PATCH',
+    OPTIONS: 'OPTIONS',
 };
 
 export const HTTP_STATUS: Record<string, number> = {

@@ -4,7 +4,7 @@ import { validateNotBlank, validateNotNull } from "@src/util/validation";
 import { VenueFlavorId, VenueId } from "@src/util/domain-types";
 import { CreateVenue } from "@src/model/internal/create-venue";
 import { normalizeForSearch } from "@src/util/search";
-import { isDefined } from "@src/util/common";
+import { ensureNotNullish, isDefined } from "@src/util/common";
 import { UpdateVenue } from "@src/model/internal/update-venue";
 import { VenueFlavor } from "@src/model/internal/venue-flavor";
 
@@ -80,6 +80,17 @@ export class VenueService {
         }
 
         return await this.mapper.getFlavorMapByIds(flavorIds);
+    }
+
+    async getVenueIdForFlavorId(flavorId: VenueFlavorId): Promise<VenueId | null> {
+        validateNotNull(flavorId, "flavorId");
+
+        const flavorMap = await this.getFlavorMapByIds([flavorId]);
+        return flavorMap.get(flavorId)?.venueId ?? null;
+    }
+
+    async requireVenueIdForFlavorId(flavorId: VenueFlavorId): Promise<VenueId> {
+        return ensureNotNullish(await this.getVenueIdForFlavorId(flavorId));
     }
 
     async getFlavorsForVenue(venueId: VenueId): Promise<VenueFlavor[]> {

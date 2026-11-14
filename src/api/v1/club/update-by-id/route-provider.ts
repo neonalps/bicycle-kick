@@ -25,7 +25,7 @@ export class UpdateClubByIdRouteProvider implements RouteProvider<UpdateClubById
             },
             body: {
                 type: 'object',
-                required: [ 'name', 'shortName', 'city', 'countryCode' ],
+                required: [ 'name', 'shortName', 'city', 'countryCode', 'homeVenueId' ],
                 properties: {
                     name: { type: 'string' },
                     shortName: { type: 'string' },

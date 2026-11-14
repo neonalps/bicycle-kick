@@ -1,3 +1,5 @@
+import { VenueId } from "@src/util/domain-types";
+
 export interface UpdateClub {
     name: string;
     shortName: string;
@@ -8,6 +10,6 @@ export interface UpdateClub {
     countryCode: string;
     primaryColour?: string;
     secondaryColour?: string;
-    homeVenueId?: number;
+    homeVenueId: VenueId;
     normalizedSearch: string;
 }

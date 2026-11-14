@@ -1,7 +1,7 @@
-import { ClubId, VenueId } from "@src/util/domain-types";
+import { VenueFlavorId } from "@src/util/domain-types";
 
 export interface UpdateClubByIdRequestDto {
-    clubId: ClubId;
+    clubId: string;
     name: string;
     shortName: string;
     primaryColour?: string;
@@ -9,5 +9,5 @@ export interface UpdateClubByIdRequestDto {
     city: string;
     district?: string;
     countryCode: string;
-    homeVenueId: VenueId;
+    homeVenueFlavorId: VenueFlavorId;
 }

@@ -32,7 +32,7 @@ export class BunnyClient implements StorageClient {
     }
 
     async removeFile(file: StorageFile): Promise<void> {
-        const response = await this.httpClient.delete(`https://storage.bunnycdn.com/${this.config.storageZoneName}/${file.path}/${file.filename}`, 
+        const response = await this.httpClient.del(`https://storage.bunnycdn.com/${this.config.storageZoneName}/${file.path}/${file.filename}`, 
             {
                 headers: {
                     'AccessKey': this.config.accessKey,

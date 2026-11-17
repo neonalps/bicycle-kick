@@ -1,5 +1,5 @@
 export interface GetClubByIdRequestDto {
-    clubId: number;
+    clubId: string;
     includeAllGames?: boolean;
     includeLastGames?: boolean;
     includeHomeVenue?: boolean;

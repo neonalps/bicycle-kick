@@ -23,11 +23,11 @@ export class GetClubByIdRouteHandler implements RouteHandler<GetClubByIdRequestD
     ) {}
 
     public async handle(_: AuthenticationContext, dto: GetClubByIdRequestDto): Promise<GetClubByIdResponseDto> {
-        const clubId = typeof dto.clubId === 'string' && dto.clubId === "main" ? this.mainClubId : dto.clubId;
+        const clubId = typeof dto.clubId === 'string' && dto.clubId === "main" ? this.mainClubId : Number(dto.clubId);
 
         const { club, externalProviderClubs } = await promiseAllObject({
             club: this.clubService.requireById(clubId),
-            externalProviderClubs: this.externalProviderService.getExternalProvidersForClub(dto.clubId),
+            externalProviderClubs: this.externalProviderService.getExternalProvidersForClub(clubId),
         });
 
         const clubDto = await this.apiHelper.convertClubToBasicDto(club);

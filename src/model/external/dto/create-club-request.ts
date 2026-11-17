@@ -1,5 +1,3 @@
-import { VenueId } from "@src/util/domain-types";
-
 export interface CreateClubRequestDto {
     name: string;
     shortName: string;
@@ -8,5 +6,5 @@ export interface CreateClubRequestDto {
     city: string;
     district?: string;
     countryCode: string;
-    homeVenueId: VenueId;
+    homeVenueFlavorId: string;
 }

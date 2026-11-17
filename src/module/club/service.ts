@@ -42,6 +42,12 @@ export class ClubService {
         return await this.requireById(clubId);
     }
 
+    async deleteById(id: ClubId): Promise<void> {
+        validateNotNull(id, "id");
+
+        await this.mapper.deleteById(id);
+    }
+
     async getById(id: ClubId): Promise<Club | null> {
         validateNotNull(id, "id");
 
@@ -75,7 +81,7 @@ export class ClubService {
         return club;
     }
 
-    async getMapByIds(ids: number[]): Promise<Map<ClubId, Club>> {
+    async getMapByIds(ids: ClubId[]): Promise<Map<ClubId, Club>> {
         validateNotNull(ids, "ids");
         if (ids.length === 0) {
             return new Map();

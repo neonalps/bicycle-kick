@@ -28,7 +28,7 @@ export class CreateClubRouteProvider implements RouteProvider<CreateClubRequestD
                     countryCode: { type: 'string' },
                     primaryColour: { type: 'string' },
                     secondaryColour: { type: 'string' },
-                    homeVenueId: { type: 'string' },
+                    homeVenueFlavorId: { type: 'string' },
                 },
                 additionalProperties: false,
             },

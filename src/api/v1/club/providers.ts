@@ -10,14 +10,17 @@ import { SetClubAvatarRouteHandler } from "./set-avatar/handler";
 import { RemoveClubAvatarRouteHandler } from "./remove-avatar/handler";
 import { RemoveClubAvatarRouteProvider } from "./remove-avatar/route-provider";
 import { SetClubAvatarRouteProvider } from "./set-avatar/route-provider";
+import { DeleteClubByIdRouteHandler } from "./delete-by-id/handler";
+import { DeleteClubByIdRouteProvider } from "./delete-by-id/route-provider";
 
 export function getClubRouteProviders(services: ApplicationServices, mainClubId: number): RouteProvider<any, any>[] {
 
-    const createClubHandler = new CreateClubRouteHandler(services.apiHelperService, services.clubService);
+    const createClubHandler = new CreateClubRouteHandler(services.apiHelperService, services.clubService, services.venueService);
     const getClubByIdHandler = new GetClubByIdRouteHandler(services.apiHelperService, services.clubService, services.externalProviderService, services.gameService, services.venueService, mainClubId);
     const removeClubAvatarHandler = new RemoveClubAvatarRouteHandler(services.clubService, services.storageService);
     const setClubAvatarHandler = new SetClubAvatarRouteHandler(services.apiHelperService, services.clubService, services.storageService);
     const updateClubByIdHandler = new UpdateClubByIdRouteHandler(services.apiHelperService, services.clubService, services.venueService);
+    const deleteClubByIdHandler = new DeleteClubByIdRouteHandler(services.clubService);
 
     return [
         new CreateClubRouteProvider(createClubHandler),
@@ -25,5 +28,6 @@ export function getClubRouteProviders(services: ApplicationServices, mainClubId:
         new RemoveClubAvatarRouteProvider(removeClubAvatarHandler),
         new SetClubAvatarRouteProvider(setClubAvatarHandler),
         new UpdateClubByIdRouteProvider(updateClubByIdHandler),
+        new DeleteClubByIdRouteProvider(deleteClubByIdHandler),
     ];
 }

@@ -30,7 +30,11 @@ export class ClubMapper {
         return result[0].id;
     }
 
-    async getById(id: number): Promise<Club | null> {
+    async deleteById(id: ClubId): Promise<void> {
+        await this.sql`delete from club where id = ${ id }`;
+    }
+
+    async getById(id: ClubId): Promise<Club | null> {
         const result = await this.sql<ClubDaoInterface[]>`select * from club where id = ${ id }`;
         if (result.length !== 1) {
             return null;

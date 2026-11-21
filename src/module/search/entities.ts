@@ -5,4 +5,5 @@ export enum SearchEntity {
     Person = "person",
     Season = "season",
     Venue = "venue",
+    VenueFlavor = "venueFlavor",
 }

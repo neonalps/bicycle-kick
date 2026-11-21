@@ -27,7 +27,7 @@ export class SearchService {
         SearchEntity.Competition,
         SearchEntity.Game,
         SearchEntity.Person,
-        SearchEntity.Season,
+        SearchEntity.Season, 
         SearchEntity.Venue,
     ];
 
@@ -70,6 +70,10 @@ export class SearchService {
         }
 
         if (entities.includes(SearchEntity.Venue)) {
+            searchProviders.push(this.searchForVenue(normalizedParts));
+        }
+
+        if (entities.includes(SearchEntity.VenueFlavor)) {
             searchProviders.push(this.searchForVenueFlavor(normalizedParts));
         }
 

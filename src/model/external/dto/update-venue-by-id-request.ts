@@ -8,6 +8,6 @@ export interface UpdateVenueByIdRequestDto {
     district?: string;
     countryCode: string;
     capacity: number;
-    latitude?: number;
-    longitude?: number;
+    latitude: number;
+    longitude: number;
 }

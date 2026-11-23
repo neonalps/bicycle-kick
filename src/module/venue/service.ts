@@ -39,6 +39,8 @@ export class VenueService {
         validateNotBlank(updateVenue.city, "updateVenue.city");
         validateNotBlank(updateVenue.countryCode, "updateVenue.countryCode");
         validateNotNull(updateVenue.capacity, "updateVenue.capacity");
+        validateNotNull(updateVenue.latitude, "updateVenue.latitude");
+        validateNotNull(updateVenue.longitude, "updateVenue.longitude");
 
         await this.requireById(venueId);
 

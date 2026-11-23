@@ -17,26 +17,24 @@ export class UpdateVenueByIdRouteProvider implements RouteProvider<UpdateVenueBy
         const schema: RequestSchema = {
             params: {
                 type: 'object',
-                required: ['clubId'],
+                required: ['venueId'],
                 properties: {
-                    clubId: { type: 'string' }
+                    venueID: { type: 'string' }
                 },
                 additionalProperties: false,
             },
             body: {
                 type: 'object',
-                required: [ 'name', 'shortName', 'city', 'countryCode' ],
+                required: [ 'name', 'shortName', 'city', 'countryCode', 'attendance', 'latitude', 'longitude' ],
                 properties: {
                     name: { type: 'string' },
                     shortName: { type: 'string' },
-                    iconLarge: { type: 'string' },
-                    iconSmall: { type: 'string' },
                     city: { type: 'string' },
                     district: { type: 'string' },
                     countryCode: { type: 'string' },
-                    primaryColour: { type: 'string' },
-                    secondaryColour: { type: 'string' },
-                    homeVenueId: { type: 'string' },
+                    attendance: { type: 'number' },
+                    latitude: { type: 'number' },
+                    longitude: { type: 'number' },
                 },
                 additionalProperties: false,
             },

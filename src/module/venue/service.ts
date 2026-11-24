@@ -8,6 +8,11 @@ import { ensureNotNullish, isDefined } from "@src/util/common";
 import { UpdateVenue } from "@src/model/internal/update-venue";
 import { VenueFlavor } from "@src/model/internal/venue-flavor";
 
+export type VenueWithFlavor = {
+    venueId: VenueId;
+    venueFlavorId: VenueFlavorId;
+}
+
 export class VenueService {
 
     constructor(private readonly mapper: VenueMapper) {}
@@ -20,7 +25,7 @@ export class VenueService {
         validateNotBlank(createVenue.countryCode, "createVenue.countryCode");
         validateNotNull(createVenue.capacity, "createVenue.capacity");
 
-        const createdVenueId = await this.mapper.create({
+        const { venueId: createdVenueId } = await this.mapper.createVenueAndFlavor({
             ...createVenue,
             normalizedSearch: normalizeForSearch([createVenue.name, createVenue.city, createVenue.district].filter(item => isDefined(item)).join(" ")),
         });

@@ -1,5 +1,6 @@
 import { Sql } from "@src/db/manager";
 import { CreateVenue } from "@src/model/internal/create-venue";
+import { CreateVenueFlavor } from "@src/model/internal/create-venue-flavor";
 import { IdInterface } from "@src/model/internal/interface/id.interface";
 import { VenueFlavorDaoInterface } from "@src/model/internal/interface/venue-flavor.interface";
 import { VenueDaoInterface } from "@src/model/internal/interface/venue.interface";
@@ -10,16 +11,42 @@ import { isDefined } from "@src/util/common";
 import { VenueFlavorId, VenueId } from "@src/util/domain-types";
 import { groupByOccurrenceAndGetLargest } from "@src/util/functional-queries";
 import postgres from "postgres";
+import { VenueWithFlavor } from "./service";
 
 export class VenueMapper {
 
     constructor(private readonly sql: Sql) {}
+
+    async createVenueAndFlavor(create: CreateVenue): Promise<VenueWithFlavor> {
+        return await this.sql.begin(async tx => {
+            const venueId = await this.create(create, tx);
+            const venueFlavorId = await this.createFlavor({
+                venueId: venueId,
+                name: create.name,
+                normalizedSearch: create.normalizedSearch,
+            }, tx);
+
+            return {
+                venueId,
+                venueFlavorId,
+            };
+        });
+    }
 
     async create(create: CreateVenue, tx?: postgres.TransactionSql): Promise<VenueId> {
         const query = tx || this.sql;
         const result = await query`insert into venue ${ query(create, 'name', 'shortName', 'capacity', 'city', 'countryCode', 'district', 'latitude', 'longitude', 'normalizedSearch') } returning id`;
         if (result.length !== 1) {
             throw new Error(`Failed to create venue`);
+        }
+        return result[0].id;
+    }
+
+    async createFlavor(create: CreateVenueFlavor, tx?: postgres.TransactionSql): Promise<VenueFlavorId> {
+        const query = tx || this.sql;
+        const result = await query`insert into venue_flavor ${ query(create, 'venueId', 'name', 'normalizedSearch') } returning id`;
+        if (result.length !== 1) {
+            throw new Error(`Failed to create venue flavor`);
         }
         return result[0].id;
     }
